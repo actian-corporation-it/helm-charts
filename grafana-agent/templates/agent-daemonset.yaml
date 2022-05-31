@@ -1,0 +1,74 @@
+{{- if or .Values.logs.enabled .Values.tracing.enabled -}}
+{{ $daemonsetServiceName := (include "daemonset.ServiceName" .) }}
+{{ $daemonsetConfigMapName := (include "daemonset.ConfigMapName" .) }}
+{{ $daemonsetServiceAccountName := (include "daemonset.ServiceAccountName" .) }}
+---
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: {{ $daemonsetServiceName }}
+  namespace: {{ .Values.global.namespace }}
+spec:
+  minReadySeconds: 10
+  selector:
+    matchLabels:
+      name: {{ $daemonsetServiceName }}
+  template:
+    metadata:
+      labels:
+        name: {{ $daemonsetServiceName }}
+    spec:
+      containers:
+      - args:
+        - -config.file=/etc/agent/agent.yaml
+        command:
+        - /bin/agent
+        env:
+        - name: HOSTNAME
+          valueFrom:
+            fieldRef:
+              fieldPath: spec.nodeName
+        image: grafana/agent:{{ .Values.global.agentVersion }}
+        imagePullPolicy: IfNotPresent
+        name: {{ $daemonsetServiceName }}
+        ports:
+        - containerPort: {{ .Values.daemonset.serverPort }}
+          name: http-metrics
+        securityContext:
+          privileged: true
+          runAsUser: 0
+        volumeMounts:
+        {{- if .Values.global.timeZone }}
+        - mountPath: /etc/localtime
+          name: tz-config
+        {{- end }}
+        - mountPath: /etc/agent
+          name: {{ $daemonsetConfigMapName }}
+        - mountPath: /var/log
+          name: varlog
+        - mountPath: /var/lib/docker/containers
+          name: varlibdockercontainers
+          readOnly: true
+      serviceAccount: {{ $daemonsetServiceAccountName }}
+      tolerations:
+      - effect: NoSchedule
+        operator: Exists
+      volumes:
+      {{- if .Values.global.timeZone }}
+      - hostPath:
+          path: /usr/share/zoneinfo/{{ .Values.global.timeZone }}
+          type: File
+        name: tz-config
+      {{- end }}
+      - configMap:
+          name: {{ $daemonsetConfigMapName }}
+        name: {{ $daemonsetConfigMapName }}
+      - hostPath:
+          path: /var/log
+        name: varlog
+      - hostPath:
+          path: /var/lib/docker/containers
+        name: varlibdockercontainers
+  updateStrategy:
+    type: RollingUpdate
+{{- end -}}

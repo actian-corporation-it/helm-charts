@@ -1,0 +1,9 @@
+
+
+Grafana Agent deployment
+
+This Helm Chart will install grafana-agent with:
+{{ if .Values.metrics.enabled }}  - Metric scraping{{- end }}
+{{ if .Values.logs.enabled }}  - Log scraping{{- end }}
+{{ if .Values.tracing.enabed }}  - Distributed Tracing{{- end }}
+

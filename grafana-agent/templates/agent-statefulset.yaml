@@ -1,0 +1,89 @@
+{{- if or .Values.metrics.enabled -}}
+{{ $statefulsetServiceName := (include "statefulset.ServiceName" .) }}
+{{ $statefulsetConfigMapName := (include "statefulset.ConfigMapName" .) }}
+{{ $statefulsetServiceAccountName := (include "statefulset.ServiceAccountName" .) }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    name: {{ $statefulsetServiceName }}
+  name: {{ $statefulsetServiceName }}
+  namespace: {{ .Values.global.namespace }}
+spec:
+  clusterIP: None
+  ports:
+  - name: grafana-agent-http-metrics
+    port: 80
+    targetPort: 80
+  selector:
+    name: grafana-agent
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: grafana-agent
+  namespace: {{ .Values.global.namespace }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      name: {{ $statefulsetServiceName }}
+  serviceName: {{ $statefulsetServiceName }}
+  template:
+    metadata:
+      labels:
+        name: {{ $statefulsetServiceName }}
+    spec:
+      containers:
+      - args:
+        - -config.file=/etc/agent/agent.yaml
+        - -enable-features=integrations-next
+        command:
+        - /bin/agent
+        env:
+        - name: HOSTNAME
+          valueFrom:
+            fieldRef:
+              fieldPath: spec.nodeName
+        image: grafana/agent:{{ .Values.global.agentVersion }}
+        imagePullPolicy: IfNotPresent
+        name: {{ $statefulsetServiceName }}
+        ports:
+        - containerPort: {{ .Values.statefulset.serverPort }}
+          name: http-metrics
+        volumeMounts:
+        {{- if .Values.global.timeZone }}
+        - mountPath: /etc/localtime
+          name: tz-config
+        {{- end }}
+        - mountPath: /var/lib/agent
+          name: agent-wal
+        - mountPath: /etc/agent
+          name: {{ $statefulsetConfigMapName }}
+      serviceAccount: {{ $statefulsetServiceAccountName }}
+      volumes:
+      {{- if .Values.global.timeZone }}
+      - hostPath:
+          path: /usr/share/zoneinfo/{{ .Values.global.timeZone }}
+          type: File
+        name: tz-config
+      {{- end }}
+      - configMap:
+          name: {{ $statefulsetConfigMapName }}
+        name: {{ $statefulsetConfigMapName }}
+  updateStrategy:
+    type: RollingUpdate
+  volumeClaimTemplates:
+  - apiVersion: v1
+    kind: PersistentVolumeClaim
+    metadata:
+      name: agent-wal
+      namespace: {{ .Values.global.namespace }}
+    spec:
+      accessModes:
+      - ReadWriteOnce
+      resources:
+        requests:
+          storage: 5Gi
+{{- end -}}

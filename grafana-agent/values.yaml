@@ -1,0 +1,62 @@
+# Default values for grafana-agent.
+
+global:
+  agentVersion: v0.24.2
+  namespace: monitoring
+  timeZone: ""
+
+daemonset:
+  createServiceAccount: true
+  serviceAccountName: ""
+  serverPort: 13579
+  logLevel: info
+statefulset:
+  createServiceAccount: true
+  serviceAccountName: ""
+  serverPort: 13578
+  logLevel: info
+
+integrations:
+  nodeExporter: true
+
+metrics:
+  enabled: true
+  scrapeInterval: 30s
+  prometheusId: 0
+  prometheusPassword: PaSsW0Rd
+  prometheusRemoteWriteUrl: https://127.0.0.1
+  collect:
+    cadvisor: true
+    kubelet: false
+    kubeStateMetrics: true
+  # External labels are added automatically to each metric.
+  # cloudProvider and cluster name is mandatory. 
+  externalLabels:
+    cloudProvider: ""
+    cluster: ""
+
+tracing:
+  enabled: false
+  tempoId: 0
+  tempoPassword: PaSsW0Rd
+  tempoUrl: https://127.0.0.1
+
+logs:
+  enabled: true
+  lokiId: 0
+  lokiPassword: PaSsW0Rd
+  lokiUrl: https://127.0.0.1
+  defaultPipelineStage: docker
+  # Jobs for log scraping
+  # Details will follow
+  jobs: {}
+  # External labels are added automatically to each log record.
+  # cloudProvider and cluster name is mandatory. 
+  externalLabels:
+    cloudProvider: ""
+    cluster: ""
+
+image:
+  repository: grafana/agent
+  pullPolicy: IfNotPresent
+  tag: ""
