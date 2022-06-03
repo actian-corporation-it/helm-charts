@@ -1,6 +1,6 @@
 apiVersion: v2
-name: grafana-agent
-description: Helm chart to deploy grafana-agent in a Kubernetes cluster
+name: clusterSecertStore
+description: Helm chart to deploy clusterSecertStore in a Kubernetes cluster
 type: application
 # This is the chart version. This version number should be incremented each time you make changes
 # to the chart and its templates, including the app version.
