@@ -2,6 +2,7 @@
 {{ $statefulsetServiceName := (include "statefulset.ServiceName" .) }}
 {{ $statefulsetConfigMapName := (include "statefulset.ConfigMapName" .) }}
 {{ $statefulsetServiceAccountName := (include "statefulset.ServiceAccountName" .) }}
+{{ $grafanaAgentVersion := (include "grafanaAgent.Version" .) }}
 ---
 apiVersion: v1
 kind: Service
@@ -46,7 +47,7 @@ spec:
           valueFrom:
             fieldRef:
               fieldPath: spec.nodeName
-        image: grafana/agent:{{ .Values.global.agentVersion }}
+        image: grafana/agent:{{ $grafanaAgentVersion }}
         imagePullPolicy: IfNotPresent
         name: {{ $statefulsetServiceName }}
         ports:
