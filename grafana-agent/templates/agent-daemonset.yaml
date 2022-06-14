@@ -2,6 +2,7 @@
 {{ $daemonsetServiceName := (include "daemonset.ServiceName" .) }}
 {{ $daemonsetConfigMapName := (include "daemonset.ConfigMapName" .) }}
 {{ $daemonsetServiceAccountName := (include "daemonset.ServiceAccountName" .) }}
+{{ $grafanaAgentVersion := (include "grafanaAgent.Version" .) }}
 ---
 apiVersion: apps/v1
 kind: DaemonSet
@@ -28,7 +29,7 @@ spec:
           valueFrom:
             fieldRef:
               fieldPath: spec.nodeName
-        image: grafana/agent:{{ .Values.global.agentVersion }}
+        image: grafana/agent:{{ $grafanaAgentVersion }}
         imagePullPolicy: IfNotPresent
         name: {{ $daemonsetServiceName }}
         ports:
