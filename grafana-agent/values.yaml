@@ -1,7 +1,7 @@
 # Default values for grafana-agent.
 
 global:
-  agentVersion: v0.24.2
+  agentVersion: ""
   namespace: monitoring
   timeZone: ""
 
@@ -27,7 +27,7 @@ metrics:
   prometheusRemoteWriteUrl: https://127.0.0.1
   collect:
     cadvisor: true
-    kubelet: false
+    kubelet: true
     kubeStateMetrics: true
   # External labels are added automatically to each metric.
   # cloudProvider and cluster name is mandatory. 
@@ -55,6 +55,12 @@ logs:
   externalLabels:
     cloudProvider: ""
     cluster: ""
+
+rabbitmq:
+  enabled: false
+  releaseName: my-release
+  namespace: default
+  metricPort: 9419
 
 image:
   repository: grafana/agent
