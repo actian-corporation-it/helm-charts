@@ -28,6 +28,19 @@
   {{- printf "%s-daemonset" .Release.Name -}}
 {{- end -}}
 
+{{- define "rabbitmq.target" -}}
+  {{- $port := .Values.rabbitmq.metricPort | toString -}}
+  {{- printf "%s.%s.svc.cluster.local:%s" .Values.rabbitmq.releaseName .Values.rabbitmq.namespace $port -}}
+{{- end -}}
+
+{{- define "grafanaAgent.Version" -}}
+  {{- if eq .Values.global.agentVersion "" -}}
+    {{- printf "%s" $.Chart.AppVersion -}}
+  {{- else -}}
+    {{- printf "%s" .Values.global.agentVersion -}}
+  {{- end -}}
+{{- end -}}
+
 {{/*
 Compute statefulset service account name
 */}}
