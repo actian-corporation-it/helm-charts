@@ -61,8 +61,3 @@ rabbitmq:
   releaseName: my-release
   namespace: default
   metricPort: 9419
-
-image:
-  repository: grafana/agent
-  pullPolicy: IfNotPresent
-  tag: ""
