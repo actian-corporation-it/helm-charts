@@ -1,0 +1,6 @@
+namespace: "harness-delegate-ng"
+delegateName:
+useProxy: false
+proxyName: ""
+harnessAccountId: "COs_17eQTMSG_HJDrYscVA"
+harnessAccountSecret: ""
