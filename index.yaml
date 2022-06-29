@@ -1,0 +1,36 @@
+apiVersion: v1
+entries:
+  clusterSecertStore:
+  - apiVersion: v2
+    appVersion: v0.24.2
+    created: "2022-06-29T14:08:12.9351292Z"
+    description: Helm chart to deploy clusterSecertStore in a Kubernetes cluster
+    digest: ec367e47afe23d0107012a24d777540fb3729695d0bb804de9f82428049c0bd2
+    name: clusterSecertStore
+    type: application
+    urls:
+    - https://github.com/actian-corporation-it/helm-charts/releases/download/clusterSecertStore-0.1.0/clusterSecertStore-0.1.0.tgz
+    version: 0.1.0
+  grafana-agent:
+  - apiVersion: v2
+    appVersion: v0.25.0
+    created: "2022-06-29T14:08:13.065325413Z"
+    description: Helm chart to deploy grafana-agent in a Kubernetes cluster
+    digest: bcb59f0aaada41b3b9e7c70fb69003420a0158eff84a67fc06c206e5579df1be
+    name: grafana-agent
+    type: application
+    urls:
+    - https://github.com/actian-corporation-it/helm-charts/releases/download/grafana-agent-0.2.2/grafana-agent-0.2.2.tgz
+    version: 0.2.2
+  harness-delegate:
+  - apiVersion: v2
+    appVersion: 0.1.0
+    created: "2022-06-29T14:08:13.233429487Z"
+    description: A Helm chart for Kubernetes
+    digest: 3c7cd7ee30bcc67cd61d20f135918eb6edba23dcc626cb35b0aaf0e60fd8fc08
+    name: harness-delegate
+    type: application
+    urls:
+    - https://github.com/actian-corporation-it/helm-charts/releases/download/harness-delegate-0.1.0/harness-delegate-0.1.0.tgz
+    version: 0.1.0
+generated: "2022-06-29T14:08:13.233434487Z"
