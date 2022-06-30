@@ -1,0 +1,7 @@
+namespace: ""
+vault_kv_path: ""
+vault_auth_path: ""
+cabundle_secretName: ""
+vault_role: ""
+k8s_sa: ""
+k8s_sa_auth_token: ""
