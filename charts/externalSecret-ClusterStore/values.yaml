@@ -1,4 +1,5 @@
 namespace: ""
+vault_server: ""
 vault_kv_path: ""
 vault_auth_path: ""
 cabundle_secretName: ""
