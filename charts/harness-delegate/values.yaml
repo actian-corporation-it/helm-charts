@@ -1,5 +1,6 @@
 namespace: "harness-delegate-ng"
 delegateName:
+serviceAccount: "default"
 useProxy: false
 proxyName: ""
 harnessAccountId: "COs_17eQTMSG_HJDrYscVA"
