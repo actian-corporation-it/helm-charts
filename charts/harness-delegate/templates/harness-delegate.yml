@@ -11,7 +11,7 @@ metadata:
   name: {{ .Values.namespace }}-cluster-admin
 subjects:
   - kind: ServiceAccount
-    name: default
+    name: {{ .Values.ServiceAccount }}
     namespace: {{ .Values.namespace }}
 roleRef:
   kind: ClusterRole
@@ -53,6 +53,7 @@ spec:
       labels:
         harness.io/name: {{ .Values.delegateName }}
     spec:
+      serviceAccountName: {{ .Values.ServiceAccount }}
       containers:
       - image: harness/delegate:latest
         imagePullPolicy: Always
