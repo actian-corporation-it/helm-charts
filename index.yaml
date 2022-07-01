@@ -36,6 +36,16 @@ entries:
   harness-delegate:
   - apiVersion: v2
     appVersion: 0.1.0
+    created: "2022-07-01T16:47:59.34977686Z"
+    description: A Helm chart for Kubernetes
+    digest: 639aaf39781a3f286ca20d03f5290675c1037cebe3b78d4ffcf78692c799d655
+    name: harness-delegate
+    type: application
+    urls:
+    - https://github.com/actian-corporation-it/helm-charts/releases/download/harness-delegate-0.1.3/harness-delegate-0.1.3.tgz
+    version: 0.1.3
+  - apiVersion: v2
+    appVersion: 0.1.0
     created: "2022-07-01T15:27:31.532724403Z"
     description: A Helm chart for Kubernetes
     digest: 868577677b290b7b4788c00a741d7d08fd00a7b2136bc9c9aabc54e62040a2c1
@@ -97,4 +107,4 @@ entries:
     urls:
     - https://github.com/actian-corporation-it/helm-charts/releases/download/prometheus-15.10.1002/prometheus-15.10.1002.tgz
     version: 15.10.1002
-generated: "2022-07-01T15:27:31.532733604Z"
+generated: "2022-07-01T16:47:59.349790661Z"
