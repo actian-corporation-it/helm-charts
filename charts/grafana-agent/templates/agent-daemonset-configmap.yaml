@@ -112,10 +112,16 @@ data:
               insecure_skip_verify: false
               server_name: kubernetes
 
-    {{- if .Values.integrations.nodeExporter }}
+    {{- if or .Values.metrics.integrations.nodeExporter .Values.metrics.integrations.cadvisor }}
     integrations:
+      {{- if .Values.metrics.integrations.nodeExporter }}
       node_exporter:
         enabled: true
+      {{- end }}
+      {{- if .Values.metrics.integrations.cadvisor }}
+      cadvisor:
+        enabled: true
+      {{- end }}
       prometheus_remote_write:
 {{ include "metrics.authentication" . | indent 6 }}
     {{- end }}

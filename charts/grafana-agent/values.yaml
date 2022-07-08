@@ -16,17 +16,23 @@ statefulset:
   serverPort: 13578
   logLevel: info
 
-integrations:
-  nodeExporter: true
-
 metrics:
   enabled: true
   scrapeInterval: 30s
   prometheusId: 0
   prometheusPassword: PaSsW0Rd
   prometheusRemoteWriteUrl: https://127.0.0.1
+  integrations:
+    nodeExporter:
+      enabled: true
+    cadvisor:
+      enabled: true
+    rabbitmq:
+      enabled: false
+      releaseName: ""
+      namespace: ""
+      metricPort: 9419
   collect:
-    cadvisor: true
     kubelet: true
     kubeStateMetrics: true
   # External labels are added automatically to each metric.
@@ -55,9 +61,3 @@ logs:
   externalLabels:
     cloudProvider: ""
     cluster: ""
-
-rabbitmq:
-  enabled: false
-  releaseName: my-release
-  namespace: default
-  metricPort: 9419
