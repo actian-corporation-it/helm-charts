@@ -13,7 +13,7 @@ data:
       global:
         scrape_interval: {{ .Values.metrics.scrapeInterval }}
         external_labels:
-        {{- range $key, $value := $.Values.metrics.externalLabels }}
+        {{- range $key, $value := $.Values.global.externalLabels }}
           {{- if $value }}
           {{ $key }}: {{ $value }}
           {{- else }}{{ required (printf "\n\nMissing value: A value is required for metrics label %s\n" $key) nil }}
@@ -24,7 +24,7 @@ data:
         remote_write:
 {{ include "metrics.authentication" . | indent 8 }}
         scrape_configs:
-        - job_name: integrations/kubernetes/kubernetes-pods
+        - job_name: kubernetes-pods
           kubernetes_sd_configs:
             - role: pod
           relabel_configs:
@@ -50,7 +50,7 @@ data:
               target_label: __metrics_path__
             - action: replace
               regex: (.+?)(\:\d+)?;(\d+)
-              replacement: $1:$3
+              replacement: $1:$2
               source_labels:
                 - __address__
                 - __meta_kubernetes_pod_annotation_prometheus_io_port
@@ -92,7 +92,7 @@ data:
               regex: Succeeded|Failed
               source_labels:
                 - __meta_kubernetes_pod_phase
-        - job_name: integrations/kubernetes
+        - job_name: kubernetes
           bearer_token_file: /var/run/secrets/kubernetes.io/serviceaccount/token
           kubernetes_sd_configs:
             - role: endpoints
@@ -112,13 +112,13 @@ data:
               insecure_skip_verify: false
               server_name: kubernetes
 
-    {{- if or .Values.metrics.integrations.nodeExporter .Values.metrics.integrations.cadvisor }}
+    {{- if or .Values.metrics.integrations.nodeExporter.enabled .Values.metrics.integrations.cadvisor.enbled }}
     integrations:
-      {{- if .Values.metrics.integrations.nodeExporter }}
+      {{- if .Values.metrics.integrations.nodeExporter.enabled }}
       node_exporter:
         enabled: true
       {{- end }}
-      {{- if .Values.metrics.integrations.cadvisor }}
+      {{- if .Values.metrics.integrations.cadvisor.enabled }}
       cadvisor:
         enabled: true
       {{- end }}
@@ -133,7 +133,7 @@ data:
         clients:
 {{ include "logs.authentication" . | indent 8 }}
           external_labels:
-          {{- range $key, $value := $.Values.logs.externalLabels }}
+          {{- range $key, $value := $.Values.global.externalLabels }}
             {{- if $value }}
             {{ $key }}: {{ $value }}
             {{- else }}{{ required (printf "\n\nMissing value: A value is required for logs label %s\n" $key) nil }}
@@ -144,7 +144,7 @@ data:
         target_config:
           sync_period: 10s
         scrape_configs:
-          - job_name: integrations/kubernetes-logs/kubernetes-pods-name
+          - job_name: kubernetes-logs/kubernetes-pods-name
             kubernetes_sd_configs:
               - role: pod
             pipeline_stages:
@@ -185,7 +185,7 @@ data:
                   - __meta_kubernetes_pod_uid
                   - __meta_kubernetes_pod_container_name
                 target_label: __path__
-          - job_name: integrations/kubernetes-logs/kubernetes-pods-app
+          - job_name: kubernetes-logs/kubernetes-pods-app
             kubernetes_sd_configs:
               - role: pod
             pipeline_stages:
@@ -230,7 +230,7 @@ data:
                   - __meta_kubernetes_pod_uid
                   - __meta_kubernetes_pod_container_name
                 target_label: __path__
-          - job_name: integrations/kubernetes-logs/kubernetes-pods-direct-controllers
+          - job_name: kubernetes-logs/kubernetes-pods-direct-controllers
             kubernetes_sd_configs:
               - role: pod
             pipeline_stages:
@@ -281,7 +281,7 @@ data:
                   - __meta_kubernetes_pod_uid
                   - __meta_kubernetes_pod_container_name
                 target_label: __path__
-          - job_name: integrations/kubernetes-logs/kubernetes-pods-indirect-controller
+          - job_name: kubernetes-logs/kubernetes-pods-indirect-controller
             kubernetes_sd_configs:
               - role: pod
             pipeline_stages:
@@ -334,7 +334,7 @@ data:
                   - __meta_kubernetes_pod_uid
                   - __meta_kubernetes_pod_container_name
                 target_label: __path__
-          - job_name: integrations/kubernetes-logs/kubernetes-pods-static
+          - job_name: kubernetes-logs/kubernetes-pods-static
             kubernetes_sd_configs:
               - role: pod
             pipeline_stages:
