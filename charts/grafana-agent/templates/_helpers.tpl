@@ -29,8 +29,8 @@
 {{- end -}}
 
 {{- define "rabbitmq.target" -}}
-  {{- $port := .Values.rabbitmq.metricPort | toString -}}
-  {{- printf "%s.%s.svc.cluster.local:%s" .Values.rabbitmq.releaseName .Values.rabbitmq.namespace $port -}}
+  {{- $port := .Values.metrics.ingtegrations.rabbitmq.metricPort | toString -}}
+  {{- printf "%s.%s.svc.cluster.local:%s" .Values.metrics.integrations.rabbitmq.releaseName .Values.metrics.integrations.rabbitmq.namespace $port -}}
 {{- end -}}
 
 {{- define "grafanaAgent.Version" -}}
