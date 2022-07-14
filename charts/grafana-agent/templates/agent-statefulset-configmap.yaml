@@ -13,7 +13,7 @@ data:
       global:
         scrape_interval: {{ .Values.metrics.scrapeInterval }}
         external_labels:
-        {{- range $key, $value := $.Values.metrics.externalLabels }}
+        {{- range $key, $value := $.Values.global.externalLabels }}
           {{- if $value }}
           {{ $key }}: {{ $value }}
           {{- else }}{{ required (printf "\n\nMissing value: A value is required for metrics label %s\n" $key) nil }}
@@ -25,9 +25,9 @@ data:
         remote_write:
 {{ include "metrics.authentication" . | indent 8 }}
         scrape_configs:
-        {{- if .Values.rabbitmq.enabled -}}
+        {{- if .Values.metrics.integrations.rabbitmq.enabled -}}
         {{ $rabbitmqTarget := (include "rabbitmq.target" .) }}
-        - job_name: integrations/kubernetes/rabbitmq
+        - job_name: rabbitmq
           static_configs:
             - targets:
               - {{ $rabbitmqTarget }}
@@ -38,8 +38,7 @@ data:
             - source_labels: [__param_target]
               target_label: instance
         {{- end }}
-        {{- if .Values.metrics.collect.kubelet }}
-        - job_name: integrations/kubernetes/kubelet
+        - job_name: kubelet
           bearer_token_file: /var/run/secrets/kubernetes.io/serviceaccount/token
           kubernetes_sd_configs:
               - role: node
@@ -47,7 +46,7 @@ data:
               - replacement: kubernetes.default.svc.cluster.local:443
                 target_label: __address__
               - regex: (.+)
-                replacement: /api/v1/nodes/$${1}/proxy/metrics
+                replacement: /api/v1/nodes/$1/proxy/metrics
                 source_labels:
                   - __meta_kubernetes_node_name
                 target_label: __metrics_path__
@@ -56,9 +55,8 @@ data:
               ca_file: /var/run/secrets/kubernetes.io/serviceaccount/ca.crt
               insecure_skip_verify: false
               server_name: kubernetes
-        {{- end }}
-        {{- if .Values.metrics.collect.kubeStateMetrics }}
-        - job_name: integrations/kubernetes/kube-state-metrics
+        {{- if .Values.metrics.integrations.kubeStateMetrics.enabled }}
+        - job_name: kube-state-metrics
           kubernetes_sd_configs:
               - role: service
           relabel_configs:

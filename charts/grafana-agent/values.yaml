@@ -4,12 +4,18 @@ global:
   agentVersion: ""
   namespace: monitoring
   timeZone: ""
+  # External labels are added automatically to each metric.
+  # cloudProvider and cluster name is mandatory. 
+  externalLabels:
+    cloudProvider: ""
+    cluster: ""
 
 daemonset:
   createServiceAccount: true
   serviceAccountName: ""
   serverPort: 13579
   logLevel: info
+
 statefulset:
   createServiceAccount: true
   serviceAccountName: ""
@@ -32,14 +38,8 @@ metrics:
       releaseName: ""
       namespace: ""
       metricPort: 9419
-  collect:
-    kubelet: true
-    kubeStateMetrics: true
-  # External labels are added automatically to each metric.
-  # cloudProvider and cluster name is mandatory. 
-  externalLabels:
-    cloudProvider: ""
-    cluster: ""
+    kubeStateMetrics:
+      enabled: true
 
 tracing:
   enabled: false
@@ -56,8 +56,3 @@ logs:
   # Jobs for log scraping
   # Details will follow
   jobs: {}
-  # External labels are added automatically to each log record.
-  # cloudProvider and cluster name is mandatory. 
-  externalLabels:
-    cloudProvider: ""
-    cluster: ""
