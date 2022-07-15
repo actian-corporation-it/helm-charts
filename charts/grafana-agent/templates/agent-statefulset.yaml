@@ -33,6 +33,8 @@ spec:
   serviceName: {{ $statefulsetServiceName }}
   template:
     metadata:
+      annotations:
+        checksum/config: {{ include (print $.Template.BasePath "/agent-statefulset-configmap.yaml") . | sha256sum }}
       labels:
         name: {{ $statefulsetServiceName }}
     spec:

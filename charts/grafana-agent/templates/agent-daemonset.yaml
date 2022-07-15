@@ -16,6 +16,8 @@ spec:
       name: {{ $daemonsetServiceName }}
   template:
     metadata:
+      annotations:
+        checksum/config: {{ include (print $.Template.BasePath "/agent-daemonset-configmap.yaml") . | sha256sum }}
       labels:
         name: {{ $daemonsetServiceName }}
     spec:
