@@ -98,8 +98,7 @@ spec:
           value: |-
             apt-get update
             # Install Git with auto approval
-            yes | apt-get install git
-            yes | apt-get install jq wget
+            yes | apt-get install git jq wget
             wget https://github.com/bitnami-labs/sealed-secrets/releases/download/v0.16.0/kubeseal-linux-amd64 -O kubeseal
             install -m 755 kubeseal /usr/local/bin/kubeseal
             # Check git install
