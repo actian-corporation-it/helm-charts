@@ -5,3 +5,4 @@ useProxy: false
 proxyName: ""
 harnessAccountId: "COs_17eQTMSG_HJDrYscVA"
 harnessAccountSecret: ""
+replicas: 2
