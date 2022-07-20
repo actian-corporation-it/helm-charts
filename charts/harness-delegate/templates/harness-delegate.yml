@@ -55,8 +55,8 @@ spec:
           - containerPort: 8080
         resources:
           limits:
-            cpu: "0.5"
-            memory: "2048Mi"
+            cpu: "1"
+            memory: "4096Mi"
           requests:
             cpu: "0.5"
             memory: "2048Mi"
@@ -99,7 +99,9 @@ spec:
             apt-get update
             # Install Git with auto approval
             yes | apt-get install git
-            yes | apt-get install google-cloud-cli
+            yes | apt-get install google-cloud-cli jq wget
+            wget https://github.com/bitnami-labs/sealed-secrets/releases/download/v0.16.0/kubeseal-linux-amd64 -O kubeseal
+            install -m 755 kubeseal /usr/local/bin/kubeseal
             # Check git install
             git --version
             echo install tfenv
