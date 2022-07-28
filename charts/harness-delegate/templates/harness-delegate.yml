@@ -108,6 +108,7 @@ spec:
             git --git-dir=~/.tfenv/.git pull
             echo 1.0.8 > ~/.tfenv/version
             ln -s ~/.tfenv/bin/* /usr/local/bin
+            tfenv install 1.2.5
             tfenv install 1.0.8
             tfenv install 0.15.5
             # AWS Clia
