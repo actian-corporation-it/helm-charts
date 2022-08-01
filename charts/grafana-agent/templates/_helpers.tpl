@@ -29,7 +29,7 @@
 {{- end -}}
 
 {{- define "rabbitmq.target" -}}
-  {{- $port := .Values.metrics.ingtegrations.rabbitmq.metricPort | toString -}}
+  {{- $port := .Values.metrics.integrations.rabbitmq.metricPort | toString -}}
   {{- printf "%s.%s.svc.cluster.local:%s" .Values.metrics.integrations.rabbitmq.releaseName .Values.metrics.integrations.rabbitmq.namespace $port -}}
 {{- end -}}
 
