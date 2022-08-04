@@ -31,6 +31,16 @@ spec:
           valueFrom:
             fieldRef:
               fieldPath: spec.nodeName
+        - name: PROMETHEUS_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: {{ .Values.global.externalSecretName }}
+              key: prometheus-password
+        - name: LOKI_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: {{ .Values.global.externalSecretName }}
+              key: loki-password
         image: grafana/agent:{{ $grafanaAgentVersion }}
         imagePullPolicy: IfNotPresent
         name: {{ $daemonsetServiceName }}
