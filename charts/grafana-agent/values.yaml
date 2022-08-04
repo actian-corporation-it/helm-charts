@@ -9,6 +9,9 @@ global:
   externalLabels:
     cloudProvider: ""
     cluster: ""
+  environment: staging
+  region: eu
+  
 
 daemonset:
   createServiceAccount: true
@@ -21,6 +24,53 @@ statefulset:
   serviceAccountName: ""
   serverPort: 13578
   logLevel: info
+
+credentials:
+  dev:
+    us:
+      prometheusId: "prometheus"
+      lokiId: "loki"
+  test:
+    us:
+      prometheusId: "prometheus"
+      lokiId: "loki"
+  staging:
+    eu:
+      prometheusId: "509808"
+      lokiId: "253874"
+  production:
+    us:
+      prometheusId: "362072"
+      lokiId: "180006"
+    eu:
+      prometheusId: "444522"
+      lokiId: "221231"
+
+urls:
+  dev:
+    us:
+      grafanaUrl: https://grafana.cloudops.actiandatacloud.com
+      prometheusRemoteWriteUrl: https://prometheus.cloudops.actiandatacloud.com/api/v1/write
+      lokiUrl: https://loki.cloudops.actiandatacloud.com/loki/api/v1/push
+  test:
+    us:
+      grafanaUrl: https://grafana.cloudops.actiandatacloud.com
+      prometheusRemoteWriteUrl: https://prometheus.cloudops.actiandatacloud.com/api/v1/write
+      lokiUrl: https://loki.cloudops.actiandatacloud.com/loki/api/v1/push
+  staging:
+    eu:
+      grafanaUrl: https://actianstgeu.grafana.net
+      prometheusRemoteWriteUrl: https://prometheus-prod-01-eu-west-0.grafana.net/api/prom/push
+      lokiUrl: https://logs-prod-eu-west-0.grafana.net/loki/api/v1/push
+  production:
+    us:
+      grafanaUrl: https://actian.grafana.net
+      prometheusRemoteWriteUrl: https://prometheus-prod-10-prod-us-central-0.grafana.net/api/prom/push
+      lokiUrl: https://logs-prod3.grafana.net/loki/api/v1/push
+    eu:
+      grafanaUrl: https://actianeu.grafana.net/
+      prometheusRemoteWriteUrl: https://prometheus-prod-01-eu-west-0.grafana.net/api/prom/push
+      lokiUrl: https://logs-prod-eu-west-0.grafana.net/loki/api/v1/push
 
 metrics:
   enabled: true
