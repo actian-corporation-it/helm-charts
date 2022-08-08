@@ -11,6 +11,8 @@ global:
     cluster: ""
   environment: staging
   region: eu
+  clusterSecretStoreName: grafana-secret-store
+  externalSecretName: grafana-secrets
   
 
 daemonset:
@@ -75,9 +77,6 @@ urls:
 metrics:
   enabled: true
   scrapeInterval: 30s
-  prometheusId: 0
-  prometheusPassword: PaSsW0Rd
-  prometheusRemoteWriteUrl: https://127.0.0.1
   integrations:
     nodeExporter:
       enabled: true
@@ -89,6 +88,9 @@ metrics:
         - netstat
     cadvisor:
       enabled: true
+    consul:
+      enabled: false
+      server: https://127.0.0.1
     rabbitmq:
       enabled: false
       releaseName: ""
@@ -116,15 +118,9 @@ metrics:
 
 tracing:
   enabled: false
-  tempoId: 0
-  tempoPassword: PaSsW0Rd
-  tempoUrl: https://127.0.0.1
 
 logs:
   enabled: true
-  lokiId: 0
-  lokiPassword: PaSsW0Rd
-  lokiUrl: https://127.0.0.1
   defaultPipelineStage: docker
   # Jobs for log scraping
   # Details will follow
