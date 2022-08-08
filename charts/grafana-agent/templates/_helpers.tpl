@@ -1,19 +1,21 @@
-{{- define "metrics.authentication" -}}
-{{ $prometheusRemoteWriteUrl := (include "urls.prometheusRemoteWriteUrl" .) }}
-{{ $prometheusId := (include "credentials.prometheusId" .) }}
+{{- define "prometheus.authentication" -}}
+{{- $prometheusRemoteWriteUrl := (include "urls.prometheusRemoteWriteUrl" .) -}}
+{{- $prometheusId := (include "credentials.prometheusId" .) -}}
+{{- $prometheusPassword := (include "credentials.prometheusPassword" .) -}}
 - url: {{ $prometheusRemoteWriteUrl }}
   basic_auth:
     username: {{ $prometheusId }}
     password: {{ $prometheusPassword }}
 {{- end -}}
 
-{{- define "logs.authentication" -}}
-{{ $lokiUrl := (include "urls.lokiUrl" .) }}
-{{ $lokiId := (include "credentials.lokiId" .) }}
+{{- define "loki.authentication" -}}
+{{- $lokiUrl := (include "urls.lokiUrl" .) -}}
+{{- $lokiId := (include "credentials.lokiId" .) -}}
+{{- $lokiPassword := (include "credentials.lokiPassword" .) -}}
 - url: {{ $lokiUrl }}
   basic_auth:
     username: {{ $lokiId }}
-    password: {{ .Values.logs.lokiPassword }}
+    password: {{ $lokiPassword }}
 {{- end -}}
 
 {{- define "statefulset.ServiceName" -}}
@@ -121,6 +123,10 @@ Prometheus and Loki IDs
   {{- end -}}
 {{- end -}}
 
+{{- define "credentials.prometheusPassword" -}}
+  {{- printf "${PROMETHEUS_PASSWORD}" -}}
+{{- end -}}
+
 {{- define "credentials.lokiId" -}}
   {{- if eq .Values.global.environment "dev" -}}
     {{- printf "%s" .Values.credentials.dev.us.lokiId -}}
@@ -135,6 +141,10 @@ Prometheus and Loki IDs
       {{- printf "%s" .Values.credentials.production.us.lokiId -}}
     {{- end -}}
   {{- end -}}
+{{- end -}}
+
+{{- define "credentials.lokiPassword" -}}
+  {{- printf "${LOKI_PASSWORD}" -}}
 {{- end -}}
 
 
