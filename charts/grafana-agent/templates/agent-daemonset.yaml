@@ -24,6 +24,7 @@ spec:
       containers:
       - args:
         - -config.file=/etc/agent/agent.yaml
+        - -config.expand-env
         command:
         - /bin/agent
         env:
