@@ -9,6 +9,11 @@ global:
   externalLabels:
     cloudProvider: ""
     cluster: ""
+  environment: staging
+  region: eu
+  clusterSecretStoreName: grafana-secret-store
+  externalSecretName: grafana-secrets
+  
 
 daemonset:
   createServiceAccount: true
@@ -22,12 +27,56 @@ statefulset:
   serverPort: 13578
   logLevel: info
 
+credentials:
+  dev:
+    us:
+      prometheusId: "prometheus"
+      lokiId: "loki"
+  test:
+    us:
+      prometheusId: "prometheus"
+      lokiId: "loki"
+  staging:
+    eu:
+      prometheusId: "509808"
+      lokiId: "253874"
+  production:
+    us:
+      prometheusId: "362072"
+      lokiId: "180006"
+    eu:
+      prometheusId: "444522"
+      lokiId: "221231"
+
+urls:
+  dev:
+    us:
+      grafanaUrl: https://grafana.cloudops.actiandatacloud.com
+      prometheusRemoteWriteUrl: https://prometheus.cloudops.actiandatacloud.com/api/v1/write
+      lokiUrl: https://loki.cloudops.actiandatacloud.com/loki/api/v1/push
+  test:
+    us:
+      grafanaUrl: https://grafana.cloudops.actiandatacloud.com
+      prometheusRemoteWriteUrl: https://prometheus.cloudops.actiandatacloud.com/api/v1/write
+      lokiUrl: https://loki.cloudops.actiandatacloud.com/loki/api/v1/push
+  staging:
+    eu:
+      grafanaUrl: https://actianstgeu.grafana.net
+      prometheusRemoteWriteUrl: https://prometheus-prod-01-eu-west-0.grafana.net/api/prom/push
+      lokiUrl: https://logs-prod-eu-west-0.grafana.net/loki/api/v1/push
+  production:
+    us:
+      grafanaUrl: https://actian.grafana.net
+      prometheusRemoteWriteUrl: https://prometheus-prod-10-prod-us-central-0.grafana.net/api/prom/push
+      lokiUrl: https://logs-prod3.grafana.net/loki/api/v1/push
+    eu:
+      grafanaUrl: https://actianeu.grafana.net/
+      prometheusRemoteWriteUrl: https://prometheus-prod-01-eu-west-0.grafana.net/api/prom/push
+      lokiUrl: https://logs-prod-eu-west-0.grafana.net/loki/api/v1/push
+
 metrics:
   enabled: true
   scrapeInterval: 30s
-  prometheusId: 0
-  prometheusPassword: PaSsW0Rd
-  prometheusRemoteWriteUrl: https://127.0.0.1
   integrations:
     nodeExporter:
       enabled: true
@@ -39,6 +88,9 @@ metrics:
         - netstat
     cadvisor:
       enabled: true
+    consul:
+      enabled: false
+      server: https://127.0.0.1
     rabbitmq:
       enabled: false
       releaseName: ""
@@ -66,15 +118,9 @@ metrics:
 
 tracing:
   enabled: false
-  tempoId: 0
-  tempoPassword: PaSsW0Rd
-  tempoUrl: https://127.0.0.1
 
 logs:
   enabled: true
-  lokiId: 0
-  lokiPassword: PaSsW0Rd
-  lokiUrl: https://127.0.0.1
   defaultPipelineStage: docker
   # Jobs for log scraping
   # Details will follow

@@ -1,15 +1,21 @@
-{{- define "metrics.authentication" -}}
-- url: {{ .Values.metrics.prometheusRemoteWriteUrl }}
+{{- define "prometheus.authentication" -}}
+{{- $prometheusRemoteWriteUrl := (include "urls.prometheusRemoteWriteUrl" .) -}}
+{{- $prometheusId := (include "credentials.prometheusId" .) -}}
+{{- $prometheusPassword := (include "credentials.prometheusPassword" .) -}}
+- url: {{ $prometheusRemoteWriteUrl }}
   basic_auth:
-    username: {{ .Values.metrics.prometheusId }}
-    password: {{ .Values.metrics.prometheusPassword }}
+    username: {{ $prometheusId }}
+    password: {{ $prometheusPassword }}
 {{- end -}}
 
-{{- define "logs.authentication" -}}
-- url: {{ .Values.logs.lokiUrl }}
+{{- define "loki.authentication" -}}
+{{- $lokiUrl := (include "urls.lokiUrl" .) -}}
+{{- $lokiId := (include "credentials.lokiId" .) -}}
+{{- $lokiPassword := (include "credentials.lokiPassword" .) -}}
+- url: {{ $lokiUrl }}
   basic_auth:
-    username: {{ .Values.logs.lokiId }}
-    password: {{ .Values.logs.lokiPassword }}
+    username: {{ $lokiId }}
+    password: {{ $lokiPassword }}
 {{- end -}}
 
 {{- define "statefulset.ServiceName" -}}
@@ -62,3 +68,134 @@ Compute daemonset service account name
     {{- printf "%s-service-account" .Release.Name -}}
   {{- end -}}
 {{- end -}}
+
+{{/*
+URLs for Prometheus and Loki
+*/}}
+{{- define "urls.prometheusRemoteWriteUrl" -}}
+  {{- if eq .Values.global.environment "dev" -}}
+    {{- printf "%s" .Values.urls.dev.us.prometheusRemoteWriteUrl -}}
+  {{- else if eq .Values.global.environment "test" -}}
+    {{- printf "%s" .Values.urls.test.us.prometheusRemoteWriteUrl -}}
+  {{- else if eq .Values.global.environment "staging" -}}
+    {{- printf "%s" .Values.urls.staging.eu.prometheusRemoteWriteUrl -}}
+  {{- else -}}
+    {{- if eq .values.global.region "eu" -}}
+      {{- printf "%s" .Values.urls.production.eu.prometheusRemoteWriteUrl -}}
+    {{- else -}}
+      {{- printf "%s" .Values.urls.production.us.prometheusRemoteWriteUrl -}}
+    {{- end -}}
+  {{- end -}}
+{{- end -}}
+
+{{- define "urls.lokiUrl" -}}
+  {{- if eq .Values.global.environment "dev" -}}
+    {{- printf "%s" .Values.urls.dev.us.lokiUrl -}}
+  {{- else if eq .Values.global.environment "test" -}}
+    {{- printf "%s" .Values.urls.test.us.lokiUrl -}}
+  {{- else if eq .Values.global.environment "staging" -}}
+    {{- printf "%s" .Values.urls.staging.eu.lokiUrl -}}
+  {{- else -}}
+    {{- if eq .values.global.region "eu" -}}
+      {{- printf "%s" .Values.urls.production.eu.lokiUrl -}}
+    {{- else -}}
+      {{- printf "%s" .Values.urls.production.us.lokiUrl -}}
+    {{- end -}}
+  {{- end -}}
+{{- end -}}
+
+{{/*
+Prometheus and Loki IDs
+*/}}
+{{- define "credentials.prometheusId" -}}
+  {{- if eq .Values.global.environment "dev" -}}
+    {{- printf "%s" .Values.credentials.dev.us.prometheusId -}}
+  {{- else if eq .Values.global.environment "test" -}}
+    {{- printf "%s" .Values.credentials.test.us.prometheusId -}}
+  {{- else if eq .Values.global.environment "staging" -}}
+    {{- printf "%s" .Values.credentials.staging.eu.prometheusId -}}
+  {{- else -}}
+    {{- if eq .values.global.region "eu" -}}
+      {{- printf "%s" .Values.credentials.production.eu.prometheusId -}}
+    {{- else -}}
+      {{- printf "%s" .Values.credentials.production.us.prometheusId -}}
+    {{- end -}}
+  {{- end -}}
+{{- end -}}
+
+{{- define "credentials.prometheusPassword" -}}
+  {{- printf "${PROMETHEUS_PASSWORD}" -}}
+{{- end -}}
+
+{{- define "credentials.lokiId" -}}
+  {{- if eq .Values.global.environment "dev" -}}
+    {{- printf "%s" .Values.credentials.dev.us.lokiId -}}
+  {{- else if eq .Values.global.environment "test" -}}
+    {{- printf "%s" .Values.credentials.test.us.lokiId -}}
+  {{- else if eq .Values.global.environment "staging" -}}
+    {{- printf "%s" .Values.credentials.staging.eu.lokiId -}}
+  {{- else -}}
+    {{- if eq .values.global.region "eu" -}}
+      {{- printf "%s" .Values.credentials.production.eu.lokiId -}}
+    {{- else -}}
+      {{- printf "%s" .Values.credentials.production.us.lokiId -}}
+    {{- end -}}
+  {{- end -}}
+{{- end -}}
+
+{{- define "credentials.lokiPassword" -}}
+  {{- printf "${LOKI_PASSWORD}" -}}
+{{- end -}}
+
+
+{{/*
+Vault paths for Prometheus and Loki secrets
+*/}}
+{{- define "vaultSecrets.prometheusPasswordPath" -}}
+  {{- if eq .Values.global.environment "dev" -}}
+    {{- printf "grafana_oss_passwords/dev" -}}
+  {{- else if eq .Values.global.environment "test" -}}
+    {{- printf "grafana_oss_passwords/dev" -}}
+  {{- else if eq .Values.global.environment "staging" -}}
+    {{- printf "portal_api_keys" -}}
+  {{- else -}}
+    {{- printf "portal_api_keys" -}}
+  {{- end -}}
+{{- end -}}
+
+{{- define "vaultSecrets.prometheusPasswordKey" -}}
+  {{- if eq .Values.global.environment "dev" -}}
+    {{- printf "prometheus_password" -}}
+  {{- else if eq .Values.global.environment "test" -}}
+    {{- printf "prometheus_password" -}}
+  {{- else if eq .Values.global.environment "staging" -}}
+    {{- printf "agent_authentication" -}}
+  {{- else -}}
+    {{- printf "agent_authentication" -}}
+  {{- end -}}
+{{- end -}}
+
+{{- define "vaultSecrets.lokiPasswordPath" -}}
+  {{- if eq .Values.global.environment "dev" -}}
+    {{- printf "grafana_oss_passwords/dev" -}}
+  {{- else if eq .Values.global.environment "test" -}}
+    {{- printf "grafana_oss_passwords/dev" -}}
+  {{- else if eq .Values.global.environment "staging" -}}
+    {{- printf "portal_api_keys" -}}
+  {{- else -}}
+    {{- printf "portal_api_keys" -}}
+  {{- end -}}
+{{- end -}}
+
+{{- define "vaultSecrets.lokiPasswordKey" -}}
+  {{- if eq .Values.global.environment "dev" -}}
+    {{- printf "loki_password" -}}
+  {{- else if eq .Values.global.environment "test" -}}
+    {{- printf "loki_password" -}}
+  {{- else if eq .Values.global.environment "staging" -}}
+    {{- printf "agent_authentication" -}}
+  {{- else -}}
+    {{- printf "agent_authentication" -}}
+  {{- end -}}
+{{- end -}}
+
