@@ -23,7 +23,7 @@ data:
       - name: integrations
         host_filter: false
         remote_write:
-{{ include "metrics.authentication" . | indent 8 }}
+{{ include "prometheus.authentication" . | indent 8 }}
         scrape_configs:
         {{- if .Values.metrics.integrations.rabbitmq.enabled -}}
         {{ $rabbitmqTarget := (include "rabbitmq.target" .) }}
