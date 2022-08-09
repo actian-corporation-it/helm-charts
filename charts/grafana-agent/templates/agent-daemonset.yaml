@@ -1,4 +1,4 @@
-{{- if or .Values.logs.enabled .Values.tracing.enabled -}}
+{{- if or .Values.metrics.enabled .Values.logs.enabled .Values.tracing.enabled -}}
 {{ $daemonsetServiceName := (include "daemonset.ServiceName" .) }}
 {{ $daemonsetConfigMapName := (include "daemonset.ConfigMapName" .) }}
 {{ $daemonsetServiceAccountName := (include "daemonset.ServiceAccountName" .) }}
@@ -24,6 +24,7 @@ spec:
       containers:
       - args:
         - -config.file=/etc/agent/agent.yaml
+        - -server.http.address="http://127.0.0.1:{{ .Values.daemonset.serverPort }}"
         - -config.expand-env
         command:
         - /bin/agent
@@ -56,6 +57,8 @@ spec:
         - mountPath: /etc/localtime
           name: tz-config
         {{- end }}
+        - mountPath: {{ .Values.global.agentVarDirectory }}
+          name: agent-var
         - mountPath: /etc/agent
           name: {{ $daemonsetConfigMapName }}
         - mountPath: /var/log
@@ -85,4 +88,16 @@ spec:
         name: varlibdockercontainers
   updateStrategy:
     type: RollingUpdate
+  volumeClaimTemplates:
+  - apiVersion: v1
+    kind: PersistentVolumeClaim
+    metadata:
+      name: agent-var
+      namespace: {{ .Values.global.namespace }}
+    spec:
+      accessModes:
+      - ReadWriteOnce
+      resources:
+        requests:
+          storage: 5Gi
 {{- end -}}
