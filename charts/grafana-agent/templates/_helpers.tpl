@@ -34,6 +34,15 @@
   {{- printf "%s-daemonset" .Release.Name -}}
 {{- end -}}
 
+{{- define "agentConfig.externalLabels" -}}
+  {{- range $key, $value := $.Values.global.externalLabels }}
+    {{- if $value }}
+    {{ $key }}: {{ $value }}
+    {{- else }}{{ required (printf "\n\nMissing value: A value is required for metrics label %s\n" $key) nil }}
+    {{- end }}
+  {{- end }}
+{{- end -}}
+
 {{- define "rabbitmq.target" -}}
   {{- $port := .Values.metrics.integrations.rabbitmq.metricPort | toString -}}
   {{- printf "%s.%s.svc.cluster.local:%s" .Values.metrics.integrations.rabbitmq.releaseName .Values.metrics.integrations.rabbitmq.namespace $port -}}
