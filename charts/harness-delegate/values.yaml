@@ -6,3 +6,4 @@ proxyName: ""
 harnessAccountId: "COs_17eQTMSG_HJDrYscVA"
 harnessAccountSecret: ""
 replicas: 2
+TF_versions: "1.2.5 1.1.9 1.0.11 0.15.5"
