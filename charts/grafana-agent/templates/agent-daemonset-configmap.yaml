@@ -5,7 +5,6 @@ metadata:
   name: {{ .Release.Name }}-daemonset
 data:
   agent.yaml: |
-{{-/* Agent configuration goes to /etc/agent/agent.yaml */-}}
     server:
       log_format: {{ .Values.daemonset.logFormat }}
       log_level: {{ .Values.daemonset.logLevel }}
