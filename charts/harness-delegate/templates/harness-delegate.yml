@@ -126,6 +126,15 @@ spec:
             unzip awscliv2.zip
             ./aws/install
             aws --version
+            #### Adding git/bitbucket cred ######
+            cat <<EOM >> $HOME/.netrc 
+            machine github.com
+            login {{ .Values.github_user }}
+            password {{ .Values.github_token }}
+            machine alm.actian.com
+            login {{ .Values.bitBucket_user }}
+            password {{ .Values.bitBucket_token }}
+            EOM
         - name: DELEGATE_DESCRIPTION
           value: ""
         - name: DELEGATE_TAGS
