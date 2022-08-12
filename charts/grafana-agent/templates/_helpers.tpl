@@ -34,9 +34,23 @@
   {{- printf "%s-daemonset" .Release.Name -}}
 {{- end -}}
 
+{{- define "agentConfig.externalLabels" -}}
+  {{- range $key, $value := $.Values.global.externalLabels }}
+    {{- if $value }}
+    {{ $key }}: {{ $value }}
+    {{- else }}{{ required (printf "\n\nMissing value: A value is required for metrics label %s\n" $key) nil }}
+    {{- end }}
+  {{- end }}
+{{- end -}}
+
 {{- define "rabbitmq.target" -}}
   {{- $port := .Values.metrics.integrations.rabbitmq.metricPort | toString -}}
   {{- printf "%s.%s.svc.cluster.local:%s" .Values.metrics.integrations.rabbitmq.releaseName .Values.metrics.integrations.rabbitmq.namespace $port -}}
+{{- end -}}
+
+{{- define "externalSecrets.target" -}}
+  {{- $port := .Values.metrics.integrations.externalSecrets.metricPort | toString -}}
+  {{- printf "%s.%s.svc.cluster.local:%s" .Values.metrics.integrations.externalSecrets.releaseName .Values.metrics.integrations.externalSecrets.namespace $port -}}
 {{- end -}}
 
 {{- define "grafanaAgent.Version" -}}
@@ -153,9 +167,9 @@ Vault paths for Prometheus and Loki secrets
 */}}
 {{- define "vaultSecrets.prometheusPasswordPath" -}}
   {{- if eq .Values.global.environment "dev" -}}
-    {{- printf "grafana_oss_passwords/dev" -}}
+    {{- printf "grafana_oss_passwords/production" -}}
   {{- else if eq .Values.global.environment "test" -}}
-    {{- printf "grafana_oss_passwords/dev" -}}
+    {{- printf "grafana_oss_passwords/production" -}}
   {{- else if eq .Values.global.environment "staging" -}}
     {{- printf "portal_api_keys" -}}
   {{- else -}}
@@ -177,9 +191,9 @@ Vault paths for Prometheus and Loki secrets
 
 {{- define "vaultSecrets.lokiPasswordPath" -}}
   {{- if eq .Values.global.environment "dev" -}}
-    {{- printf "grafana_oss_passwords/dev" -}}
+    {{- printf "grafana_oss_passwords/production" -}}
   {{- else if eq .Values.global.environment "test" -}}
-    {{- printf "grafana_oss_passwords/dev" -}}
+    {{- printf "grafana_oss_passwords/production" -}}
   {{- else if eq .Values.global.environment "staging" -}}
     {{- printf "portal_api_keys" -}}
   {{- else -}}

@@ -1,4 +1,4 @@
-{{- if or .Values.logs.enabled .Values.tracing.enabled -}}
+{{- if or .Values.metrics.enabled .Values.logs.enabled .Values.tracing.enabled -}}
 {{ $daemonsetServiceName := (include "daemonset.ServiceName" .) }}
 {{ $daemonsetConfigMapName := (include "daemonset.ConfigMapName" .) }}
 {{ $daemonsetServiceAccountName := (include "daemonset.ServiceAccountName" .) }}
@@ -24,6 +24,7 @@ spec:
       containers:
       - args:
         - -config.file=/etc/agent/agent.yaml
+        - -server.http.address=0.0.0.0:{{ .Values.daemonset.serverPort }}
         - -config.expand-env
         command:
         - /bin/agent

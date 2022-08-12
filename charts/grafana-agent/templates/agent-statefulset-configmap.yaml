@@ -6,25 +6,33 @@ metadata:
 data:
   agent.yaml: |
     server:
-      http_listen_port: {{ .Values.statefulset.serverPort }}
+      log_format: {{ .Values.daemonset.logFormat }}
       log_level: {{ .Values.statefulset.logLevel }}
     metrics:
-      wal_directory: /var/lib/agent/data
+      wal_directory: "{{ .Values.global.agentVarDirectory }}/data"
       global:
         scrape_interval: {{ .Values.metrics.scrapeInterval }}
         external_labels:
-        {{- range $key, $value := $.Values.global.externalLabels }}
-          {{- if $value }}
-          {{ $key }}: {{ $value }}
-          {{- else }}{{ required (printf "\n\nMissing value: A value is required for metrics label %s\n" $key) nil }}
-          {{- end }}
-        {{- end }}
-      configs:
-      - name: integrations
-        host_filter: false
+{{ include "agentConfig.externalLabels" . | indent 10 }}
         remote_write:
 {{ include "prometheus.authentication" . | indent 8 }}
+      configs:
+      - name: {{ .Values.metrics.instanceName }}
+        host_filter: false
         scrape_configs:
+        {{- if .Values.metrics.integrations.externalSecrets.enabled -}}
+        {{ $externalSecretsTarget := (include "externalSecrets.target" .) }}
+        - job_name: external_secrets
+          static_configs:
+            - targets:
+              - {{ $externalSecretsTarget }}
+          relabel_configs:
+            - source_labels: [__address__]
+              target_label: __param_target
+              regex: (.+):\d+
+            - source_labels: [__param_target]
+              target_label: instance
+        {{- end }}
         {{- if .Values.metrics.integrations.rabbitmq.enabled -}}
         {{ $rabbitmqTarget := (include "rabbitmq.target" .) }}
         - job_name: rabbitmq

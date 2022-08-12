@@ -9,23 +9,25 @@ global:
   externalLabels:
     cloudProvider: ""
     cluster: ""
-  environment: staging
+  environment: stage
   region: eu
   clusterSecretStoreName: grafana-secret-store
   externalSecretName: grafana-secrets
-  
+  agentVarDirectory: "/var/lib/agent"
 
 daemonset:
   createServiceAccount: true
   serviceAccountName: ""
   serverPort: 13579
   logLevel: info
+  logFormat: json
 
 statefulset:
   createServiceAccount: true
   serviceAccountName: ""
   serverPort: 13578
   logLevel: info
+  logFormat: json
 
 credentials:
   dev:
@@ -36,7 +38,7 @@ credentials:
     us:
       prometheusId: "prometheus"
       lokiId: "loki"
-  staging:
+  stage:
     eu:
       prometheusId: "509808"
       lokiId: "253874"
@@ -59,7 +61,7 @@ urls:
       grafanaUrl: https://grafana.cloudops.actiandatacloud.com
       prometheusRemoteWriteUrl: https://prometheus.cloudops.actiandatacloud.com/api/v1/write
       lokiUrl: https://loki.cloudops.actiandatacloud.com/loki/api/v1/push
-  staging:
+  stage:
     eu:
       grafanaUrl: https://actianstgeu.grafana.net
       prometheusRemoteWriteUrl: https://prometheus-prod-01-eu-west-0.grafana.net/api/prom/push
@@ -76,8 +78,15 @@ urls:
 
 metrics:
   enabled: true
+  instanceName: metrics
   scrapeInterval: 30s
   integrations:
+    externalSecrets:
+      enabled: false
+      releaseName: "external-secrets"
+      namespace: "external-secrets"
+      metricPath: "/metrics"
+      metricPort: 8080
     nodeExporter:
       enabled: true
       collectorSet:
@@ -90,7 +99,6 @@ metrics:
       enabled: true
     consul:
       enabled: false
-      server: https://127.0.0.1
     rabbitmq:
       enabled: false
       releaseName: ""
@@ -121,6 +129,7 @@ tracing:
 
 logs:
   enabled: true
+  instanceName: logs
   defaultPipelineStage: docker
   # Jobs for log scraping
   # Details will follow

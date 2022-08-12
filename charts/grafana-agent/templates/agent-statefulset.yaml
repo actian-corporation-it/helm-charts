@@ -41,7 +41,7 @@ spec:
       containers:
       - args:
         - -config.file=/etc/agent/agent.yaml
-        - -enable-features=integrations-next
+        - -server.http.address=0.0.0.0:{{ .Values.statefulset.serverPort }}
         - -config.expand-env
         command:
         - /bin/agent
@@ -66,8 +66,8 @@ spec:
         - mountPath: /etc/localtime
           name: tz-config
         {{- end }}
-        - mountPath: /var/lib/agent
-          name: agent-wal
+        - mountPath: {{ .Values.global.agentVarDirectory }}
+          name: agent-var
         - mountPath: /etc/agent
           name: {{ $statefulsetConfigMapName }}
       serviceAccount: {{ $statefulsetServiceAccountName }}
@@ -87,7 +87,7 @@ spec:
   - apiVersion: v1
     kind: PersistentVolumeClaim
     metadata:
-      name: agent-wal
+      name: agent-var
       namespace: {{ .Values.global.namespace }}
     spec:
       accessModes:
