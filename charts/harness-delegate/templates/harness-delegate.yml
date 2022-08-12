@@ -109,16 +109,15 @@ spec:
             git clone https://github.com/asdf-vm/asdf.git $ASDF_PATH
             echo '. $ASDF_PATH/asdf.sh' >> ~/.bashrc
             echo PATH=\$PATH:\$HOME/.asdf/shims:\$HOME/.asdf/bin >> /root/.bashrc
-            source /root/.bashrc
-            asdf --version
+            /root/.asdf/bin/asdf --version
             export PATH=$HOME/.asdf/shims:$HOME/.asdf/bin:$PATH
             # Install and configure Terraform plugin and versions
-            asdf plugin-add terraform https://github.com/Banno/asdf-hashicorp.git 
+            /root/.asdf/bin/asdf plugin-add terraform https://github.com/Banno/asdf-hashicorp.git 
             for version in $TERRAFORM_VERSIONS; do
-              asdf install terraform $version
+              /root/.asdf/bin/asdf install terraform $version
             done
             # Verify Terraform versions
-            asdf list terraform
+            /root/.asdf/bin/asdf list terraform
 
             # Set a default version on the delegate
             echo "terraform 1.1.7" > $HOME/.tool-versions 
