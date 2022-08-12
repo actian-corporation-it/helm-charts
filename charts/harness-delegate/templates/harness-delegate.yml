@@ -98,25 +98,43 @@ spec:
           value: |-
             apt-get update
             # Install Git with auto approval
-            yes | apt-get install git jq wget
+            yes | apt-get install git jq wget curl unzip
             wget https://github.com/bitnami-labs/sealed-secrets/releases/download/v0.16.0/kubeseal-linux-amd64 -O kubeseal
             install -m 755 kubeseal /usr/local/bin/kubeseal
             # Check git install
             git --version
-            echo install tfenv
-            git clone https://github.com/tfutils/tfenv.git ~/.tfenv
-            git --git-dir=~/.tfenv/.git pull
-            echo 1.2.5 > ~/.tfenv/version
-            ln -s ~/.tfenv/bin/* /usr/local/bin
-            tfenv install 1.2.5
-            tfenv install 1.0.8
-            tfenv install 0.15.5
-            # AWS Clia
+            # Installing terraform with asdf
+            ASDF_PATH=$HOME/.asdf
+            TERRAFORM_VERSIONS={{ .Values.TF_versions }}
+            git clone https://github.com/asdf-vm/asdf.git $ASDF_PATH --branch v0.8.0
+            echo '. $ASDF_PATH/asdf.sh' >> ~/.bashrc
+            echo PATH=\$PATH:\$HOME/.asdf/shims:\$HOME/.asdf/bin >> /root/.bashrc
+            asdf --version
+            export PATH=$HOME/.asdf/shims:$HOME/.asdf/bin:$PATH
+            # Install and configure Terraform plugin and versions
+            asdf plugin-add terraform https://github.com/Banno/asdf-hashicorp.git 
+            for version in $TERRAFORM_VERSIONS; do
+              asdf install terraform $version
+            done
+            # Verify Terraform versions
+            asdf list terraform
+
+            # Set a default version on the delegate
+            echo "terraform 1.2.5" > $HOME/.tool-versions 
+            # AWS Cli
             curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
             unzip awscliv2.zip
             ./aws/install
             aws --version
-            echo tfenv installed
+            #### Adding git/bitbucket cred ######
+            cat <<EOM >> $HOME/.netrc 
+            machine github.com
+            login {{ .Values.github_user }}
+            password {{ .Values.github_token }}
+            machine alm.actian.com
+            login {{ .Values.bitBucket_user }}
+            password {{ .Values.bitBucket_token }}
+            EOM
         - name: DELEGATE_DESCRIPTION
           value: ""
         - name: DELEGATE_TAGS
