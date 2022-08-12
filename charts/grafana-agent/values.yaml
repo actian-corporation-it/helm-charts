@@ -84,7 +84,7 @@ metrics:
     externalSecrets:
       enabled: false
       releaseName: "external-secrets"
-      namespace: ""
+      namespace: "external-secrets"
       metricPath: "/metrics"
       metricPort: 8080
     nodeExporter:
