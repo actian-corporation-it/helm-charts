@@ -5,7 +5,6 @@ metadata:
   name: {{ .Release.Name }}-statefulset
 data:
   agent.yaml: |
-{{-/* Agent configuration goes to /etc/agent/agent.yaml */-}}
     server:
       log_format: {{ .Values.daemonset.logFormat }}
       log_level: {{ .Values.statefulset.logLevel }}
@@ -18,7 +17,7 @@ data:
         remote_write:
 {{ include "prometheus.authentication" . | indent 8 }}
       configs:
-      - name: {{ .Values.netrics.instanceName }}
+      - name: {{ .Values.metrics.instanceName }}
         host_filter: false
         scrape_configs:
         {{- if .Values.metrics.integrations.externalSecrets.enabled -}}

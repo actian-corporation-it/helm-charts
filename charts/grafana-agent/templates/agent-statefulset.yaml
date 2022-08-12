@@ -41,7 +41,7 @@ spec:
       containers:
       - args:
         - -config.file=/etc/agent/agent.yaml
-        - -server.http.address="http://127.0.0.1:{{ .Values.statefulset.serverPort }}"
+        - -server.http.address=0.0.0.0:{{ .Values.statefulset.serverPort }}
         - -config.expand-env
         command:
         - /bin/agent
