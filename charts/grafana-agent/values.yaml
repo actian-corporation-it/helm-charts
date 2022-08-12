@@ -9,7 +9,7 @@ global:
   externalLabels:
     cloudProvider: ""
     cluster: ""
-  environment: staging
+  environment: stage
   region: eu
   clusterSecretStoreName: grafana-secret-store
   externalSecretName: grafana-secrets
@@ -38,7 +38,7 @@ credentials:
     us:
       prometheusId: "prometheus"
       lokiId: "loki"
-  staging:
+  stage:
     eu:
       prometheusId: "509808"
       lokiId: "253874"
@@ -61,7 +61,7 @@ urls:
       grafanaUrl: https://grafana.cloudops.actiandatacloud.com
       prometheusRemoteWriteUrl: https://prometheus.cloudops.actiandatacloud.com/api/v1/write
       lokiUrl: https://loki.cloudops.actiandatacloud.com/loki/api/v1/push
-  staging:
+  stage:
     eu:
       grafanaUrl: https://actianstgeu.grafana.net
       prometheusRemoteWriteUrl: https://prometheus-prod-01-eu-west-0.grafana.net/api/prom/push
@@ -83,7 +83,7 @@ metrics:
   integrations:
     externalSecrets:
       enabled: false
-      releaseName: ""
+      releaseName: "external-secrets"
       namespace: ""
       metricPath: "/metrics"
       metricPort: 8080
