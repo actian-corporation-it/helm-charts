@@ -96,9 +96,14 @@ spec:
               fieldPath: metadata.namespace
         - name: INIT_SCRIPT
           value: |-
+            # Install software with auto approval
+            apt-get install curl apt-transport-https ca-certificates gnupg -y
+            echo "deb https://packages.cloud.google.com/apt cloud-sdk main" | tee -a /etc/apt/sources.list.d/google-cloud-sdk.list
+            curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-key --keyring /usr/share/keyrings/cloud.google.gpg add -
+            curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-key add -
+            curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | tee /usr/share/keyrings/cloud.google.gpg
             apt-get update
-            # Install Git with auto approval
-            yes | apt-get install git jq wget curl unzip
+            apt-get install git jq wget curl unzip google-cloud-cli -y
             wget https://github.com/bitnami-labs/sealed-secrets/releases/download/v0.16.0/kubeseal-linux-amd64 -O kubeseal
             install -m 755 kubeseal /usr/local/bin/kubeseal
             # Check git install
@@ -139,6 +144,8 @@ spec:
           value: ""
         - name: DELEGATE_TAGS
           value: ""
+        - name: DELEGATE_TASK_LIMIT
+          value: {{ .Values.harnessNumTask }}
         - name: NEXT_GEN
           value: "true"
         - name: ACCOUNT_SECRET

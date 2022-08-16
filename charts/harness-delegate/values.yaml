@@ -11,3 +11,4 @@ bitBucket_user: "cloudops-automation"
 bitBucket_token: ""
 github_user: "cloudops-automation"
 github_token: ""
+harnessNumTask: 1
