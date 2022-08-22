@@ -1,0 +1,8 @@
+namespace: "<+pipeline.stages.DeployExternalSecrets.spec.execution.steps.external_secrets_apply.output.namespace>"
+vault_server: "vault.cloudops.actiandatacloud.com"
+vault_kv_path: "<+pipeline.stages.DeployExternalSecrets.spec.execution.steps.external_secrets_apply.output.vault_kv_paths>"
+vault_auth_path: "<+pipeline.stages.DeployExternalSecrets.spec.execution.steps.external_secrets_apply.output.vault_auth_path>"
+cabundle_secretName: "<+pipeline.stages.DeployExternalSecrets.spec.execution.steps.external_secrets_apply.output.cabundle_secretName>"
+vault_role: "<+pipeline.stages.DeployExternalSecrets.spec.execution.steps.external_secrets_apply.output.vault_role>"
+k8s_sa: "<+pipeline.stages.DeployExternalSecrets.spec.execution.steps.external_secrets_apply.output.k8s_sa>"
+k8s_sa_auth_token: "<+pipeline.stages.DeployExternalSecrets.spec.execution.steps.external_secrets_apply.output.k8s_sa_auth_token>"
