@@ -6,3 +6,4 @@ cabundle_secretName: <+pipeline.stages.install_external_secrets.spec.execution.s
 vault_role: <+pipeline.stages.install_external_secrets.spec.execution.steps.euw2_external_secrets_tf_apply.output.vault_role>
 k8s_sa: <+pipeline.stages.install_external_secrets.spec.execution.steps.euw2_external_secrets_tf_apply.output.k8s_sa>
 k8s_sa_auth_token: <+pipeline.stages.install_external_secrets.spec.execution.steps.euw2_external_secrets_tf_apply.output.k8s_sa_auth_token>
+clusterStore_name: "grafana-secret-store"
