@@ -1,0 +1,5 @@
+global:
+  externalLabels:
+    cloudProvider: "aws"
+    cluster: "<+pipeline.stages.avalanchedataplaneekscluster.spec.execution.steps.apply_use2.output.eks_main_cluster_name>"
+  environment: "stage"
