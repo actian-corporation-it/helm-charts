@@ -10,11 +10,6 @@ metadata:
   name: {{ $daemonsetServiceName }}
   namespace: {{ .Values.global.namespace }}
 spec:
-  tolerations:
-    - key: dedicated
-      operator: Equal
-      value: vectorh
-      effect: NoExecute
   minReadySeconds: 10
   selector:
     matchLabels:
@@ -26,6 +21,11 @@ spec:
       labels:
         name: {{ $daemonsetServiceName }}
     spec:
+      tolerations:
+        - key: dedicated
+          operator: Equal
+          value: vectorh
+          effect: NoExecute
       containers:
       - args:
         - -config.file=/etc/agent/agent.yaml
