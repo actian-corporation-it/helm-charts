@@ -22,10 +22,7 @@ spec:
         name: {{ $daemonsetServiceName }}
     spec:
       tolerations:
-        - key: dedicated
-          operator: Equal
-          value: vectorh
-          effect: NoExecute
+        - operator: exists
       containers:
       - args:
         - -config.file=/etc/agent/agent.yaml
