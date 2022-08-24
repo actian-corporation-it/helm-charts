@@ -91,8 +91,8 @@ URLs for Prometheus and Loki
     {{- printf "%s" .Values.urls.dev.us.prometheusRemoteWriteUrl -}}
   {{- else if eq .Values.global.environment "test" -}}
     {{- printf "%s" .Values.urls.test.us.prometheusRemoteWriteUrl -}}
-  {{- else if eq .Values.global.environment "staging" -}}
-    {{- printf "%s" .Values.urls.staging.eu.prometheusRemoteWriteUrl -}}
+  {{- else if or (eq .Values.global.environment "stage") (eq .Values.global.environment "staging") -}}
+    {{- printf "%s" .Values.urls.stage.eu.prometheusRemoteWriteUrl -}}
   {{- else -}}
     {{- if eq .values.global.region "eu" -}}
       {{- printf "%s" .Values.urls.production.eu.prometheusRemoteWriteUrl -}}
@@ -107,8 +107,8 @@ URLs for Prometheus and Loki
     {{- printf "%s" .Values.urls.dev.us.lokiUrl -}}
   {{- else if eq .Values.global.environment "test" -}}
     {{- printf "%s" .Values.urls.test.us.lokiUrl -}}
-  {{- else if eq .Values.global.environment "staging" -}}
-    {{- printf "%s" .Values.urls.staging.eu.lokiUrl -}}
+  {{- else if or (eq .Values.global.environment "stage") (eq .Values.global.environment "staging") -}}
+    {{- printf "%s" .Values.urls.stage.eu.lokiUrl -}}
   {{- else -}}
     {{- if eq .values.global.region "eu" -}}
       {{- printf "%s" .Values.urls.production.eu.lokiUrl -}}
@@ -126,8 +126,8 @@ Prometheus and Loki IDs
     {{- printf "%s" .Values.credentials.dev.us.prometheusId -}}
   {{- else if eq .Values.global.environment "test" -}}
     {{- printf "%s" .Values.credentials.test.us.prometheusId -}}
-  {{- else if eq .Values.global.environment "staging" -}}
-    {{- printf "%s" .Values.credentials.staging.eu.prometheusId -}}
+  {{- else if or (eq .Values.global.environment "stage") (eq .Values.global.environment "staging") -}}
+    {{- printf "%s" .Values.credentials.stage.eu.prometheusId -}}
   {{- else -}}
     {{- if eq .values.global.region "eu" -}}
       {{- printf "%s" .Values.credentials.production.eu.prometheusId -}}
@@ -146,8 +146,8 @@ Prometheus and Loki IDs
     {{- printf "%s" .Values.credentials.dev.us.lokiId -}}
   {{- else if eq .Values.global.environment "test" -}}
     {{- printf "%s" .Values.credentials.test.us.lokiId -}}
-  {{- else if eq .Values.global.environment "staging" -}}
-    {{- printf "%s" .Values.credentials.staging.eu.lokiId -}}
+  {{- else if or (eq .Values.global.environment "stage") (eq .Values.global.environment "staging") -}}
+    {{- printf "%s" .Values.credentials.stage.eu.lokiId -}}
   {{- else -}}
     {{- if eq .values.global.region "eu" -}}
       {{- printf "%s" .Values.credentials.production.eu.lokiId -}}
@@ -170,7 +170,7 @@ Vault paths for Prometheus and Loki secrets
     {{- printf "grafana_oss_passwords/production" -}}
   {{- else if eq .Values.global.environment "test" -}}
     {{- printf "grafana_oss_passwords/production" -}}
-  {{- else if eq .Values.global.environment "staging" -}}
+  {{- else if or (eq .Values.global.environment "stage") (eq .Values.global.environment "staging") -}}
     {{- printf "portal_api_keys" -}}
   {{- else -}}
     {{- printf "portal_api_keys" -}}
@@ -182,7 +182,7 @@ Vault paths for Prometheus and Loki secrets
     {{- printf "prometheus_password" -}}
   {{- else if eq .Values.global.environment "test" -}}
     {{- printf "prometheus_password" -}}
-  {{- else if eq .Values.global.environment "staging" -}}
+  {{- else if or (eq .Values.global.environment "stage") (eq .Values.global.environment "staging") -}}
     {{- printf "agent_authentication" -}}
   {{- else -}}
     {{- printf "agent_authentication" -}}
@@ -194,7 +194,7 @@ Vault paths for Prometheus and Loki secrets
     {{- printf "grafana_oss_passwords/production" -}}
   {{- else if eq .Values.global.environment "test" -}}
     {{- printf "grafana_oss_passwords/production" -}}
-  {{- else if eq .Values.global.environment "staging" -}}
+  {{- else if or (eq .Values.global.environment "stage") (eq .Values.global.environment "staging") -}}
     {{- printf "portal_api_keys" -}}
   {{- else -}}
     {{- printf "portal_api_keys" -}}
@@ -206,7 +206,7 @@ Vault paths for Prometheus and Loki secrets
     {{- printf "loki_password" -}}
   {{- else if eq .Values.global.environment "test" -}}
     {{- printf "loki_password" -}}
-  {{- else if eq .Values.global.environment "staging" -}}
+  {{- else if or (eq .Values.global.environment "stage") (eq .Values.global.environment "staging") -}}
     {{- printf "agent_authentication" -}}
   {{- else -}}
     {{- printf "agent_authentication" -}}
