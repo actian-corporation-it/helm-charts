@@ -22,7 +22,7 @@ spec:
         name: {{ $daemonsetServiceName }}
     spec:
       tolerations:
-        - operator: exists
+        - operator: Exists
       containers:
       - args:
         - -config.file=/etc/agent/agent.yaml
