@@ -21,8 +21,6 @@ spec:
       labels:
         name: {{ $daemonsetServiceName }}
     spec:
-      tolerations:
-        - operator: Exists
       containers:
       - args:
         - -config.file=/etc/agent/agent.yaml
@@ -70,6 +68,7 @@ spec:
       tolerations:
       - effect: NoSchedule
         operator: Exists
+      - operator: Exists
       volumes:
       {{- if .Values.global.timeZone }}
       - hostPath:
