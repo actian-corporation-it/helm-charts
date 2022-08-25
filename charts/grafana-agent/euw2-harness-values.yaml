@@ -2,4 +2,4 @@ global:
   externalLabels:
     cloudProvider: "aws"
     cluster: "<+pipeline.stages.avalanchedataplaneekscluster.spec.execution.steps.apply_euw2.output.eks_main_cluster_name>"
-  environment: "stage"
+  environment: "<+pipeline.stages.euw2_grafana_agent.spec.infrastructure.environmentRef>"
