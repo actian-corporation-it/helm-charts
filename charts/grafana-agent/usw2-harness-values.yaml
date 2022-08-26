@@ -3,3 +3,4 @@ global:
     cloudProvider: "aws"
     cluster: "<+pipeline.stages.avalanchedataplaneekscluster.spec.execution.steps.apply_usw2.output.eks_main_cluster_name>"
   environment: "<+pipeline.stages.usw2_grafana_agent.spec.infrastructure.environmentRef>"
+  region: <+<+pipeline.stages.usw2_grafana_agent.identifier>.substring(0,1)>
