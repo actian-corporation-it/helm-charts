@@ -81,8 +81,14 @@ metrics:
   instanceName: metrics
   scrapeInterval: 30s
   integrations:
+    certManager:
+      enabled: true
+      releaseName: "cert-manager"
+      namespace: "cert-manager"
+      metricPath: "/metrics"
+      metricPort: 9402
     externalSecrets:
-      enabled: false
+      enabled: true
       releaseName: "external-secrets"
       namespace: "external-secrets"
       metricPath: "/metrics"
