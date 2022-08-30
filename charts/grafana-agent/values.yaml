@@ -87,6 +87,12 @@ metrics:
       namespace: "cert-manager"
       metricPath: "/metrics"
       metricPort: 9402
+    velero:
+      enabled: true
+      releaseName: "velero"
+      namespace: "velero"
+      metricPath: "/metrics"
+      metricPort: 8085
     externalSecrets:
       enabled: true
       releaseName: "external-secrets"

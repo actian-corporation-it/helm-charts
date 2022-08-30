@@ -20,6 +20,19 @@ data:
       - name: {{ .Values.metrics.instanceName }}
         host_filter: false
         scrape_configs:
+        {{- if .Values.metrics.integrations.velero.enabled -}}
+        {{ $veleroTarget := (include "velero.target" .) }}
+        - job_name: velero
+          static_configs:
+            - targets:
+              - {{ $veleroTarget }}
+          relabel_configs:
+            - source_labels: [__address__]
+              target_label: __param_target
+              regex: ([\w\-\_]+)\..+:\d+
+            - source_labels: [__param_target]
+              target_label: instance
+        {{- end }}
         {{- if .Values.metrics.integrations.certManager.enabled -}}
         {{ $certManagerTarget := (include "certManager.target" .) }}
         - job_name: cert-manager

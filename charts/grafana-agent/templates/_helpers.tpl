@@ -58,6 +58,11 @@
   {{- printf "%s.%s.svc.cluster.local:%s" .Values.metrics.integrations.certManager.releaseName .Values.metrics.integrations.certManager.namespace $port -}}
 {{- end -}}
 
+{{- define "velero.target" -}}
+  {{- $port := .Values.metrics.integrations.velero.metricPort | toString -}}
+  {{- printf "%s.%s.svc.cluster.local:%s" .Values.metrics.integrations.velero.releaseName .Values.metrics.integrations.velero.namespace $port -}}
+{{- end -}}
+
 {{- define "grafanaAgent.Version" -}}
   {{- if eq .Values.global.agentVersion "" -}}
     {{- printf "%s" $.Chart.AppVersion -}}
