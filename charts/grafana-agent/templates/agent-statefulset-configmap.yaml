@@ -20,16 +20,29 @@ data:
       - name: {{ .Values.metrics.instanceName }}
         host_filter: false
         scrape_configs:
+        {{- if .Values.metrics.integrations.certManager.enabled -}}
+        {{ $certManagerTarget := (include "certManager.target" .) }}
+        - job_name: cert-manager
+          static_configs:
+            - targets:
+              - {{ $certManagerTarget }}
+          relabel_configs:
+            - source_labels: [__address__]
+              target_label: __param_target
+              regex: ([\w\-\_]+)\..+:\d+
+            - source_labels: [__param_target]
+              target_label: instance
+        {{- end }}
         {{- if .Values.metrics.integrations.externalSecrets.enabled -}}
         {{ $externalSecretsTarget := (include "externalSecrets.target" .) }}
-        - job_name: external_secrets
+        - job_name: external-secrets
           static_configs:
             - targets:
               - {{ $externalSecretsTarget }}
           relabel_configs:
             - source_labels: [__address__]
               target_label: __param_target
-              regex: (.+):\d+
+              regex: ([\w\-\_]+)\..+:\d+
             - source_labels: [__param_target]
               target_label: instance
         {{- end }}
@@ -42,7 +55,7 @@ data:
           relabel_configs:
             - source_labels: [__address__]
               target_label: __param_target
-              regex: (.+):\d+
+              regex: ([\w\-\_]+)\..+:\d+
             - source_labels: [__param_target]
               target_label: instance
         {{- end }}

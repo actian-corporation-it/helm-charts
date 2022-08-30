@@ -112,7 +112,7 @@ spec:
             ASDF_PATH=$HOME/.asdf
             TERRAFORM_VERSIONS="{{ .Values.TF_versions }}"
             git clone https://github.com/asdf-vm/asdf.git $ASDF_PATH
-            echo '. $ASDF_PATH/asdf.sh' >> ~/.bashrc
+            echo ". $ASDF_PATH/asdf.sh" >> ~/.bashrc
             echo PATH=\$PATH:\$HOME/.asdf/shims:\$HOME/.asdf/bin >> /root/.bashrc
             /root/.asdf/bin/asdf --version
             export PATH=$HOME/.asdf/shims:$HOME/.asdf/bin:$PATH
