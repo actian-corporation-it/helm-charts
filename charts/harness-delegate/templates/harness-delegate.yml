@@ -90,6 +90,8 @@ spec:
           value: {{ .Values.delegateName }}
         - name: DELEGATE_TYPE
           value: "KUBERNETES"
+        - name: HELM3_PATH
+          value: "/opt/harness-delegate/client-tools/helm/v3.8.0/helm"
         - name: DELEGATE_NAMESPACE
           valueFrom:
             fieldRef:
