@@ -103,8 +103,9 @@ spec:
             echo "deb https://packages.cloud.google.com/apt cloud-sdk main" | tee -a /etc/apt/sources.list.d/google-cloud-sdk.list
             curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-key --keyring /usr/share/keyrings/cloud.google.gpg add -
             curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-key add -
-            curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | tee /usr/share/keyrings/cloud.google.gpg
-            apt-get install git jq wget curl unzip google-cloud-cli google-cloud-sdk-gke-gcloud-auth-plugin -y
+            curl https://packages.cloud.google.com/apt/doc/apt-key.gpg > /usr/share/keyrings/cloud.google.gpg
+            apt update
+            apt install git jq wget curl less unzip google-cloud-cli google-cloud-sdk-gke-gcloud-auth-plugin -y
             wget https://github.com/bitnami-labs/sealed-secrets/releases/download/v0.16.0/kubeseal-linux-amd64 -O kubeseal
             install -m 755 kubeseal /usr/local/bin/kubeseal
             # Check git install
