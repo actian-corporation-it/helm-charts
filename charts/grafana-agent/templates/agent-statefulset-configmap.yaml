@@ -20,8 +20,111 @@ data:
       - name: {{ .Values.metrics.instanceName }}
         host_filter: false
         scrape_configs:
+        # Istio jobs
+        # istio-mesh
+        - job_name: 'istio-mesh'
+          kubernetes_sd_configs:
+          - role: endpoints
+            namespaces:
+              names:
+              - istio-system
+          relabel_configs:
+          - source_labels: [__meta_kubernetes_service_name, __meta_kubernetes_endpoint_port_name]
+            action: keep
+            regex: istio-telemetry;prometheus
+        # envoy stats
+        - job_name: 'envoy-stats'
+          metrics_path: /stats/prometheus
+          kubernetes_sd_configs:
+          - role: pod
+          relabel_configs:
+          - source_labels: [__meta_kubernetes_pod_container_port_name]
+            action: keep
+            regex: '.*-envoy-prom'
+          - source_labels: [__address__, __meta_kubernetes_pod_annotation_prometheus_io_port]
+            action: replace
+            regex: ([^:]+)(?::\d+)?;(\d+)
+            replacement: $1:15090
+            target_label: __address__
+          - action: labeldrop
+            regex: __meta_kubernetes_pod_label_(.+)
+          - source_labels: [__meta_kubernetes_namespace]
+            action: replace
+            target_label: namespace
+          - source_labels: [__meta_kubernetes_pod_name]
+            action: replace
+            target_label: pod_name
+        # istio-policy
+        - job_name: 'istio-policy'
+          kubernetes_sd_configs:
+          - role: endpoints
+            namespaces:
+              names:
+              - istio-system
+          relabel_configs:
+          - source_labels: [__meta_kubernetes_service_name, __meta_kubernetes_endpoint_port_name]
+            action: keep
+            regex: istio-policy;http-policy-monitoring
+        # istio-telemetry
+        - job_name: 'istio-telemetry'
+          kubernetes_sd_configs:
+          - role: endpoints
+            namespaces:
+              names:
+              - istio-system
+          relabel_configs:
+          - source_labels: [__meta_kubernetes_service_name, __meta_kubernetes_endpoint_port_name]
+            action: keep
+            regex: istio-telemetry;http-monitoring
+        # istio-pilot
+        - job_name: 'istio-pilot'
+          kubernetes_sd_configs:
+          - role: endpoints
+            namespaces:
+              names:
+              - istio-system
+          relabel_configs:
+          - source_labels: [__meta_kubernetes_service_name, __meta_kubernetes_endpoint_port_name]
+            action: keep
+            regex: istiod;http-monitoring
+          - source_labels: [__meta_kubernetes_service_label_app]
+            target_label: app
+        # istio-galley
+        - job_name: 'istio-galley'
+          kubernetes_sd_configs:
+          - role: endpoints
+            namespaces:
+              names:
+              - istio-system
+          relabel_configs:
+          - source_labels: [__meta_kubernetes_service_name, __meta_kubernetes_endpoint_port_name]
+            action: keep
+            regex: istio-galley;http-monitoring
+        # istio-citadel
+        - job_name: 'istio-citadel'
+          kubernetes_sd_configs:
+          - role: endpoints
+            namespaces:
+              names:
+              - istio-system
+          relabel_configs:
+          - source_labels: [__meta_kubernetes_service_name, __meta_kubernetes_endpoint_port_name]
+            action: keep
+            regex: istio-citadel;http-monitoring
+        # istio-sidecar-injector
+        - job_name: 'sidecar-injector'
+          kubernetes_sd_configs:
+          - role: endpoints
+            namespaces:
+              names:
+              - istio-system
+          relabel_configs:
+          - source_labels: [__meta_kubernetes_service_name, __meta_kubernetes_endpoint_port_name]
+            action: keep
+            regex: istio-sidecar-injector;http-monitoring
         {{- if .Values.metrics.integrations.velero.enabled -}}
         {{ $veleroTarget := (include "velero.target" .) }}
+        # Velero
         - job_name: velero
           static_configs:
             - targets:
@@ -50,6 +153,7 @@ data:
         {{- end }}
         {{- if .Values.metrics.integrations.certManager.enabled -}}
         {{ $certManagerTarget := (include "certManager.target" .) }}
+        # Cert-Manager
         - job_name: cert-manager
           static_configs:
             - targets:
@@ -63,6 +167,7 @@ data:
         {{- end }}
         {{- if .Values.metrics.integrations.externalSecrets.enabled -}}
         {{ $externalSecretsTarget := (include "externalSecrets.target" .) }}
+        # External-Secrets-Operator
         - job_name: external-secrets
           static_configs:
             - targets:
@@ -76,6 +181,7 @@ data:
         {{- end }}
         {{- if .Values.metrics.integrations.rabbitmq.enabled -}}
         {{ $rabbitmqTarget := (include "rabbitmq.target" .) }}
+        # RabbitMQ
         - job_name: rabbitmq
           static_configs:
             - targets:
@@ -140,6 +246,7 @@ data:
             insecure_skip_verify: false
             server_name: kubernetes
         {{- if .Values.metrics.integrations.kubeStateMetrics.enabled }}
+        # kube-STate-Metrics
         - job_name: kube-state-metrics
           kubernetes_sd_configs:
             - role: service
