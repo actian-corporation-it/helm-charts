@@ -132,12 +132,6 @@ data:
           {{- end }}
         {{- end}}
       {{- end }}
-      {{- if .Values.metrics.integrations.cadvisor.enabled }}
-      cadvisor:
-        enabled: true
-        store_container_labels: false
-        docker_only: false
-      {{- end }}
     {{- end }}
     {{- if .Values.logs.enabled }}
     logs:
