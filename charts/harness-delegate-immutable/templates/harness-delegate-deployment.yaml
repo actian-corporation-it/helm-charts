@@ -44,7 +44,7 @@ spec:
           failureThreshold: 2
         envFrom:
         - secretRef:
-            name: {{ .Values.harnessName }}-account-token
+            name: {{ .Values.delegateName }}-account-token
         env:
         - name: JAVA_OPTS
           value: "-Xms64M"
