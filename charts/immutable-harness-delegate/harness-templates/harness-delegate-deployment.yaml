@@ -22,7 +22,7 @@ spec:
       terminationGracePeriodSeconds: 600
       restartPolicy: Always
       containers:
-      - image: harness/delegate-immutable:latest
+      - image: harness/delegate-immutable:22.09.76614
         imagePullPolicy: Always
         name: delegate
         ports:
