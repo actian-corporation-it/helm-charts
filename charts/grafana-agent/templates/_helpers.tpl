@@ -177,11 +177,11 @@ Vault paths for Prometheus and Loki secrets
 */}}
 {{- define "vaultSecrets.prometheusPasswordPath" -}}
   {{- if eq .Values.global.environment "dev" -}}
-    {{- printf "grafana_oss_passwords/production" -}}
+    {{- printf "grafana_oss_passwords/engineering" -}}
   {{- else if eq .Values.global.environment "test" -}}
-    {{- printf "grafana_oss_passwords/production" -}}
+    {{- printf "grafana_oss_passwords/engineering" -}}
   {{- else if or (eq .Values.global.environment "stage") (eq .Values.global.environment "staging") -}}
-    {{- printf "portal_api_keys" -}}
+    {{- printf "grafana_oss_passwords/stage" -}}
   {{- else -}}
     {{- printf "portal_api_keys" -}}
   {{- end -}}
@@ -193,7 +193,7 @@ Vault paths for Prometheus and Loki secrets
   {{- else if eq .Values.global.environment "test" -}}
     {{- printf "prometheus_password" -}}
   {{- else if or (eq .Values.global.environment "stage") (eq .Values.global.environment "staging") -}}
-    {{- printf "agent_authentication" -}}
+    {{- printf "prometheus_password" -}}
   {{- else -}}
     {{- printf "agent_authentication" -}}
   {{- end -}}
@@ -201,11 +201,11 @@ Vault paths for Prometheus and Loki secrets
 
 {{- define "vaultSecrets.lokiPasswordPath" -}}
   {{- if eq .Values.global.environment "dev" -}}
-    {{- printf "grafana_oss_passwords/production" -}}
+    {{- printf "grafana_oss_passwords/engineering" -}}
   {{- else if eq .Values.global.environment "test" -}}
-    {{- printf "grafana_oss_passwords/production" -}}
+    {{- printf "grafana_oss_passwords/engineering" -}}
   {{- else if or (eq .Values.global.environment "stage") (eq .Values.global.environment "staging") -}}
-    {{- printf "portal_api_keys" -}}
+    {{- printf "grafana_oss_passwords/stage" -}}
   {{- else -}}
     {{- printf "portal_api_keys" -}}
   {{- end -}}
@@ -217,7 +217,7 @@ Vault paths for Prometheus and Loki secrets
   {{- else if eq .Values.global.environment "test" -}}
     {{- printf "loki_password" -}}
   {{- else if or (eq .Values.global.environment "stage") (eq .Values.global.environment "staging") -}}
-    {{- printf "agent_authentication" -}}
+    {{- printf "loki_password" -}}
   {{- else -}}
     {{- printf "agent_authentication" -}}
   {{- end -}}
