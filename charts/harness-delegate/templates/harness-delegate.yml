@@ -110,6 +110,8 @@ spec:
             install -m 755 kubeseal /usr/local/bin/kubeseal
             # Check git install
             git --version
+            # Installing yq
+            wget -q https://github.com/mikefarah/yq/releases/download/v4.27.5/yq_linux_amd64 -O /usr/bin/yq && chmod +x /usr/bin/yq
             # Installing terraform with asdf
             ASDF_PATH=$HOME/.asdf
             TERRAFORM_VERSIONS="{{ .Values.TF_versions }}"
