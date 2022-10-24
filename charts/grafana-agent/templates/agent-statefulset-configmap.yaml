@@ -33,6 +33,19 @@ data:
             - source_labels: [__param_target]
               target_label: instance
         {{- end }}
+        {{- if .Values.metrics.integrations.argocd.enabled -}}
+        {{ $argocdTarget := (include "argocd.target" .) }}
+        - job_name: argocd
+          static_configs:
+            - targets:
+              - {{ $argocdTarget }}
+          relabel_configs:
+            - source_labels: [__address__]
+              target_label: __param_target
+              regex: ([\w\-\_]+)\..+:\d+
+            - source_labels: [__param_target]
+              target_label: instance
+        {{- end }}
         {{- if .Values.metrics.integrations.certManager.enabled -}}
         {{ $certManagerTarget := (include "certManager.target" .) }}
         - job_name: cert-manager
