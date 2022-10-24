@@ -55,7 +55,7 @@
 
 {{- define "argocd.target" -}}
   {{- $port := .Values.metrics.integrations.argocd.metricPort | toString -}}
-  {{- printf "%s.%s.svc.cluster.local:%s" .Values.metrics.integrations.argocd.releaseName .Values.metrics.integrations.argocd.namespace $port -}}
+  {{- printf "%s-metrics.%s.svc.cluster.local:%s" .Values.metrics.integrations.argocd.releaseName .Values.metrics.integrations.argocd.namespace $port -}}
 {{- end -}}
 
 {{- define "velero.target" -}}
