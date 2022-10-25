@@ -35,10 +35,12 @@ data:
         {{- end }}
         {{- if .Values.metrics.integrations.argocd.enabled -}}
         {{ $argocdTarget := (include "argocd.target" .) }}
+        {{ $argocdServerTarget := (include "argocdServer.target" .) }}
         - job_name: argocd
           static_configs:
             - targets:
               - {{ $argocdTarget }}
+              - {{ $argocdServerTarget }}
           relabel_configs:
             - source_labels: [__address__]
               target_label: __param_target

@@ -58,6 +58,11 @@
   {{- printf "%s-metrics.%s.svc.cluster.local:%s" .Values.metrics.integrations.argocd.releaseName .Values.metrics.integrations.argocd.namespace $port -}}
 {{- end -}}
 
+{{- define "argocdServer.target" -}}
+  {{- $port := .Values.metrics.integrations.argocdServer.metricPort | toString -}}
+  {{- printf "%s-server-metrics.%s.svc.cluster.local:%s" .Values.metrics.integrations.argocd.releaseName .Values.metrics.integrations.argocd.namespace $port -}}
+{{- end -}}
+
 {{- define "certManager.target" -}}
   {{- $port := .Values.metrics.integrations.certManager.metricPort | toString -}}
   {{- printf "%s.%s.svc.cluster.local:%s" .Values.metrics.integrations.certManager.releaseName .Values.metrics.integrations.certManager.namespace $port -}}
