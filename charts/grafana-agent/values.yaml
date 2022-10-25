@@ -87,6 +87,7 @@ metrics:
       namespace: "argocd"
       metricPath: "/metrics"
       metricPort: 8082
+      serverMetricPort: 8083
     certManager:
       enabled: true
       releaseName: "cert-manager"
