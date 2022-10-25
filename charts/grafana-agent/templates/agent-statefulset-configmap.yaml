@@ -90,6 +90,14 @@ data:
           bearer_token_file: /var/run/secrets/kubernetes.io/serviceaccount/token
           kubernetes_sd_configs:
             - role: node
+          {{- if .Values.metrics.filters.cadvisor }}
+          metric_relabel_configs:
+            {{ range $.Values.metrics.filters.cadvisor -}}
+            - action: {{ .action }}
+              source_labels: {{ .source_labels }}
+              regex: {{ .regex }}
+            {{- end }}
+          {{- end }}
           relabel_configs:
             - replacement: kubernetes.default.svc:443
               target_label: __address__
@@ -115,7 +123,7 @@ data:
               source_labels: {{ .source_labels }}
               regex: {{ .regex }}
             {{- end }}
-          {{- end}}
+          {{- end }}
           relabel_configs:
             - replacement: kubernetes.default.svc.cluster.local:443
               target_label: __address__
@@ -133,11 +141,6 @@ data:
         - job_name: kube-state-metrics
           kubernetes_sd_configs:
             - role: service
-          relabel_configs:
-            - action: keep
-              regex: kube-state-metrics
-              source_labels:
-                - __meta_kubernetes_service_name
           {{- if .Values.metrics.filters.kubeStateMetrics }}
           metric_relabel_configs:
             {{ range $.Values.metrics.filters.kubeStateMetrics -}}
@@ -145,6 +148,11 @@ data:
               source_labels: {{ .source_labels }}
               regex: {{ .regex }}
             {{- end }}
-          {{- end}}
+          {{- end }}
+          relabel_configs:
+            - action: keep
+              regex: kube-state-metrics
+              source_labels:
+                - __meta_kubernetes_service_name
         {{- end }}
 {{- end }}
