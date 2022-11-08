@@ -203,7 +203,7 @@ Vault paths for Prometheus and Loki secrets
   {{- else if eq .Values.global.environment "test" -}}
     {{- printf "prometheus_password" -}}
   {{- else if or (eq .Values.global.environment "stage") (eq .Values.global.environment "staging") -}}
-    {{- printf "prometheus_password" -}}
+    {{- printf "mimir_password" -}}
   {{- else -}}
     {{- printf "agent_authentication" -}}
   {{- end -}}
