@@ -40,7 +40,7 @@ credentials:
       lokiId: "loki"
   stage:
     eu:
-      prometheusId: "prometheus"
+      prometheusId: "mimir"
       lokiId: "loki"
   production:
     us:
