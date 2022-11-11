@@ -199,11 +199,11 @@ Vault paths for Prometheus and Loki secrets
 */}}
 {{- define "vaultSecrets.prometheusPasswordPath" -}}
   {{- if eq .Values.global.environment "dev" -}}
-    {{- printf "grafana_oss_passwords/engineering" -}}
+    {{- printf "grafana_oss_passwords/production" -}}
   {{- else if eq .Values.global.environment "test" -}}
-    {{- printf "grafana_oss_passwords/engineering" -}}
+    {{- printf "grafana_oss_passwords/production" -}}
   {{- else if or (eq .Values.global.environment "stage") (eq .Values.global.environment "staging") -}}
-    {{- printf "grafana_oss_passwords/stage" -}}
+    {{- printf "grafana_oss_passwords/production" -}}
   {{- else -}}
     {{- printf "portal_api_keys" -}}
   {{- end -}}
@@ -223,11 +223,11 @@ Vault paths for Prometheus and Loki secrets
 
 {{- define "vaultSecrets.lokiPasswordPath" -}}
   {{- if eq .Values.global.environment "dev" -}}
-    {{- printf "grafana_oss_passwords/engineering" -}}
+    {{- printf "grafana_oss_passwords/production" -}}
   {{- else if eq .Values.global.environment "test" -}}
-    {{- printf "grafana_oss_passwords/engineering" -}}
+    {{- printf "grafana_oss_passwords/production" -}}
   {{- else if or (eq .Values.global.environment "stage") (eq .Values.global.environment "staging") -}}
-    {{- printf "grafana_oss_passwords/stage" -}}
+    {{- printf "grafana_oss_passwords/production" -}}
   {{- else -}}
     {{- printf "portal_api_keys" -}}
   {{- end -}}
