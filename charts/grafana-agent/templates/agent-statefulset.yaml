@@ -50,11 +50,11 @@ spec:
           valueFrom:
             fieldRef:
               fieldPath: spec.nodeName
-        - name: PROMETHEUS_PASSWORD
+        - name: MIMIR_PASSWORD
           valueFrom:
             secretKeyRef:
               name: {{ .Values.global.externalSecretName }}
-              key: prometheus-password
+              key: mimir-password
         image: grafana/agent:{{ $grafanaAgentVersion }}
         imagePullPolicy: IfNotPresent
         name: {{ $statefulsetServiceName }}

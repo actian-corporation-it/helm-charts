@@ -32,11 +32,11 @@ statefulset:
 credentials:
   dev:
     us:
-      prometheusId: "prometheus"
+      prometheusId: "mimir"
       lokiId: "loki"
   test:
     us:
-      prometheusId: "prometheus"
+      prometheusId: "mimir"
       lokiId: "loki"
   stage:
     eu:
@@ -54,18 +54,18 @@ urls:
   dev:
     us:
       grafanaUrl: https://grafana-engineering.cloudops.actiandatacloud.com
-      prometheusRemoteWriteUrl: https://prometheus-engineering.cloudops.actiandatacloud.com/api/v1/write
-      lokiUrl: https://loki-engineering.cloudops.actiandatacloud.com/loki/api/v1/push
+      prometheusRemoteWriteUrl: https://prometheus.cloudops.actiandatacloud.com/api/v1/push
+      lokiUrl: https://loki.cloudops.actiandatacloud.com/loki/api/v1/push
   test:
     us:
       grafanaUrl: https://grafana-engineering.cloudops.actiandatacloud.com
-      prometheusRemoteWriteUrl: https://prometheus-engineering.cloudops.actiandatacloud.com/api/v1/write
-      lokiUrl: https://loki-engineering.cloudops.actiandatacloud.com/loki/api/v1/push
+      prometheusRemoteWriteUrl: https://prometheus.cloudops.actiandatacloud.com/api/v1/push
+      lokiUrl: https://loki.cloudops.actiandatacloud.com/loki/api/v1/push
   stage:
     eu:
       grafanaUrl: https://grafana-stage.cloudops.actiandatacloud.com
-      prometheusRemoteWriteUrl: https://prometheus-stage.cloudops.actiandatacloud.com/api/v1/push
-      lokiUrl: https://loki-stage.cloudops.actiandatacloud.com/loki/api/v1/push
+      prometheusRemoteWriteUrl: https://prometheus.cloudops.actiandatacloud.com/api/v1/push
+      lokiUrl: https://loki.cloudops.actiandatacloud.com/loki/api/v1/push
   production:
     us:
       grafanaUrl: https://actian.grafana.net
