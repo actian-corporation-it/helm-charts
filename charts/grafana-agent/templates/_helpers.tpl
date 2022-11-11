@@ -3,6 +3,13 @@
 {{- $prometheusId := (include "credentials.prometheusId" .) -}}
 {{- $prometheusPassword := (include "credentials.prometheusPassword" .) -}}
 - url: {{ $prometheusRemoteWriteUrl }}
+  {{- if or (eq .Values.global.environment "dev") (eq .Values.global.environment "test")  -}}
+  headers:
+    X-Scope-OrgId: engineering
+  {{- else if eq .Values.global.environment "stage" -}}
+  headers:
+    X-Scope-OrgId: stage
+  {{- end -}}
   basic_auth:
     username: {{ $prometheusId }}
     password: {{ $prometheusPassword }}
@@ -13,6 +20,11 @@
 {{- $lokiId := (include "credentials.lokiId" .) -}}
 {{- $lokiPassword := (include "credentials.lokiPassword" .) -}}
 - url: {{ $lokiUrl }}
+  {{- if or (eq .Values.global.environment "dev") (eq .Values.global.environment "test")  -}}
+  tenant_id: engineering
+  {{- else if eq .Values.global.environment "stage" -}}
+  tenant_id: stage
+  {{- end -}}
   basic_auth:
     username: {{ $lokiId }}
     password: {{ $lokiPassword }}
@@ -158,7 +170,7 @@ Prometheus and Loki IDs
 {{- end -}}
 
 {{- define "credentials.prometheusPassword" -}}
-  {{- printf "${PROMETHEUS_PASSWORD}" -}}
+  {{- printf "${MIMIR_PASSWORD}" -}}
 {{- end -}}
 
 {{- define "credentials.lokiId" -}}
@@ -199,9 +211,9 @@ Vault paths for Prometheus and Loki secrets
 
 {{- define "vaultSecrets.prometheusPasswordKey" -}}
   {{- if eq .Values.global.environment "dev" -}}
-    {{- printf "prometheus_password" -}}
+    {{- printf "mimir_password" -}}
   {{- else if eq .Values.global.environment "test" -}}
-    {{- printf "prometheus_password" -}}
+    {{- printf "mimir_password" -}}
   {{- else if or (eq .Values.global.environment "stage") (eq .Values.global.environment "staging") -}}
     {{- printf "mimir_password" -}}
   {{- else -}}
