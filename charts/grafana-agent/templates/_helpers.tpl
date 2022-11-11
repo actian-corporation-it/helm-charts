@@ -3,13 +3,13 @@
 {{- $prometheusId := (include "credentials.prometheusId" .) -}}
 {{- $prometheusPassword := (include "credentials.prometheusPassword" .) -}}
 - url: {{ $prometheusRemoteWriteUrl }}
-  {{- if or (eq .Values.global.environment "dev") (eq .Values.global.environment "test")  -}}
+  {{- if or (eq .Values.global.environment "dev") (eq .Values.global.environment "test") }}
   headers:
     X-Scope-OrgId: engineering
-  {{- else if eq .Values.global.environment "stage" -}}
+  {{- else if eq .Values.global.environment "stage" }}
   headers:
     X-Scope-OrgId: stage
-  {{- end -}}
+  {{- end }}
   basic_auth:
     username: {{ $prometheusId }}
     password: {{ $prometheusPassword }}
@@ -20,11 +20,11 @@
 {{- $lokiId := (include "credentials.lokiId" .) -}}
 {{- $lokiPassword := (include "credentials.lokiPassword" .) -}}
 - url: {{ $lokiUrl }}
-  {{- if or (eq .Values.global.environment "dev") (eq .Values.global.environment "test")  -}}
+  {{- if or (eq .Values.global.environment "dev") (eq .Values.global.environment "test")  }}
   tenant_id: engineering
-  {{- else if eq .Values.global.environment "stage" -}}
+  {{- else if eq .Values.global.environment "stage" }}
   tenant_id: stage
-  {{- end -}}
+  {{- end }}
   basic_auth:
     username: {{ $lokiId }}
     password: {{ $lokiPassword }}
