@@ -126,6 +126,10 @@ metrics:
     kubeStateMetrics:
       enabled: true
   filters:
+    istioEnvoyStats:
+      - action: drop
+        source_labels: [__name__]
+        regex: istio_response_bytes_bucket|istio_request_duration_milliseconds_bucket|istio_request_bytes_bucket
     nodeExporter:
       - action: keep
         source_labels: [__name__]
