@@ -24,7 +24,7 @@ data:
         - job_name: nginx-ingress
           static_configs:
             - targets:
-              - ingress-nginx-controller.ingress-nginx.svc.cluster.local:10254
+              - ingress-nginx-controller-metrics.ingress-nginx.svc.cluster.local:10254
           relabel_configs:
           - source_labels: [__address__]
             target_label: __param_target
