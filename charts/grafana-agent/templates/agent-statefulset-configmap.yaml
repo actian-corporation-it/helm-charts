@@ -25,14 +25,6 @@ data:
           static_configs:
             - targets:
               - ingress-nginx-controller-metrics.ingress-nginx.svc.cluster.local:10254
-          {{- if .Values.metrics.filters.istioEnvoyStats }}
-          metric_relabel_configs:
-            {{ range $.Values.metrics.filters.istioEnvoyStats -}}
-            - action: {{ .action }}
-              source_labels: {{ .source_labels }}
-              regex: {{ .regex }}
-            {{- end }}
-          {{- end }}
           relabel_configs:
           - source_labels: [__address__]
             target_label: __param_target
@@ -67,6 +59,14 @@ data:
           metrics_path: /stats/prometheus
           kubernetes_sd_configs:
           - role: pod
+          {{- if .Values.metrics.filters.istioEnvoyStats }}
+          metric_relabel_configs:
+            {{ range $.Values.metrics.filters.istioEnvoyStats -}}
+            - action: {{ .action }}
+              source_labels: {{ .source_labels }}
+              regex: {{ .regex }}
+            {{- end }}
+          {{- end }}
           relabel_configs:
           - source_labels: [__meta_kubernetes_pod_container_port_name]
             action: keep
