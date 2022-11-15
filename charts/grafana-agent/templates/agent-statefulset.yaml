@@ -81,18 +81,9 @@ spec:
       - configMap:
           name: {{ $statefulsetConfigMapName }}
         name: {{ $statefulsetConfigMapName }}
+      - hostPath:
+          path: {{ .Values.global.agentVarDirectory }}
+        name: agent-var
   updateStrategy:
     type: RollingUpdate
-  volumeClaimTemplates:
-  - apiVersion: v1
-    kind: PersistentVolumeClaim
-    metadata:
-      name: agent-var
-      namespace: {{ .Values.global.namespace }}
-    spec:
-      accessModes:
-      - ReadWriteOnce
-      resources:
-        requests:
-          storage: 5Gi
 {{- end -}}
