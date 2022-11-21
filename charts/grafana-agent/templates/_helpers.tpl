@@ -85,6 +85,26 @@
   {{- printf "%s.%s.svc.cluster.local:%s" .Values.metrics.integrations.velero.releaseName .Values.metrics.integrations.velero.namespace $port -}}
 {{- end -}}
 
+{{- define "hashicorpVault.target" -}}
+  {{- $port := .Values.metrics.integrations.hashicorpVault.metricPort | toString -}}
+  {{- printf "%s-active.%s.svc.cluster.local:%s" .Values.metrics.integrations.hashicorpVault.releaseName .Values.metrics.integrations.hashicorpVault.namespace $port -}}
+{{- end -}}
+
+{{- define "hashicorpConsul.target" -}}
+  {{- $port := .Values.metrics.integrations.hashicorpConsul.metricPort | toString -}}
+  {{- printf "%s-server.%s.svc.cluster.local:%s" .Values.metrics.integrations.hashicorpConsul.releaseName .Values.metrics.integrations.hashicorpConsul.namespace $port -}}
+{{- end -}}
+
+{{- define "ingressNginx.target" -}}
+  {{- $port := .Values.metrics.integrations.ingressNginx.metricPort | toString -}}
+  {{- printf "%s-metrics.%s.svc.cluster.local:%s" .Values.metrics.integrations.ingressNginx.releaseName .Values.metrics.integrations.ingressNginx.namespace $port -}}
+{{- end -}}
+
+{{- define "trivy.target" -}}
+  {{- $port := .Values.metrics.integrations.trivy.metricPort | toString -}}
+  {{- printf "%s.%s.svc.cluster.local:%s" .Values.metrics.integrations.trivy.releaseName .Values.metrics.integrations.trivy.namespace $port -}}
+{{- end -}}
+
 {{- define "grafanaAgent.Version" -}}
   {{- if eq .Values.global.agentVersion "" -}}
     {{- printf "%s" $.Chart.AppVersion -}}

@@ -20,28 +20,64 @@ data:
       - name: {{ .Values.metrics.instanceName }}
         host_filter: false
         scrape_configs:
+        {{- if .Values.metrics.integrations.hashicorpVault.enabled -}}
+        {{ $hashicorpVaultTarget := (include "hashicorpVault.target" .) }}
+        # Vault Server
+        - job_name: vault
+          static_configs:
+            - targets:
+              - {{ $hashicorpVaultTarget }}
+          metrics_path: /v1/sys/metrics
+          relabel_configs:
+          - source_labels: [__address__]
+            target_label: __param_target
+            regex: ([\w\-\_]+)\..+:\d+
+          - source_labels: [__param_target]
+            target_label: instance
+        {{- end }}
+        {{- if .Values.metrics.integrations.hashicorpConsul.enabled -}}
+        {{ $hashicorpCnsulTarget := (include "hashicorpConsul.target" .) }}
+        # Consul Server
+        - job_name: consul
+          static_configs:
+            - targets:
+              - {{ $hashicorpConsulTarget }}
+          metrics_path: /v1/agent/metrics
+          relabel_configs:
+          - source_labels: [__address__]
+            target_label: __param_target
+            regex: ([\w\-\_]+)\..+:\d+
+          - source_labels: [__param_target]
+            target_label: instance
+        {{- end }}
+        {{- if .Values.metrics.integrations.ingressNginx.enabled -}}
+        {{ $ingressNginxTarget := (include "ingressNginx.target" .) }}
         # NGINX Ingress Controller
         - job_name: nginx-ingress
           static_configs:
             - targets:
-              - ingress-nginx-controller-metrics.ingress-nginx.svc.cluster.local:10254
+              - {{ $ingressNginxTarget }}
           relabel_configs:
           - source_labels: [__address__]
             target_label: __param_target
             regex: ([\w\-\_]+)\..+:\d+
           - source_labels: [__param_target]
             target_label: instance
+        {{- end }}
+        {{- if .Values.metrics.integrations.trivy.enabled -}}
+        {{ $trivyTarget := (include "trivy.target" .) }}
         # Trivy
         - job_name: trivy
           static_configs:
             - targets:
-              - trivy-operator.trivy-system.svc.cluster.local:8080
+              - {{ $trivyTarget }}
           relabel_configs:
           - source_labels: [__address__]
             target_label: __param_target
             regex: ([\w\-\_]+)\..+:\d+
           - source_labels: [__param_target]
             target_label: instance
+        {{- end }}
         # Istio jobs
         # istio-mesh
         - job_name: 'istio-mesh'
@@ -216,6 +252,7 @@ data:
           static_configs:
             - targets:
               - {{ $rabbitmqTarget }}
+          metrics_path: /metrics/per-object
           relabel_configs:
             - source_labels: [__address__]
               target_label: __param_target

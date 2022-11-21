@@ -107,14 +107,8 @@ data:
               ca_file: /var/run/secrets/kubernetes.io/serviceaccount/ca.crt
               insecure_skip_verify: false
               server_name: kubernetes
-    {{- if or .Values.metrics.integrations.nodeExporter.enabled .Values.metrics.integrations.cadvisor.enabled .Values.metrics.integrations.consul.enabled }}
+
     integrations:
-      {{- if .Values.metrics.integrations.consul.enabled }}
-      consul_exporter:
-        enabled: true
-        server_name: "consul"
-      {{- end }}
-      {{- if .Values.metrics.integrations.nodeExporter.enabled }}
       node_exporter:
         enabled: true
         {{- if .Values.metrics.integrations.nodeExporter.collectorSet }}
@@ -131,8 +125,7 @@ data:
             regex: {{ .regex | quote }}
           {{- end }}
         {{- end}}
-      {{- end }}
-    {{- end }}
+
     {{- if .Values.logs.enabled }}
     logs:
       positions_directory: "{{ .Values.global.agentVarDirectory }}/positions"
