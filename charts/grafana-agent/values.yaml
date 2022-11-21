@@ -106,6 +106,30 @@ metrics:
       namespace: "external-secrets"
       metricPath: "/metrics"
       metricPort: 8080
+    hashicorpVault:
+      enabled: false
+      releaseName: "vault"
+      namespace: "vault"
+      metricPath: /v1/sys/metrics
+      metricPort: 8200
+    hashicorpConsul:
+      enabled: false
+      releaseName: "consul"
+      namespace: "consul"
+      metricPath: /v1/agent/metrics
+      metricPort: 8500
+    ingressNginx:
+      enabled: false
+      releaseName: "ingress-nginx-controller"
+      namespace: "ingress-nginx"
+      metricPath: /metrics
+      metricPort: 10254
+    trivy:
+      enabled: false
+      releaseName: "trivy-operator"
+      namespace: "trivy-system"
+      metricPath: /metrics
+      metricPort: 8080
     nodeExporter:
       enabled: true
       collectorSet:
