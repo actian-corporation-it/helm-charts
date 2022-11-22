@@ -36,7 +36,7 @@ data:
             target_label: instance
         {{- end }}
         {{- if .Values.metrics.integrations.hashicorpConsul.enabled -}}
-        {{ $hashicorpCnsulTarget := (include "hashicorpConsul.target" .) }}
+        {{ $hashicorpConsulTarget := (include "hashicorpConsul.target" .) }}
         # Consul Server
         - job_name: consul
           static_configs:
