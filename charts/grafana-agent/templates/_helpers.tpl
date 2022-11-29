@@ -144,9 +144,9 @@ URLs for Prometheus and Loki
   {{- else if eq .Values.global.environment "test" -}}
     {{- printf "%s" .Values.urls.test.us.prometheusRemoteWriteUrl -}}
   {{- else if or (eq .Values.global.environment "stage") (eq .Values.global.environment "staging") -}}
-    {{- printf "%s" .Values.urls.stage.eu.prometheusRemoteWriteUrl -}}
+    {{- printf "%s" .Values.urls.stage.us.prometheusRemoteWriteUrl -}}
   {{- else -}}
-    {{- if eq .Values.global.region "eu" -}}
+    {{- if eq .Values.global.grafanaRegion "eu" -}}
       {{- printf "%s" .Values.urls.production.eu.prometheusRemoteWriteUrl -}}
     {{- else -}}
       {{- printf "%s" .Values.urls.production.us.prometheusRemoteWriteUrl -}}
@@ -160,9 +160,9 @@ URLs for Prometheus and Loki
   {{- else if eq .Values.global.environment "test" -}}
     {{- printf "%s" .Values.urls.test.us.lokiUrl -}}
   {{- else if or (eq .Values.global.environment "stage") (eq .Values.global.environment "staging") -}}
-    {{- printf "%s" .Values.urls.stage.eu.lokiUrl -}}
+    {{- printf "%s" .Values.urls.stage.us.lokiUrl -}}
   {{- else -}}
-    {{- if eq .Values.global.region "eu" -}}
+    {{- if eq .Values.global.grafanaRegion "eu" -}}
       {{- printf "%s" .Values.urls.production.eu.lokiUrl -}}
     {{- else -}}
       {{- printf "%s" .Values.urls.production.us.lokiUrl -}}
@@ -179,9 +179,9 @@ Prometheus and Loki IDs
   {{- else if eq .Values.global.environment "test" -}}
     {{- printf "%s" .Values.credentials.test.us.prometheusId -}}
   {{- else if or (eq .Values.global.environment "stage") (eq .Values.global.environment "staging") -}}
-    {{- printf "%s" .Values.credentials.stage.eu.prometheusId -}}
+    {{- printf "%s" .Values.credentials.stage.us.prometheusId -}}
   {{- else -}}
-    {{- if eq .Values.global.region "eu" -}}
+    {{- if eq .Values.global.grafanaRegion "eu" -}}
       {{- printf "%s" .Values.credentials.production.eu.prometheusId -}}
     {{- else -}}
       {{- printf "%s" .Values.credentials.production.us.prometheusId -}}
@@ -199,9 +199,9 @@ Prometheus and Loki IDs
   {{- else if eq .Values.global.environment "test" -}}
     {{- printf "%s" .Values.credentials.test.us.lokiId -}}
   {{- else if or (eq .Values.global.environment "stage") (eq .Values.global.environment "staging") -}}
-    {{- printf "%s" .Values.credentials.stage.eu.lokiId -}}
+    {{- printf "%s" .Values.credentials.stage.us.lokiId -}}
   {{- else -}}
-    {{- if eq .Values.global.region "eu" -}}
+    {{- if eq .Values.global.grafanagrafanaRegion "eu" -}}
       {{- printf "%s" .Values.credentials.production.eu.lokiId -}}
     {{- else -}}
       {{- printf "%s" .Values.credentials.production.us.lokiId -}}

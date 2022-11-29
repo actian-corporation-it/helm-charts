@@ -20,7 +20,7 @@ data:
       - name: {{ .Values.metrics.instanceName }}
         host_filter: false
         scrape_configs:
-        {{- if .Values.metrics.integrations.hashicorpVault.enabled -}}
+        {{- if .Values.metrics.services.hashicorpVault.enabled -}}
         {{ $hashicorpVaultTarget := (include "hashicorpVault.target" .) }}
         # Vault Server
         - job_name: vault
@@ -35,7 +35,7 @@ data:
           - source_labels: [__param_target]
             target_label: instance
         {{- end }}
-        {{- if .Values.metrics.integrations.hashicorpConsul.enabled -}}
+        {{- if .Values.metrics.services.hashicorpConsul.enabled -}}
         {{ $hashicorpConsulTarget := (include "hashicorpConsul.target" .) }}
         # Consul Server
         - job_name: consul
@@ -50,7 +50,7 @@ data:
           - source_labels: [__param_target]
             target_label: instance
         {{- end }}
-        {{- if .Values.metrics.integrations.ingressNginx.enabled -}}
+        {{- if .Values.metrics.services.ingressNginx.enabled -}}
         {{ $ingressNginxTarget := (include "ingressNginx.target" .) }}
         # NGINX Ingress Controller
         - job_name: nginx-ingress
@@ -64,7 +64,7 @@ data:
           - source_labels: [__param_target]
             target_label: instance
         {{- end }}
-        {{- if .Values.metrics.integrations.trivy.enabled -}}
+        {{- if .Values.metrics.services.trivy.enabled -}}
         {{ $trivyTarget := (include "trivy.target" .) }}
         # Trivy
         - job_name: trivy
@@ -188,7 +188,7 @@ data:
           - source_labels: [__meta_kubernetes_service_name, __meta_kubernetes_endpoint_port_name]
             action: keep
             regex: istio-sidecar-injector;http-monitoring
-        {{- if .Values.metrics.integrations.velero.enabled -}}
+        {{- if .Values.metrics.services.velero.enabled -}}
         {{ $veleroTarget := (include "velero.target" .) }}
         # Velero
         - job_name: velero
@@ -202,7 +202,7 @@ data:
             - source_labels: [__param_target]
               target_label: instance
         {{- end }}
-        {{- if .Values.metrics.integrations.argocd.enabled -}}
+        {{- if .Values.metrics.services.argocd.enabled -}}
         {{ $argocdTarget := (include "argocd.target" .) }}
         {{ $argocdServerTarget := (include "argocdServer.target" .) }}
         - job_name: argocd
@@ -217,7 +217,7 @@ data:
             - source_labels: [__param_target]
               target_label: instance
         {{- end }}
-        {{- if .Values.metrics.integrations.certManager.enabled -}}
+        {{- if .Values.metrics.services.certManager.enabled -}}
         {{ $certManagerTarget := (include "certManager.target" .) }}
         # Cert-Manager
         - job_name: cert-manager
@@ -231,7 +231,7 @@ data:
             - source_labels: [__param_target]
               target_label: instance
         {{- end }}
-        {{- if .Values.metrics.integrations.externalSecrets.enabled -}}
+        {{- if .Values.metrics.services.externalSecrets.enabled -}}
         {{ $externalSecretsTarget := (include "externalSecrets.target" .) }}
         # External-Secrets-Operator
         - job_name: external-secrets
@@ -245,7 +245,7 @@ data:
             - source_labels: [__param_target]
               target_label: instance
         {{- end }}
-        {{- if .Values.metrics.integrations.rabbitmq.enabled -}}
+        {{- if .Values.metrics.services.rabbitmq.enabled -}}
         {{ $rabbitmqTarget := (include "rabbitmq.target" .) }}
         # RabbitMQ
         - job_name: rabbitmq
@@ -260,7 +260,6 @@ data:
             - source_labels: [__param_target]
               target_label: instance
         {{- end }}
-        {{- if .Values.metrics.integrations.cadvisor.enabled }}
         - job_name: cadvisor
           bearer_token_file: /var/run/secrets/kubernetes.io/serviceaccount/token
           kubernetes_sd_configs:
@@ -286,7 +285,6 @@ data:
               ca_file: /var/run/secrets/kubernetes.io/serviceaccount/ca.crt
               insecure_skip_verify: false
               server_name: kubernetes
-        {{- end }}
         - job_name: kubelet
           bearer_token_file: /var/run/secrets/kubernetes.io/serviceaccount/token
           kubernetes_sd_configs:
@@ -312,8 +310,7 @@ data:
             ca_file: /var/run/secrets/kubernetes.io/serviceaccount/ca.crt
             insecure_skip_verify: false
             server_name: kubernetes
-        {{- if .Values.metrics.integrations.kubeStateMetrics.enabled }}
-        # kube-STate-Metrics
+        # kube-state-metrics
         - job_name: kube-state-metrics
           kubernetes_sd_configs:
             - role: service
@@ -330,5 +327,4 @@ data:
               regex: kube-state-metrics
               source_labels:
                 - __meta_kubernetes_service_name
-        {{- end }}
 {{- end }}
