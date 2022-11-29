@@ -56,53 +56,53 @@
 {{- end -}}
 
 {{- define "rabbitmq.target" -}}
-  {{- $port := .Values.metrics.integrations.rabbitmq.metricPort | toString -}}
-  {{- printf "%s.%s.svc.cluster.local:%s" .Values.metrics.integrations.rabbitmq.releaseName .Values.metrics.integrations.rabbitmq.namespace $port -}}
+  {{- $port := .Values.metrics.services.rabbitmq.metricPort | toString -}}
+  {{- printf "%s.%s.svc.cluster.local:%s" .Values.metrics.services.rabbitmq.releaseName .Values.metrics.services.rabbitmq.namespace $port -}}
 {{- end -}}
 
 {{- define "externalSecrets.target" -}}
-  {{- $port := .Values.metrics.integrations.externalSecrets.metricPort | toString -}}
-  {{- printf "%s-metrics.%s.svc.cluster.local:%s" .Values.metrics.integrations.externalSecrets.releaseName .Values.metrics.integrations.externalSecrets.namespace $port -}}
+  {{- $port := .Values.metrics.services.externalSecrets.metricPort | toString -}}
+  {{- printf "%s-metrics.%s.svc.cluster.local:%s" .Values.metrics.services.externalSecrets.releaseName .Values.metrics.services.externalSecrets.namespace $port -}}
 {{- end -}}
 
 {{- define "argocd.target" -}}
-  {{- $port := .Values.metrics.integrations.argocd.metricPort | toString -}}
-  {{- printf "%s-metrics.%s.svc.cluster.local:%s" .Values.metrics.integrations.argocd.releaseName .Values.metrics.integrations.argocd.namespace $port -}}
+  {{- $port := .Values.metrics.services.argocd.metricPort | toString -}}
+  {{- printf "%s-metrics.%s.svc.cluster.local:%s" .Values.metrics.services.argocd.releaseName .Values.metrics.services.argocd.namespace $port -}}
 {{- end -}}
 
 {{- define "argocdServer.target" -}}
-  {{- $port := .Values.metrics.integrations.argocd.serverMetricPort | toString -}}
-  {{- printf "%s-server-metrics.%s.svc.cluster.local:%s" .Values.metrics.integrations.argocd.releaseName .Values.metrics.integrations.argocd.namespace $port -}}
+  {{- $port := .Values.metrics.services.argocd.serverMetricPort | toString -}}
+  {{- printf "%s-server-metrics.%s.svc.cluster.local:%s" .Values.metrics.services.argocd.releaseName .Values.metrics.services.argocd.namespace $port -}}
 {{- end -}}
 
 {{- define "certManager.target" -}}
-  {{- $port := .Values.metrics.integrations.certManager.metricPort | toString -}}
-  {{- printf "%s.%s.svc.cluster.local:%s" .Values.metrics.integrations.certManager.releaseName .Values.metrics.integrations.certManager.namespace $port -}}
+  {{- $port := .Values.metrics.services.certManager.metricPort | toString -}}
+  {{- printf "%s.%s.svc.cluster.local:%s" .Values.metrics.services.certManager.releaseName .Values.metrics.services.certManager.namespace $port -}}
 {{- end -}}
 
 {{- define "velero.target" -}}
-  {{- $port := .Values.metrics.integrations.velero.metricPort | toString -}}
-  {{- printf "%s.%s.svc.cluster.local:%s" .Values.metrics.integrations.velero.releaseName .Values.metrics.integrations.velero.namespace $port -}}
+  {{- $port := .Values.metrics.services.velero.metricPort | toString -}}
+  {{- printf "%s.%s.svc.cluster.local:%s" .Values.metrics.services.velero.releaseName .Values.metrics.services.velero.namespace $port -}}
 {{- end -}}
 
 {{- define "hashicorpVault.target" -}}
-  {{- $port := .Values.metrics.integrations.hashicorpVault.metricPort | toString -}}
-  {{- printf "%s-active.%s.svc.cluster.local:%s" .Values.metrics.integrations.hashicorpVault.releaseName .Values.metrics.integrations.hashicorpVault.namespace $port -}}
+  {{- $port := .Values.metrics.services.hashicorpVault.metricPort | toString -}}
+  {{- printf "%s-active.%s.svc.cluster.local:%s" .Values.metrics.services.hashicorpVault.releaseName .Values.metrics.services.hashicorpVault.namespace $port -}}
 {{- end -}}
 
 {{- define "hashicorpConsul.target" -}}
-  {{- $port := .Values.metrics.integrations.hashicorpConsul.metricPort | toString -}}
-  {{- printf "%s-server.%s.svc.cluster.local:%s" .Values.metrics.integrations.hashicorpConsul.releaseName .Values.metrics.integrations.hashicorpConsul.namespace $port -}}
+  {{- $port := .Values.metrics.services.hashicorpConsul.metricPort | toString -}}
+  {{- printf "%s-server.%s.svc.cluster.local:%s" .Values.metrics.services.hashicorpConsul.releaseName .Values.metrics.services.hashicorpConsul.namespace $port -}}
 {{- end -}}
 
 {{- define "ingressNginx.target" -}}
-  {{- $port := .Values.metrics.integrations.ingressNginx.metricPort | toString -}}
-  {{- printf "%s-metrics.%s.svc.cluster.local:%s" .Values.metrics.integrations.ingressNginx.releaseName .Values.metrics.integrations.ingressNginx.namespace $port -}}
+  {{- $port := .Values.metrics.services.ingressNginx.metricPort | toString -}}
+  {{- printf "%s-metrics.%s.svc.cluster.local:%s" .Values.metrics.services.ingressNginx.releaseName .Values.metrics.services.ingressNginx.namespace $port -}}
 {{- end -}}
 
 {{- define "trivy.target" -}}
-  {{- $port := .Values.metrics.integrations.trivy.metricPort | toString -}}
-  {{- printf "%s.%s.svc.cluster.local:%s" .Values.metrics.integrations.trivy.releaseName .Values.metrics.integrations.trivy.namespace $port -}}
+  {{- $port := .Values.metrics.services.trivy.metricPort | toString -}}
+  {{- printf "%s.%s.svc.cluster.local:%s" .Values.metrics.services.trivy.releaseName .Values.metrics.services.trivy.namespace $port -}}
 {{- end -}}
 
 {{- define "grafanaAgent.Version" -}}
