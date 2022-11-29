@@ -140,32 +140,32 @@ URLs for Prometheus and Loki
 */}}
 {{- define "urls.prometheusRemoteWriteUrl" -}}
   {{- if eq .Values.global.environment "dev" -}}
-    {{- printf "%s" .Values.urls.dev.us.prometheusRemoteWriteUrl -}}
+    {{- printf "%s" .Values.urls.us.prometheusRemoteWriteUrl -}}
   {{- else if eq .Values.global.environment "test" -}}
-    {{- printf "%s" .Values.urls.test.us.prometheusRemoteWriteUrl -}}
+    {{- printf "%s" .Values.urls.us.prometheusRemoteWriteUrl -}}
   {{- else if or (eq .Values.global.environment "stage") (eq .Values.global.environment "staging") -}}
-    {{- printf "%s" .Values.urls.stage.us.prometheusRemoteWriteUrl -}}
+    {{- printf "%s" .Values.urls.us.prometheusRemoteWriteUrl -}}
   {{- else -}}
     {{- if eq .Values.global.grafanaRegion "eu" -}}
-      {{- printf "%s" .Values.urls.production.eu.prometheusRemoteWriteUrl -}}
+      {{- printf "%s" .Values.urls.eu.prometheusRemoteWriteUrl -}}
     {{- else -}}
-      {{- printf "%s" .Values.urls.production.us.prometheusRemoteWriteUrl -}}
+      {{- printf "%s" .Values.urls.us.prometheusRemoteWriteUrl -}}
     {{- end -}}
   {{- end -}}
 {{- end -}}
 
 {{- define "urls.lokiUrl" -}}
   {{- if eq .Values.global.environment "dev" -}}
-    {{- printf "%s" .Values.urls.dev.us.lokiUrl -}}
+    {{- printf "%s" .Values.urls.us.lokiUrl -}}
   {{- else if eq .Values.global.environment "test" -}}
-    {{- printf "%s" .Values.urls.test.us.lokiUrl -}}
+    {{- printf "%s" .Values.urls.us.lokiUrl -}}
   {{- else if or (eq .Values.global.environment "stage") (eq .Values.global.environment "staging") -}}
-    {{- printf "%s" .Values.urls.stage.us.lokiUrl -}}
+    {{- printf "%s" .Values.urls.us.lokiUrl -}}
   {{- else -}}
     {{- if eq .Values.global.grafanaRegion "eu" -}}
-      {{- printf "%s" .Values.urls.production.eu.lokiUrl -}}
+      {{- printf "%s" .Values.urls.eu.lokiUrl -}}
     {{- else -}}
-      {{- printf "%s" .Values.urls.production.us.lokiUrl -}}
+      {{- printf "%s" .Values.urls.us.lokiUrl -}}
     {{- end -}}
   {{- end -}}
 {{- end -}}
@@ -175,16 +175,16 @@ Prometheus and Loki IDs
 */}}
 {{- define "credentials.prometheusId" -}}
   {{- if eq .Values.global.environment "dev" -}}
-    {{- printf "%s" .Values.credentials.dev.us.prometheusId -}}
+    {{- printf "%s" .Values.credentials.us.prometheusId -}}
   {{- else if eq .Values.global.environment "test" -}}
-    {{- printf "%s" .Values.credentials.test.us.prometheusId -}}
+    {{- printf "%s" .Values.credentials.us.prometheusId -}}
   {{- else if or (eq .Values.global.environment "stage") (eq .Values.global.environment "staging") -}}
-    {{- printf "%s" .Values.credentials.stage.us.prometheusId -}}
+    {{- printf "%s" .Values.credentials.us.prometheusId -}}
   {{- else -}}
     {{- if eq .Values.global.grafanaRegion "eu" -}}
-      {{- printf "%s" .Values.credentials.production.eu.prometheusId -}}
+      {{- printf "%s" .Values.credentials.eu.prometheusId -}}
     {{- else -}}
-      {{- printf "%s" .Values.credentials.production.us.prometheusId -}}
+      {{- printf "%s" .Values.credentials.us.prometheusId -}}
     {{- end -}}
   {{- end -}}
 {{- end -}}
@@ -195,16 +195,16 @@ Prometheus and Loki IDs
 
 {{- define "credentials.lokiId" -}}
   {{- if eq .Values.global.environment "dev" -}}
-    {{- printf "%s" .Values.credentials.dev.us.lokiId -}}
+    {{- printf "%s" .Values.credentials.us.lokiId -}}
   {{- else if eq .Values.global.environment "test" -}}
-    {{- printf "%s" .Values.credentials.test.us.lokiId -}}
+    {{- printf "%s" .Values.credentials.us.lokiId -}}
   {{- else if or (eq .Values.global.environment "stage") (eq .Values.global.environment "staging") -}}
-    {{- printf "%s" .Values.credentials.stage.us.lokiId -}}
+    {{- printf "%s" .Values.credentials.us.lokiId -}}
   {{- else -}}
     {{- if eq .Values.global.grafanagrafanaRegion "eu" -}}
-      {{- printf "%s" .Values.credentials.production.eu.lokiId -}}
+      {{- printf "%s" .Values.credentials.eu.lokiId -}}
     {{- else -}}
-      {{- printf "%s" .Values.credentials.production.us.lokiId -}}
+      {{- printf "%s" .Values.credentials.us.lokiId -}}
     {{- end -}}
   {{- end -}}
 {{- end -}}
