@@ -202,7 +202,7 @@ data:
             - source_labels: [__param_target]
               target_label: instance
         {{- end }}
-        {{- if or (.Values.metrics.services.argocd-dev.enabled) -}}
+        {{- if or (.Values.metrics.services.argocdDev.enabled) -}}
         - job_name: argocd-dev
           static_configs:
             - targets:
@@ -217,7 +217,7 @@ data:
             - source_labels: [__param_target]
               target_label: instance
         {{- end }}
-        {{- if or (.Values.metrics.services.argocd-test.enabled) -}}
+        {{- if or (.Values.metrics.services.argocdTest.enabled) -}}
         - job_name: argocd-test
           static_configs:
             - targets:
@@ -232,7 +232,7 @@ data:
             - source_labels: [__param_target]
               target_label: instance
         {{- end }}
-        {{- if or (.Values.metrics.services.argocd-stage.enabled) -}}
+        {{- if or (.Values.metrics.services.argocdStage.enabled) -}}
         - job_name: argocd-stage
           static_configs:
             - targets:
@@ -247,7 +247,7 @@ data:
             - source_labels: [__param_target]
               target_label: instance
         {{- end }}
-        {{- if or (.Values.metrics.services.argocd-production.enabled) -}}
+        {{- if or (.Values.metrics.services.argocdProduction.enabled) -}}
         - job_name: argocd-production
           static_configs:
             - targets:
