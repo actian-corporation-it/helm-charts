@@ -87,17 +87,17 @@
 
 {{- define "hashicorpVault.target" -}}
   {{- $port := .Values.metrics.services.hashicorpVault.metricPort | toString -}}
-  {{- printf "%s-active.%s.svc.cluster.local:%s" .Values.metrics.services.hashicorpVault.releaseName .Values.metrics.services.hashicorpVault.namespace $port -}}
+  {{- printf "%s.%s.svc.cluster.local:%s" .Values.metrics.services.hashicorpVault.releaseName .Values.metrics.services.hashicorpVault.namespace $port -}}
 {{- end -}}
 
 {{- define "hashicorpConsul.target" -}}
   {{- $port := .Values.metrics.services.hashicorpConsul.metricPort | toString -}}
-  {{- printf "%s-server.%s.svc.cluster.local:%s" .Values.metrics.services.hashicorpConsul.releaseName .Values.metrics.services.hashicorpConsul.namespace $port -}}
+  {{- printf "%s.%s.svc.cluster.local:%s" .Values.metrics.services.hashicorpConsul.releaseName .Values.metrics.services.hashicorpConsul.namespace $port -}}
 {{- end -}}
 
 {{- define "ingressNginx.target" -}}
   {{- $port := .Values.metrics.services.ingressNginx.metricPort | toString -}}
-  {{- printf "%s-metrics.%s.svc.cluster.local:%s" .Values.metrics.services.ingressNginx.releaseName .Values.metrics.services.ingressNginx.namespace $port -}}
+  {{- printf "%s.%s.svc.cluster.local:%s" .Values.metrics.services.ingressNginx.releaseName .Values.metrics.services.ingressNginx.namespace $port -}}
 {{- end -}}
 
 {{- define "trivy.target" -}}
