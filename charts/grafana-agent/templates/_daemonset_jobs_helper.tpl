@@ -237,7 +237,7 @@
     target_label: __path__
 {{- end -}}
 
-{{- define "daemonsetjobs.kubernetesPodsLogsIndirectControllers" -}}
+{{- define "daemonsetjobs.kubernetesPodsLogsIndirectController" -}}
 - job_name: kubernetes-pods-logs-indirect-controller
   kubernetes_sd_configs:
   - role: pod
