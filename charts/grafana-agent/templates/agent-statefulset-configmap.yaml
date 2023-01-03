@@ -20,7 +20,7 @@ data:
       - name: {{ .Values.metrics.instanceName }}
         host_filter: false
         scrape_configs:
-{{ include "jobs.hashicorpVault" . | indent 8 }}
+{{ include "statefulsetjobs.hashicorpVault" . | indent 8 }}
 {{ include "statefulsetjobs.hashicorpConsul" . | indent 8 }}
 {{ include "statefulsetjobs.ingressNginx" . | indent 8 }}
 {{ include "statefulsetjobs.trivy" . | indent 8 }}
