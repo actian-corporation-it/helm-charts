@@ -201,7 +201,7 @@ Prometheus and Loki IDs
   {{- else if or (eq .Values.global.environment "stage") (eq .Values.global.environment "staging") -}}
     {{- printf "%s" .Values.credentials.us.lokiId -}}
   {{- else -}}
-    {{- if eq .Values.global.grafanagrafanaRegion "eu" -}}
+    {{- if eq .Values.global.grafanaRegion "eu" -}}
       {{- printf "%s" .Values.credentials.eu.lokiId -}}
     {{- else -}}
       {{- printf "%s" .Values.credentials.us.lokiId -}}
