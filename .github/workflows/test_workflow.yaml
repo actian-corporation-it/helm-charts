@@ -1,0 +1,17 @@
+name:  test_workflow
+
+on:
+  workflow_dispatch:
+
+env:
+  LANG: en_US.UTF-8
+  LC_ALL: en_US.UTF-8
+
+jobs:
+  test_workflow:
+  timeout_minutes: 30
+
+  steps:
+    - name: hello world
+      id:  hellow-world
+      run: "echo \" This is a test_workflow that meant to test changes/newly developed workflow added to this repo.\""
