@@ -41,6 +41,7 @@ spec:
       containers:
       - args:
         - -config.file=/etc/agent/agent.yaml
+        - -enable-features=integrations-next
         - -server.http.address=0.0.0.0:{{ .Values.statefulset.serverPort }}
         - -config.expand-env
         command:
@@ -81,9 +82,18 @@ spec:
       - configMap:
           name: {{ $statefulsetConfigMapName }}
         name: {{ $statefulsetConfigMapName }}
-      - hostPath:
-          path: {{ .Values.global.agentVarDirectory }}
-        name: agent-var
   updateStrategy:
     type: RollingUpdate
+  volumeClaimTemplates:
+  - apiVersion: v1
+    kind: PersistentVolumeClaim
+    metadata:
+      name: agent-var
+      namespace: {{ .Values.global.namespace }}
+    spec:
+      accessModes:
+      - ReadWriteOnce
+      resources:
+        requests:
+          storage: 20Gi
 {{- end -}}
