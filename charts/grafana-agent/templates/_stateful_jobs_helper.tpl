@@ -164,6 +164,7 @@ metric_relabel_configs:
 {{- end -}}
 
 {{- define "statefulsetjobs.redpanda" -}}
+{{- if and .Values.metrics.services.redpanda .Values.metrics.services.redpanda.enabled -}}
 {{- if .Values.metrics.services.redpanda.enabled -}}
 # RedPanda Kafka
 - job_name: redpanda
@@ -181,19 +182,19 @@ metric_relabel_configs:
 {{- end -}}
 
 {{- define "statefulsetjobs.mimir" -}}
-{{- if .Values.metrics.services.mimir.enabled -}}
+{{- if and .Values.metrics.services.mimir .Values.metrics.services.mimir.enabled -}}
 # Mimir will be here soon
 {{- end -}}
 {{- end -}}
 
 {{- define "statefulsetjobs.loki" -}}
-{{- if .Values.metrics.services.loki.enabled -}}
+{{- if and .Values.metrics.services.loki .Values.metrics.services.loki.enabled -}}
 # Loki will be here soon
 {{- end -}}
 {{- end -}}
 
 {{- define "statefulsetjobs.grafana" -}}
-{{- if .Values.metrics.services.grafana.enabled -}}
+{{- if and .Values.metrics.services.grafana .Values.metrics.services.grafana.enabled -}}
 # Grafana will be here soon
 {{- end -}}
 {{- end -}}
