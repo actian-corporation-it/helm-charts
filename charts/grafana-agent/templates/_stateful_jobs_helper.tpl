@@ -163,6 +163,41 @@ metric_relabel_configs:
 {{- end -}}
 {{- end -}}
 
+{{- define "statefulsetjobs.redpanda" -}}
+{{- if .Values.metrics.services.redpanda.enabled -}}
+# RedPanda Kafka
+- job_name: redpanda
+  static_configs:
+  - targets:
+    - {{ .Values.metrics.services.redpanda.releaseName }}.{{ .Values.metrics.services.redpanda.namespace }}.svc.cluster.local:{{ .Values.metrics.services.repanda.metricPort}}
+  metrics_path: /metrics
+  relabel_configs:
+  - source_labels: [__address__]
+    target_label: __param_target
+    regex: ([\w\-\_]+)\..+:\d+
+  - source_labels: [__param_target]
+    target_label: instance
+{{ include "metrics.metricRelabelConfigs" .Values.metrics.filters.redpanda | indent 2 }}
+{{- end -}}
+
+{{- define "statefulsetjobs.mimir" -}}
+{{- if .Values.metrics.services.mimir.enabled -}}
+# Mimir will be here soon
+{{- end -}}
+{{- end -}}
+
+{{- define "statefulsetjobs.loki" -}}
+{{- if .Values.metrics.services.loki.enabled -}}
+# Loki will be here soon
+{{- end -}}
+{{- end -}}
+
+{{- define "statefulsetjobs.grafana" -}}
+{{- if .Values.metrics.services.grafana.enabled -}}
+# Grafana will be here soon
+{{- end -}}
+{{- end -}}
+
 {{- define "statefulsetjobs.cadvisor" -}}
 - job_name: cadvisor
   bearer_token_file: /var/run/secrets/kubernetes.io/serviceaccount/token
