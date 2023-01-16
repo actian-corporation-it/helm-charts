@@ -179,6 +179,7 @@ metric_relabel_configs:
     target_label: instance
 {{ include "metrics.metricRelabelConfigs" .Values.metrics.filters.redpanda | indent 2 }}
 {{- end -}}
+{{- end -}}
 
 {{- define "statefulsetjobs.mimir" -}}
 {{- if and .Values.metrics.services.mimir .Values.metrics.services.mimir.enabled -}}
