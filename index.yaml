@@ -35,6 +35,16 @@ entries:
   grafana-agent:
   - apiVersion: v2
     appVersion: v0.26.1
+    created: "2023-01-16T16:55:06.939269441Z"
+    description: Helm chart to deploy grafana-agent in a Kubernetes cluster
+    digest: b21d8631c32cdeea938100e9b18c5f1affb7071eb570734ff7b872a6f6011321
+    name: grafana-agent
+    type: application
+    urls:
+    - https://github.com/actian-corporation-it/helm-charts/releases/download/grafana-agent-2.1.2/grafana-agent-2.1.2.tgz
+    version: 2.1.2
+  - apiVersion: v2
+    appVersion: v0.26.1
     created: "2023-01-16T16:49:00.418727616Z"
     description: Helm chart to deploy grafana-agent in a Kubernetes cluster
     digest: d985bfd61b47721c07cebb21a28227fc3a1205c3c57a06d03a3d497f4df45f65
@@ -868,4 +878,4 @@ entries:
     urls:
     - https://github.com/actian-corporation-it/helm-charts/releases/download/prometheus-15.10.1002/prometheus-15.10.1002.tgz
     version: 15.10.1002
-generated: "2023-01-16T16:49:00.419355025Z"
+generated: "2023-01-16T16:55:06.940145937Z"
