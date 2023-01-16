@@ -165,7 +165,6 @@ metric_relabel_configs:
 
 {{- define "statefulsetjobs.redpanda" -}}
 {{- if and .Values.metrics.services.redpanda .Values.metrics.services.redpanda.enabled -}}
-{{- if .Values.metrics.services.redpanda.enabled -}}
 # RedPanda Kafka
 - job_name: redpanda
   static_configs:
