@@ -37,4 +37,18 @@ data:
 {{ include "statefulsetjobs.cadvisor" . | indent 8}}
 {{ include "statefulsetjobs.kubelet" . | indent 8}}
 {{ include "statefulsetjobs.kubeStateMetrics" . | indent 8}}
+  integrations:
+    eventhandler:
+      cache_path: "{{ .Values.global.agentVarDirectory }}/eventhandler/eventhandler.cache"
+      logs_instance: {{ .Values.logs.eventHandlerInstanceName }}
+
+  logs:
+    positions_directory: "{{ .Values.global.agentVarDirectory }}/eventhandler/positions"
+    configs:
+    - name: {{ .Values.logs.eventHandlerInstanceName }}
+      clients:
+{{ include "loki.authentication" . | indent 8 }}
+        external_labels:
+{{- include "agentConfig.externalLabels" . | indent 12 }}
+          job: "integrations/kubernetes/eventhandler"
 {{- end }}

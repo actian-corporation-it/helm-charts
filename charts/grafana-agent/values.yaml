@@ -109,6 +109,7 @@ tracing:
 logs:
   enabled: true
   instanceName: logs
+  eventHandlerInstanceName: eventHandler
   defaultPipelineStage: docker
   # Jobs for log scraping
   # Details will follow
