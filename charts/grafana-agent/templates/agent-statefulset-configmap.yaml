@@ -31,9 +31,6 @@ data:
 {{ include "statefulsetjobs.externalSecrets" . | indent 8}}
 {{ include "statefulsetjobs.rabbitmq" . | indent 8}}
 {{ include "statefulsetjobs.redpanda" . | indent 8}}
-{{ include "statefulsetjobs.mimir" . | indent 8}}
-{{ include "statefulsetjobs.loki" . | indent 8}}
-{{ include "statefulsetjobs.grafana" . | indent 8}}
 {{ include "statefulsetjobs.cadvisor" . | indent 8}}
 {{ include "statefulsetjobs.kubelet" . | indent 8}}
 {{ include "statefulsetjobs.kubeStateMetrics" . | indent 8}}
