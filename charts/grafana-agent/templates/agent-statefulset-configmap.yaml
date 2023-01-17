@@ -49,6 +49,6 @@ data:
         clients:
 {{ include "loki.authentication" . | indent 8 }}
           external_labels:
-{{- include "agentConfig.externalLabels" . | indent 10 }}
+{{- include "agentConfig.externalLabels" . | indent 8 }}
             job: "integrations/kubernetes/eventhandler"
 {{- end }}
