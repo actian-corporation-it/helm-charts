@@ -56,6 +56,11 @@ spec:
             secretKeyRef:
               name: {{ .Values.global.externalSecretName }}
               key: mimir-password
+        - name: LOKI_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: {{ .Values.global.externalSecretName }}
+              key: loki-password
         image: grafana/agent:{{ $grafanaAgentVersion }}
         imagePullPolicy: IfNotPresent
         name: {{ $statefulsetServiceName }}
