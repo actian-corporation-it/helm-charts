@@ -24,7 +24,7 @@ export function im_login_production() {
   console.error('error')
 
   const browser = chromium.launch({
-    headless: false,
+    headless: true,
     slowMo: '800ms' // slow down by 500ms
   });
   const context = browser.newContext();
@@ -32,12 +32,12 @@ export function im_login_production() {
 
   // Goto front page, find login link and click it
 
-  const resp = page.goto('https://console.im.actiandatacloud.com');
+  const resp = page.goto('https://console.im.actiandatacloud.com/dx/login');
   check(resp, {
     'ResponseCodeIs200': (resp) => resp.status() == 200,
   });
-  page.fill('input[placeholder="Username"]', __ENV.username);
-  page.fill('input[placeholder="Password"]', __ENV.password);
+  page.fill('input[name="username"]', __ENV.username);
+  page.fill('input[name="password"]', __ENV.password);
   Promise.all([
     page.waitForNavigation(),
     page.$('button[type="submit"]').click(),
