@@ -64,7 +64,7 @@ export function avalanche_login_production() {
   // console.warn(page.content());
   const body = page.content();
   check(body, {
-    'ContentHasKeyword': (body) => body.includes('DO-NOT-DELETE'),
+    'ContentHasKeyword': (body) => body.includes('Avalanche Summary'),
   });
   //console.warn(page.content());
   page.close();
