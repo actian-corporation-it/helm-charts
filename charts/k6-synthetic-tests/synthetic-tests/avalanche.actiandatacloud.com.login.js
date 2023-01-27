@@ -3,9 +3,6 @@ import { check } from 'k6';
 import { response } from 'k6/x/browser';
 
 export const options = {
-  // tags: {
-  //   cluster: __ENV.CLUSTER_NAME,
-  // },
   thresholds: {},
   scenarios: {
     AvalancheLoginProduction: {
@@ -28,7 +25,7 @@ export function avalanche_login_production() {
 
   const browser = chromium.launch({
     headless: true,
-    slowMo: '800ms' // slow down by 500ms
+    slowMo: '500ms' // slow down by 500ms
   });
   const context = browser.newContext();
   const page = context.newPage();
@@ -41,10 +38,11 @@ export function avalanche_login_production() {
   });
   page.$('input[id="username"]').type(__ENV.first_username);
   page.$('button[type="submit"]').click();
-  page.$('app-avalanche-login').click();
+  // page.$('app-pages-layout').click();
+
   Promise.all([
     page.waitForNavigation(),
-    page.$('label[for="mat-radio-3-input"]').click(),
+    page.locator('label[for="mat-radio-3-input"]').click(),
   ]);
   Promise.all([
     page.waitForNavigation(),
