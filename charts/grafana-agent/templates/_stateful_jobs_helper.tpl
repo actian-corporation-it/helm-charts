@@ -169,7 +169,7 @@ metric_relabel_configs:
 - job_name: redpanda
   static_configs:
   - targets:
-    - {{ .Values.metrics.services.redpanda.releaseName }}.{{ .Values.metrics.services.redpanda.namespace }}.svc.cluster.local:{{ .Values.metrics.services.repanda.metricPort}}
+    - {{ .Values.metrics.services.redpanda.releaseName }}.{{ .Values.metrics.services.redpanda.namespace }}.svc.cluster.local:{{ .Values.metrics.services.redpanda.metricPort}}
   metrics_path: /metrics
   relabel_configs:
   - source_labels: [__address__]
