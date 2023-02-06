@@ -75,7 +75,7 @@ spec:
               - -c
               - '[[ -e /opt/harness-delegate/msg/data/watcher-data && $(($(date +%s000) - $(grep heartbeat /opt/harness-delegate/msg/data/watcher-data | cut -d ":" -f 2 | cut -d "," -f 1))) -lt 300000 ]]'
           initialDelaySeconds: 360
-          periodSeconds: 10
+          periodSeconds: 30
           failureThreshold: 3
         env:
         - name: JAVA_OPTS
