@@ -1,0 +1,4 @@
+{{- range $test, $details := $.Values.syntheticTests.definitions }}
+---
+{{ include "synthetictests.execution" (dict "root" $ "test" $test "details" $details) }}
+{{- end -}}

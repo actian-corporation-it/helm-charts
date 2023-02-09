@@ -1,0 +1,32 @@
+{{- range $test, $details := $.Values.syntheticTests.definitions }}
+---
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: "{{ $test }}-cronjob"
+spec:
+  schedule: {{ $details.schedule | quote }}
+  concurrencyPolicy: Forbid
+  jobTemplate:
+    spec:
+      ttlSecondsAfterFinished: 600
+      template:
+        spec:
+          serviceAccount: {{ $.Values.serviceAccountName }}
+          containers:
+            - name: kubectl
+              image: bitnami/kubectl
+              volumeMounts:
+                - name: cronjobs
+                  mountPath: /jobs/
+              command:
+                - /bin/bash
+              args:
+                - -c
+                - "kubectl delete -f /jobs/{{ $test }}.yaml; kubectl apply -f /jobs/{{ $test }}.yaml"
+          restartPolicy: OnFailure
+          volumes:
+            - name: cronjobs
+              configMap:
+                name: {{ $.Values.syntheticTests.cronjobsConfigMapName }}
+{{- end -}}

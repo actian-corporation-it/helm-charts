@@ -1,0 +1,41 @@
+serviceAccountName: k6-synthetic-tests
+clusterName: cluster
+environment: dev
+grafanaRegion: us
+secretStoreName: k6-secret-store
+namespace: k6-synthetic-tests
+k6Image:
+  name: actian/k6-actian-cloudops
+  tag: 0.4.0
+  secret: k6-synthetic-test-docker-secret
+grafanaParameters:
+  prometheusUrl:
+    remoteKey: paramstore/dev/us
+    remoteProperty: mimir_remote_write_url
+  prometheusUsername:
+    remoteKey: paramstore/dev/us
+    remoteProperty: mimir_user
+  prometheusPassword:
+    remoteKey: grafana_oss_passwords/dev
+    remoteProperty: mimir_password
+syntheticTests:
+  cronjobsConfigMapName: k6-synthetic-test-cronjobs
+  configMapName: k6-synthetic-test-scripts
+  secretName: k6-secrets
+  definitions:
+    avalanche-login:
+      scriptName: avalanche.actiandatacloud.com.login.js
+      scriptFile: avalanche.actiandatacloud.com.login.js
+      schedule: "*/5 * * * *"
+      usernameSecretKey: av_console_username
+      usernameRemoteKey: synthetics/production/avalanche-login
+      passwordSecretKey: av_console_password
+      passwordRemoteKey: synthetics/production/avalanche-login
+    integrationmanager-login:
+      scriptName: console.im.actiandatacloud.com.login.js
+      schedule: "*/5 * * * *"
+      scriptFile: console.im.actiandatacloud.com.login.js
+      usernameSecretKey: im_console_username
+      usernameRemoteKey: synthetics/production/integrationmanager-console-login
+      passwordSecretKey: im_console_password
+      passwordRemoteKey: synthetics/production/integrationmanager-console-login

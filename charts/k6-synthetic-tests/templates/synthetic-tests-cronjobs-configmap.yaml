@@ -1,0 +1,15 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  annotations:
+    app.kubernetes.io/managed-by: cloudops
+    environment: dev
+    owner: cloudoperations@actian.com
+  name: {{ $.Values.syntheticTests.cronjobsConfigMapName }}
+  namespace: {{ $.Values.namespace }}
+data:
+{{- range $test, $details := $.Values.syntheticTests.definitions }}
+  {{ $test }}.yaml: |
+{{ include "synthetictests.execution" (dict "root" $ "test" $test "details" $details) | indent 4 }}
+{{- end -}}
