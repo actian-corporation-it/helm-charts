@@ -925,6 +925,17 @@ entries:
     urls:
     - https://github.com/actian-corporation-it/helm-charts/releases/download/harness-delegate-immutable-0.1.0/harness-delegate-immutable-0.1.0.tgz
     version: 0.1.0
+  k6-synthetic-tests:
+  - apiVersion: v2
+    appVersion: 0.4.0
+    created: "2023-02-09T17:24:39.578015829Z"
+    description: Helm chart to deploy K6 Synthetic Tests in a Kubernetes cluster
+    digest: 4fb6e763adfdbc28dad60fb621e0c660a08b4d92868fe101f75fc2b4d44291b5
+    name: k6-synthetic-tests
+    type: application
+    urls:
+    - https://github.com/actian-corporation-it/helm-charts/releases/download/k6-synthetic-tests-0.1.0/k6-synthetic-tests-0.1.0.tgz
+    version: 0.1.0
   prometheus:
   - apiVersion: v2
     appVersion: 2.34.0
@@ -958,4 +969,4 @@ entries:
     urls:
     - https://github.com/actian-corporation-it/helm-charts/releases/download/prometheus-15.10.1002/prometheus-15.10.1002.tgz
     version: 15.10.1002
-generated: "2023-02-06T17:58:45.639508997Z"
+generated: "2023-02-09T17:24:39.578473233Z"
