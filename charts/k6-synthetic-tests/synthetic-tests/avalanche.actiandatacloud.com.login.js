@@ -10,8 +10,8 @@ export const options = {
       executor: 'shared-iterations',
       gracefulStop: '60s',
       maxDuration: '10m',
-      vus: 3,
-      iterations: 3
+      vus: 5,
+      iterations: 5
     }
   }
 }
@@ -49,7 +49,6 @@ export function avalanche_login_production() {
 
   // Wait for the login container class on the next page
   page.waitForSelector('.login-container')
-  // page.screenshot({ path: 'test/png/click_next.png'})
 
   // Wait for the Radio Button to choose community login and click it
   page.waitForSelector('.radio-controls.ng-star-inserted')
@@ -62,12 +61,10 @@ export function avalanche_login_production() {
   page.waitForSelector('.siteforceSldsOneColLayout.siteforceContentArea')
   page.fill('input[placeholder="Email"]', __ENV.username);
   page.fill('input[placeholder="Password"]', __ENV.password);
-  // page.screenshot({ path: 'test/png/filled_second_username.png'})
 
   // Wait for the Log In button to be displayed properly and click
   page.waitForSelector('.sfdc')
   page.locator('.slds-button.slds-button--neutral.sfdc_button.uiButton').click()
-  // page.screenshot({ path: 'test/png/click_login.png'})
 
   // Wait for the main user landing page to be displayed
   Promise.all([
@@ -79,7 +76,6 @@ export function avalanche_login_production() {
   // Click Warehouses link to display all warehouses
   page.locator('a[href="/warehouse"]').click()
   page.waitForNavigation()
-  // page.screenshot({ path: 'test/png/click_warehouses.png'})
 
   // Check page content for a warehouse named DO-NOT-DELETE
   const body = page.content();
