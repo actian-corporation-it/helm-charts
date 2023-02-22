@@ -190,7 +190,7 @@ Prometheus and Loki IDs
 {{- end -}}
 
 {{- define "credentials.prometheusPassword" -}}
-  {{- printf "${MIMIR_PASSWORD}" -}}
+  {{- printf "${PROMETHEUS_PASSWORD}" -}}
 {{- end -}}
 
 {{- define "credentials.lokiId" -}}
@@ -231,11 +231,11 @@ Vault paths for Prometheus and Loki secrets
 
 {{- define "vaultSecrets.prometheusPasswordKey" -}}
   {{- if eq .Values.global.environment "dev" -}}
-    {{- printf "mimir_password" -}}
+    {{- printf "prometheus_password" -}}
   {{- else if eq .Values.global.environment "test" -}}
-    {{- printf "mimir_password" -}}
+    {{- printf "prometheus_password" -}}
   {{- else if or (eq .Values.global.environment "stage") (eq .Values.global.environment "staging") -}}
-    {{- printf "mimir_password" -}}
+    {{- printf "prometheus_password" -}}
   {{- else -}}
     {{- printf "agent_authentication" -}}
   {{- end -}}

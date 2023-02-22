@@ -33,11 +33,11 @@ spec:
           valueFrom:
             fieldRef:
               fieldPath: spec.nodeName
-        - name: MIMIR_PASSWORD
+        - name: PROMETHEUS_PASSWORD
           valueFrom:
             secretKeyRef:
               name: {{ .Values.global.externalSecretName }}
-              key: mimir-password
+              key: prometheus-password
         - name: LOKI_PASSWORD
           valueFrom:
             secretKeyRef:
