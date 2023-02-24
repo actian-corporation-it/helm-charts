@@ -96,6 +96,7 @@ spec:
       name: agent-var
       namespace: {{ .Values.global.namespace }}
     spec:
+      storageClassName: {{ .Values.statefulset.persistentVolume.storageClassName }}
       accessModes:
       - ReadWriteOnce
       resources:
