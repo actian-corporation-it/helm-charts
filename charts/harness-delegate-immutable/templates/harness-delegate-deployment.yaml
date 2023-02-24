@@ -19,7 +19,8 @@ spec:
         prometheus.io/port: "3460"
         prometheus.io/path: "/api/metrics"
     spec:
-      imagePullSecrets: dockerhub-image-pull
+      imagePullSecrets: 
+      - name: dockerhub-image-pull
       terminationGracePeriodSeconds: 600
       restartPolicy: Always
       containers:
