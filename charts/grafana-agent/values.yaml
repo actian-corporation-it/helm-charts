@@ -28,6 +28,8 @@ statefulset:
   serverPort: 13578
   logLevel: info
   logFormat: json
+  persistentVolume:
+    storageClassName: efs-sc
 
 credentials:
   # <grafanaRegion>:
