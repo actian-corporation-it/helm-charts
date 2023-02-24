@@ -7,7 +7,6 @@ metadata:
   namespace: {{ .Values.namespace }}
 spec:
   replicas: 2
-  imagePullSecrets: dockerhub-image-pull
   selector:
     matchLabels:
       harness.io/name: {{ .Values.delegateName }}
@@ -20,6 +19,7 @@ spec:
         prometheus.io/port: "3460"
         prometheus.io/path: "/api/metrics"
     spec:
+      imagePullSecrets: dockerhub-image-pull
       terminationGracePeriodSeconds: 600
       restartPolicy: Always
       containers:
