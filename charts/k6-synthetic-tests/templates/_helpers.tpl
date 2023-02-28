@@ -53,11 +53,11 @@ Vault paths for Prometheus secrets
 
 {{- define "vaultSecrets.prometheusPasswordKey" -}}
   {{- if eq .Values.global.environment "dev" -}}
-    {{- printf "mimir_password" -}}
+    {{- printf "prometheus_password" -}}
   {{- else if eq .Values.global.environment "test" -}}
-    {{- printf "mimir_password" -}}
+    {{- printf "prometheus_password" -}}
   {{- else if or (eq .Values.global.environment "stage") (eq .Values.global.environment "staging") -}}
-    {{- printf "mimir_password" -}}
+    {{- printf "prometheus_password" -}}
   {{- else -}}
     {{- printf "agent_authentication" -}}
   {{- end -}}
@@ -77,7 +77,7 @@ spec:
     configMap:
       name: {{ $root.Values.syntheticTests.configMapName }}
       file: {{ $details.scriptName }}
-  arguments: -o output-prometheus-remote --tag cluster={{ $root.Values.clusterName }}
+  arguments: -o experimental-prometheus-rw --tag k6cluster={{ $root.Values.clusterName }}
   runner:
     image: {{ $root.Values.k6Image.name }}:{{ $root.Values.k6Image.tag }}
     imagePullSecrets:
@@ -87,17 +87,17 @@ spec:
         value: 'true'
       - name: K6_KEEP_URL_TAG
         value: 'false'
-      - name: K6_PROMETHEUS_REMOTE_URL
+      - name: K6_PROMETHEUS_RW_SERVER_URL
         valueFrom:
           secretKeyRef:
             name: {{ $root.Values.syntheticTests.secretName }}
             key: prometheusUrl
-      - name: K6_PROMETHEUS_USER
+      - name: K6_PROMETHEUS_RW_USERNAME
         valueFrom:
           secretKeyRef:
             name: {{ $root.Values.syntheticTests.secretName }}
             key: prometheusUsername
-      - name: K6_PROMETHEUS_PASSWORD
+      - name: K6_PROMETHEUS_RW_PASSWORD
         valueFrom:
           secretKeyRef:
             name: {{ $root.Values.syntheticTests.secretName }}
