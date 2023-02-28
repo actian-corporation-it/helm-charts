@@ -1,56 +1,64 @@
-import { chromium } from 'k6/x/browser';
+import { chromium, version } from 'k6/x/browser';
 import { check } from 'k6';
 import { response } from 'k6/x/browser';
 
 export const options = {
+  tags: {
+    k6cluster: __ENV.CLUSTER_NAME,
+  },
   thresholds: {},
   scenarios: {
     IMLoginProduction: {
       exec: 'im_login_production',
       executor: 'shared-iterations',
-      gracefulStop: '30s',
+      gracefulStop: '60s',
       maxDuration: '10m',
-      vus: 1,
-      iterations: 1
+      vus: 3,
+      iterations: 3
     }
   }
 }
 
-export function im_login_production() {
-  console.log('log')
-  console.debug('debug')
-  console.info('info')
-  console.warn('warn')
-  console.error('error')
+export async function im_login_production() {
+  console.info('info');
 
   const browser = chromium.launch({
+    args: ['start-maximized'],
     headless: true,
-    slowMo: '800ms' // slow down by 500ms
+    slowMo: '500ms' // slow down by 500ms
   });
   const context = browser.newContext();
   const page = context.newPage();
 
-  // Goto front page, find login link and click it
+  console.info('xk6-browser version: ', version);
 
-  const resp = page.goto('https://console.im.actiandatacloud.com/dx/login');
-  check(resp, {
-    'ResponseCodeIs200': (resp) => resp.status() == 200,
-  });
-  page.fill('input[name="username"]', __ENV.username);
-  page.fill('input[name="password"]', __ENV.password);
-  Promise.all([
-    page.waitForNavigation(),
-    page.$('button[type="submit"]').click(),
-  ]);
-  Promise.all([
-    page.waitForNavigation(),
-    page.waitForTimeout(6000),
-  ]);
-  const body = page.content();
-  check(body, {
-    'ContentHasKeyword': (body) => body.includes('All Jobs'),
-  });
-  page.close();
-  browser.close();
+  try {
+    // Goto main page, waittill page is loaded and check HTTP status code
+    const resp = await page.goto('https://console.im.actiandatacloud.com/dx/login', { waitUntil: 'load'});
+    check(resp, {
+      'ResponseCodeIs200': (resp) => resp.status() == 200,
+    });
+ 
+    page.locator('input[name="username"]').fill(__ENV.username);
+    page.locator('input[name="password"]').fill(__ENV.password);
+
+    Promise.all([
+      page.waitForNavigation(),
+      page.$('button[type="submit"]').click(),
+    ]);
+
+    Promise.all([
+      page.waitForNavigation(),
+      page.waitForTimeout(6000),
+    ]);
+
+    const body = page.content();
+    check(body, {
+      'ContentHasKeyword': (body) => body.includes('All Jobs'),
+    });
+  } finally {
+    page.close();
+    browser.close();
+  }
 }
 
