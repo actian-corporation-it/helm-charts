@@ -11,13 +11,13 @@ k6Image:
 grafanaParameters:
   prometheusUrl:
     remoteKey: paramstore/dev/us
-    remoteProperty: mimir_remote_write_url
+    remoteProperty: prometheus_remote_write_url
   prometheusUsername:
     remoteKey: paramstore/dev/us
-    remoteProperty: mimir_user
+    remoteProperty: prometheus_user
   prometheusPassword:
     remoteKey: grafana_oss_passwords/dev
-    remoteProperty: mimir_password
+    remoteProperty: prometheus_password
 syntheticTests:
   cronjobsConfigMapName: k6-synthetic-test-cronjobs
   configMapName: k6-synthetic-test-scripts
