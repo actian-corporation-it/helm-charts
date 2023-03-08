@@ -24,7 +24,7 @@ spec:
       terminationGracePeriodSeconds: 600
       restartPolicy: Always
       containers:
-      - image: actian/harness-delegate-immutable:1.0.1
+      - image: actian/harness-delegate-immutable:{{ .Values.delegateVersion }}
         imagePullPolicy: Always
         name: delegate
         ports:
