@@ -997,6 +997,16 @@ entries:
     version: 0.1.0
   k6-synthetic-tests:
   - apiVersion: v2
+    appVersion: 0.8.0
+    created: "2023-03-08T15:15:36.930314094Z"
+    description: Helm chart to deploy K6 Synthetic Tests in a Kubernetes cluster
+    digest: cdcbf8491a29596bd8c254ed56f4a33ee036978a726391753714f0bca9d58fe7
+    name: k6-synthetic-tests
+    type: application
+    urls:
+    - https://github.com/actian-corporation-it/helm-charts/releases/download/k6-synthetic-tests-0.3.0/k6-synthetic-tests-0.3.0.tgz
+    version: 0.3.0
+  - apiVersion: v2
     appVersion: 0.4.0
     created: "2023-02-28T16:40:02.35388312Z"
     description: Helm chart to deploy K6 Synthetic Tests in a Kubernetes cluster
@@ -1049,4 +1059,4 @@ entries:
     urls:
     - https://github.com/actian-corporation-it/helm-charts/releases/download/prometheus-15.10.1002/prometheus-15.10.1002.tgz
     version: 15.10.1002
-generated: "2023-03-08T00:09:52.671547704Z"
+generated: "2023-03-08T15:15:36.930818591Z"
