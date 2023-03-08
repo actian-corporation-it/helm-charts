@@ -26,14 +26,14 @@ syntheticTests:
     avalanche-login:
       scriptName: avalanche.actiandatacloud.com.login.js
       scriptFile: avalanche.actiandatacloud.com.login.js
-      schedule: "*/5 * * * *"
+      schedule: "*/1 * * * *"
       usernameSecretKey: av_console_username
       usernameRemoteKey: synthetics/production/avalanche-login
       passwordSecretKey: av_console_password
       passwordRemoteKey: synthetics/production/avalanche-login
     integrationmanager-login:
       scriptName: console.im.actiandatacloud.com.login.js
-      schedule: "*/5 * * * *"
+      schedule: "*/1 * * * *"
       scriptFile: console.im.actiandatacloud.com.login.js
       usernameSecretKey: im_console_username
       usernameRemoteKey: synthetics/production/integrationmanager-console-login
