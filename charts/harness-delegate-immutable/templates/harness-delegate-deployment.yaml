@@ -19,6 +19,7 @@ spec:
         prometheus.io/port: "3460"
         prometheus.io/path: "/api/metrics"
     spec:
+      serviceAccountName: {{ .Values.serviceAccount }}
       imagePullSecrets: 
       - name: dockerhub-image-pull
       terminationGracePeriodSeconds: 600
