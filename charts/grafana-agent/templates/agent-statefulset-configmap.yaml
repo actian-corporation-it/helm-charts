@@ -21,7 +21,6 @@ data:
         host_filter: false
         scrape_configs:
 {{ include "statefulsetjobs.hashicorpVault" . | indent 8 }}
-{{ include "statefulsetjobs.hashicorpConsul" . | indent 8 }}
 {{ include "statefulsetjobs.ingressNginx" . | indent 8 }}
 {{ include "statefulsetjobs.trivy" . | indent 8 }}
 {{ include "statefulsetjobs.istio" . | indent 8 }}
@@ -38,9 +37,14 @@ data:
 {{ include "statefulsetjobs.kubelet" . | indent 8}}
 {{ include "statefulsetjobs.kubeStateMetrics" . | indent 8}}
     integrations:
+      metrics:
+        autoscrape:
+          enable: true
+          metrics_instance: {{ .Values.metrics.instanceName }}
       eventhandler:
         cache_path: "{{ .Values.global.agentVarDirectory }}/eventhandler/eventhandler.cache"
         logs_instance: {{ .Values.logs.eventHandlerInstanceName }}
+{{ include "statefulsetjobs.hashicorpConsul" . | indent 6 }}
 
     logs:
       positions_directory: "{{ .Values.global.agentVarDirectory }}/eventhandler/positions"

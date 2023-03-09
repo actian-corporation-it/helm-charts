@@ -38,19 +38,9 @@ metric_relabel_configs:
 {{- define "statefulsetjobs.hashicorpConsul" -}}
 {{- if .Values.metrics.services.hashicorpConsul.enabled -}}
 {{- $hashicorpConsulTarget := (include "hashicorpConsul.target" .) -}}
-# Consul Server
-- job_name: consul
-  static_configs:
-  - targets:
-    - {{ $hashicorpConsulTarget }}
-  metrics_path: /v1/agent/metrics
-  relabel_configs:
-  - source_labels: [__address__]
-    target_label: __param_target
-    regex: ([\w\-\_]+)\..+:\d+
-  - source_labels: [__param_target]
-    target_label: instance
-{{ include "metrics.metricRelabelConfigs" .Values.metrics.filters.hashicorpConsul | indent 2 }}
+consul_configs:
+- server: {{ $hashicorpConsulTarget }}
+  instance: {{ .Values.metrics.services.hashicorpConsul.releaseName }}
 {{- end -}}
 {{- end -}}
 
