@@ -34,6 +34,16 @@ entries:
     version: 0.1.1
   grafana-agent:
   - apiVersion: v2
+    appVersion: v0.32.1
+    created: "2023-03-10T16:15:30.711213282Z"
+    description: Helm chart to deploy grafana-agent in a Kubernetes cluster
+    digest: 7a5028569c76e09e12ab30bbe541915ac6766e48752c77d424d2ed2a8d0ed36f
+    name: grafana-agent
+    type: application
+    urls:
+    - https://github.com/actian-corporation-it/helm-charts/releases/download/grafana-agent-3.0.0/grafana-agent-3.0.0.tgz
+    version: 3.0.0
+  - apiVersion: v2
     appVersion: v0.26.1
     created: "2023-02-24T15:29:24.797352154Z"
     description: Helm chart to deploy grafana-agent in a Kubernetes cluster
@@ -897,6 +907,16 @@ entries:
   harness-delegate-immutable:
   - apiVersion: v2
     appVersion: 0.1.0
+    created: "2023-03-10T16:15:30.848732251Z"
+    description: A Helm chart for Kubernetes
+    digest: 0bae7e0ee4eaf486a67e6aefd18b690af9f383d89bc8a7c474fecfd73e53fb54
+    name: harness-delegate-immutable
+    type: application
+    urls:
+    - https://github.com/actian-corporation-it/helm-charts/releases/download/harness-delegate-immutable-0.2.0/harness-delegate-immutable-0.2.0.tgz
+    version: 0.2.0
+  - apiVersion: v2
+    appVersion: 0.1.0
     created: "2023-03-08T00:09:52.670988897Z"
     description: A Helm chart for Kubernetes
     digest: db38eb28873fe93a44c92c960e5121b86be4b2d9d37b6ce5e8392d951098ae6f
@@ -1059,4 +1079,4 @@ entries:
     urls:
     - https://github.com/actian-corporation-it/helm-charts/releases/download/prometheus-15.10.1002/prometheus-15.10.1002.tgz
     version: 15.10.1002
-generated: "2023-03-08T15:15:36.930818591Z"
+generated: "2023-03-10T16:15:30.849564863Z"
