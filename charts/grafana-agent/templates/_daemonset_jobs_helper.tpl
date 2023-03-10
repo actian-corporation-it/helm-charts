@@ -1,3 +1,32 @@
+{{/*
+*****************************************
+Daemonset Integration definitions
+*****************************************
+*/}}
+{{- define "integrations.nodeExporter" -}}
+node_exporter:
+  {{- if .Values.metrics.integrations.nodeExporter.collectorSet }}
+  set_collectors: 
+    {{- range $set := .Values.metrics.integrations.nodeExporter.collectorSet }}
+    - {{ $set }}
+    {{- end }}
+  {{- end }}
+  {{- if .Values.metrics.filters.nodeExporter }}
+  autoscrape:
+    metric_relabel_configs:
+      {{ range $.Values.metrics.filters.nodeExporter -}}
+      - action: {{ .action }}
+        source_labels: {{ .source_labels }}
+        regex: {{ .regex | quote }}
+      {{- end }}
+  {{- end}}
+{{- end -}}
+
+{{/*
+*****************************************
+Daemonset service job definitions
+*****************************************
+*/}}
 {{- define "daemonsetjobs.kubernetesPods" -}}
 - job_name: kubernetes-pods
   kubernetes_sd_configs:

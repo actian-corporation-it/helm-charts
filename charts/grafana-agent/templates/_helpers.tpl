@@ -1,7 +1,13 @@
+{{/*
+*****************************************
+Authentication blocks
+*****************************************
+*/}}
 {{- define "prometheus.authentication" -}}
 {{- $prometheusRemoteWriteUrl := (include "urls.prometheusRemoteWriteUrl" .) -}}
 {{- $prometheusId := (include "credentials.prometheusId" .) -}}
 {{- $prometheusPassword := (include "credentials.prometheusPassword" .) -}}
+remote_write:
 - url: {{ $prometheusRemoteWriteUrl }}
   {{- if or (eq .Values.global.environment "dev") (eq .Values.global.environment "test") }}
   headers:
@@ -19,6 +25,7 @@
 {{- $lokiUrl := (include "urls.lokiUrl" .) -}}
 {{- $lokiId := (include "credentials.lokiId" .) -}}
 {{- $lokiPassword := (include "credentials.lokiPassword" .) -}}
+clients:
 - url: {{ $lokiUrl }}
   {{- if or (eq .Values.global.environment "dev") (eq .Values.global.environment "test")  }}
   tenant_id: engineering
@@ -28,6 +35,17 @@
   basic_auth:
     username: {{ $lokiId }}
     password: {{ $lokiPassword }}
+{{- end -}}
+
+{{/*
+*****************************************
+Misc definitions
+*****************************************
+*/}}
+
+{{- define "annotations.versions" -}}
+{{- $grafanaAgentVersion := (include "grafanaAgent.Version" .) -}}
+grafana_agent_versions: "Chart: {{ $.Chart.Name }} / {{ $.Chart.Version }}; App: {{ $grafanaAgentVersion }}"
 {{- end -}}
 
 {{- define "statefulset.ServiceName" -}}
@@ -46,13 +64,62 @@
   {{- printf "%s-daemonset" .Release.Name -}}
 {{- end -}}
 
+{{- define "grafanaAgent.Version" -}}
+  {{- if eq .Values.global.agentVersion "" -}}
+    {{- printf "%s" $.Chart.AppVersion -}}
+  {{- else -}}
+    {{- printf "%s" .Values.global.agentVersion -}}
+  {{- end -}}
+{{- end -}}
+
+{{/*
+*****************************************
+Agent Configuration definitions
+*****************************************
+*/}}
 {{- define "agentConfig.externalLabels" -}}
+external_labels:
   {{- range $key, $value := $.Values.global.externalLabels }}
     {{- if $value }}
-    {{ $key }}: {{ $value }}
-    {{- else }}{{ required (printf "\n\nMissing value: A value is required for metrics label %s\n" $key) nil }}
+  {{ $key }}: {{ $value }}
+    {{- else }}
+      {{ required (printf "\n\nMissing value: A value is required for metrics label %s\n" $key) nil }}
     {{- end }}
   {{- end }}
+{{- end -}}
+
+{{- define "agentConfig.daemonsetServer" -}}
+server:
+  log_format: {{ .Values.daemonset.logFormat }}
+  log_level: {{ .Values.daemonset.logLevel }}
+{{- end -}}
+
+{{- define "agentConfig.statefulsetServer" -}}
+server:
+  log_format: {{ .Values.statefulset.logFormat }}
+  log_level: {{ .Values.statefulset.logLevel }}
+{{- end -}}
+
+{{/*
+*****************************************
+Common Integration definitions
+*****************************************
+*/}}
+{{- define "integrations.metrics" -}}
+metrics:
+  autoscrape:
+    enable: true
+    metrics_instance: {{ .Values.metrics.instanceName }}
+{{- end -}}
+
+{{/*
+*****************************************
+Application target definitions
+*****************************************
+*/}}
+{{- define "redpanda.target" -}}
+  {{- $port := .Values.metrics.services.redpanda.metricPort | toString -}}
+  {{- printf "%s.%s.svc.cluster.local:%s" .Values.metrics.services.redpanda.releaseName .Values.metrics.services.redpanda.namespace $port -}}
 {{- end -}}
 
 {{- define "rabbitmq.target" -}}
@@ -91,8 +158,13 @@
 {{- end -}}
 
 {{- define "hashicorpConsul.target" -}}
-  {{- $port := .Values.metrics.services.hashicorpConsul.metricPort | toString -}}
-  {{- printf "%s.%s.svc.cluster.local:%s" .Values.metrics.services.hashicorpConsul.releaseName .Values.metrics.services.hashicorpConsul.namespace $port -}}
+  {{- $port := .Values.metrics.integrations.hashicorpConsul.metricPort | toString -}}
+  {{- printf "%s.%s.svc.cluster.local:%s" .Values.metrics.integrations.hashicorpConsul.releaseName .Values.metrics.integrations.hashicorpConsul.namespace $port -}}
+{{- end -}}
+
+{{- define "redis.target" -}}
+  {{- $port := .metricPort | toString -}}
+  {{- printf "%s.%s.svc.cluster.local:%s" .releaseName .namespace $port -}}
 {{- end -}}
 
 {{- define "ingressNginx.target" -}}
@@ -105,16 +177,10 @@
   {{- printf "%s.%s.svc.cluster.local:%s" .Values.metrics.services.trivy.releaseName .Values.metrics.services.trivy.namespace $port -}}
 {{- end -}}
 
-{{- define "grafanaAgent.Version" -}}
-  {{- if eq .Values.global.agentVersion "" -}}
-    {{- printf "%s" $.Chart.AppVersion -}}
-  {{- else -}}
-    {{- printf "%s" .Values.global.agentVersion -}}
-  {{- end -}}
-{{- end -}}
-
 {{/*
+*****************************************
 Compute statefulset service account name
+*****************************************
 */}}
 {{- define "statefulset.ServiceAccountName" -}}
   {{- if ne .Values.statefulset.serviceAccountName "" -}}
@@ -125,7 +191,9 @@ Compute statefulset service account name
 {{- end -}}
 
 {{/*
+*****************************************
 Compute daemonset service account name
+*****************************************
 */}}
 {{- define "daemonset.ServiceAccountName" -}}
   {{- if ne .Values.daemonset.serviceAccountName "" -}}
@@ -136,7 +204,9 @@ Compute daemonset service account name
 {{- end -}}
 
 {{/*
+*****************************************
 URLs for Prometheus and Loki
+*****************************************
 */}}
 {{- define "urls.prometheusRemoteWriteUrl" -}}
   {{- if eq .Values.global.environment "dev" -}}
@@ -171,7 +241,9 @@ URLs for Prometheus and Loki
 {{- end -}}
 
 {{/*
-Prometheus and Loki IDs
+*****************************************
+Prometheus and Loki IDs and passwords
+*****************************************
 */}}
 {{- define "credentials.prometheusId" -}}
   {{- if eq .Values.global.environment "dev" -}}
@@ -215,7 +287,9 @@ Prometheus and Loki IDs
 
 
 {{/*
+*****************************************
 Vault paths for Prometheus and Loki secrets
+*****************************************
 */}}
 {{- define "vaultSecrets.prometheusPasswordPath" -}}
   {{- if eq .Values.global.environment "dev" -}}

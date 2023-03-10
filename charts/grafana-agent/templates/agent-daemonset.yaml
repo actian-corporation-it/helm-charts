@@ -9,6 +9,8 @@ kind: DaemonSet
 metadata:
   name: {{ $daemonsetServiceName }}
   namespace: {{ .Values.global.namespace }}
+  annotations:
+{{ include "annotations.versions" . | indent 4 }}
 spec:
   minReadySeconds: 10
   selector:
@@ -24,6 +26,7 @@ spec:
       containers:
       - args:
         - -config.file=/etc/agent/agent.yaml
+        - -enable-features=integrations-next
         - -server.http.address=0.0.0.0:{{ .Values.daemonset.serverPort }}
         - -config.expand-env
         command:
