@@ -3,56 +3,51 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: {{ .Release.Name }}-statefulset
+  annotations:
+{{ include "annotations.versions" . | indent 4 }}
+
 data:
   agent.yaml: |
-    server:
-      log_format: {{ .Values.daemonset.logFormat }}
-      log_level: {{ .Values.statefulset.logLevel }}
+{{ include "agentConfig.statefulsetServer" . | indent 4 }}
+
     metrics:
       wal_directory: "{{ .Values.global.agentVarDirectory }}/data"
       global:
         scrape_interval: {{ .Values.metrics.scrapeInterval }}
-        external_labels:
-{{- include "agentConfig.externalLabels" . | indent 8 }}
-        remote_write:
+{{ include "agentConfig.externalLabels" . | indent 8 }}
 {{ include "prometheus.authentication" . | indent 8 }}
       configs:
       - name: {{ .Values.metrics.instanceName }}
         host_filter: false
         scrape_configs:
-{{ include "statefulsetjobs.hashicorpVault" . | indent 8 }}
-{{ include "statefulsetjobs.ingressNginx" . | indent 8 }}
-{{ include "statefulsetjobs.trivy" . | indent 8 }}
-{{ include "statefulsetjobs.istio" . | indent 8 }}
-{{ include "statefulsetjobs.velero" . | indent 8 }}
-{{ include "statefulsetjobs.argocd" . | indent 8 }}
-{{ include "statefulsetjobs.certManager" . | indent 8}}
-{{ include "statefulsetjobs.externalSecrets" . | indent 8}}
-{{ include "statefulsetjobs.rabbitmq" . | indent 8}}
-{{ include "statefulsetjobs.redpanda" . | indent 8}}
-{{ include "statefulsetjobs.mimir" . | indent 8}}
-{{ include "statefulsetjobs.loki" . | indent 8}}
-{{ include "statefulsetjobs.grafana" . | indent 8}}
-{{ include "statefulsetjobs.cadvisor" . | indent 8}}
-{{ include "statefulsetjobs.kubelet" . | indent 8}}
-{{ include "statefulsetjobs.kubeStateMetrics" . | indent 8}}
+{{ include "statefulsetjobs.cadvisor" . | indent 8 }}
+{{ include "statefulsetjobs.kubelet" . | indent 8 }}
+{{ include "statefulsetjobs.kubeStateMetrics" . | indent 8 }}
+{{- if .Values.metrics.services.certManager.enabled }}{{ include "statefulsetjobs.certManager" . | indent 8 }}{{- end -}}
+{{- if .Values.metrics.services.externalSecrets.enabled -}}{{ include "statefulsetjobs.externalSecrets" . | indent 8 }}{{- end -}}
+{{- if .Values.metrics.services.argocd.enabled -}}{{ include "statefulsetjobs.argocd" . | indent 8 }}{{- end -}}
+{{- if .Values.metrics.services.hashicorpVault.enabled -}}{{ include "statefulsetjobs.hashicorpVault" . | indent 8 }}{{- end -}}
+{{- if .Values.metrics.services.ingressNginx.enabled -}}{{ include "statefulsetjobs.ingressNginx" . | indent 8 }}{{- end -}}
+{{- if .Values.metrics.services.trivy.enabled -}}{{ include "statefulsetjobs.trivy" . | indent 8 }}{{- end -}}
+{{- if .Values.metrics.services.velero.enabled -}}{{ include "statefulsetjobs.velero" . | indent 8 }}{{- end -}}
+{{- if .Values.metrics.services.rabbitmq.enabled -}}{{ include "statefulsetjobs.rabbitmq" . | indent 8 }}{{- end -}}
+{{- if .Values.metrics.services.redpanda.enabled -}}{{ include "statefulsetjobs.redpanda" . | indent 8 }}{{- end -}}
+{{- if and .Values.metrics.services.mimir .Values.metrics.services.mimir.enabled -}}{{ include "statefulsetjobs.mimir" . | indent 8 }}{{- end -}}
+{{- if and .Values.metrics.services.loki .Values.metrics.services.loki.enabled -}}{{ include "statefulsetjobs.loki" . | indent 8 }}{{- end -}}
+{{- if and .Values.metrics.services.grafana .Values.metrics.services.grafana.enabled -}}{{ include "statefulsetjobs.grafana" . | indent 8 }}{{- end -}}
+{{- if .Values.metrics.services.istio.enabled -}}{{ include "statefulsetjobs.istio" . | indent 8 }}{{- end }}
+
     integrations:
-      metrics:
-        autoscrape:
-          enable: true
-          metrics_instance: {{ .Values.metrics.instanceName }}
-      eventhandler:
-        cache_path: "{{ .Values.global.agentVarDirectory }}/eventhandler/eventhandler.cache"
-        logs_instance: {{ .Values.logs.eventHandlerInstanceName }}
-{{ include "statefulsetjobs.hashicorpConsul" . | indent 6 }}
+{{ include "integrations.metrics" . | indent 6 }}
+{{ include "integrations.eventHandler" . | indent 6 }}
+{{- if .Values.metrics.integrations.redis.enabled -}}{{ include "integrations.redisExporter" . | indent 6 }}{{- end -}}
+{{- if .Values.metrics.integrations.hashicorpConsul.enabled -}}{{ include "integrations.hashicorpConsulExporter" . | indent 6 }}{{- end }}
 
     logs:
       positions_directory: "{{ .Values.global.agentVarDirectory }}/eventhandler/positions"
       configs:
       - name: {{ .Values.logs.eventHandlerInstanceName }}
-        clients:
 {{ include "loki.authentication" . | indent 8 }}
-          external_labels:
-{{- include "agentConfig.externalLabels" . | indent 8 }}
+{{ include "agentConfig.externalLabels" . | indent 10 }}
             job: "integrations/kubernetes/eventhandler"
 {{- end }}

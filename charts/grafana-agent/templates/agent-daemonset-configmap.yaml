@@ -3,18 +3,17 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: {{ .Release.Name }}-daemonset
+  annotations:
+{{ include "annotations.versions" . | indent 4 }}
 data:
   agent.yaml: |
-    server:
-      log_format: {{ .Values.daemonset.logFormat }}
-      log_level: {{ .Values.daemonset.logLevel }}
+{{ include "agentConfig.daemonsetServer" . | indent 4}}
+
     metrics:
       wal_directory: "{{ .Values.global.agentVarDirectory }}/data"
       global:
         scrape_interval: {{ .Values.metrics.scrapeInterval }}
-        external_labels:
-{{- include "agentConfig.externalLabels" . | indent 10 }}
-        remote_write:
+{{ include "agentConfig.externalLabels" . | indent 8 }}
 {{ include "prometheus.authentication" . | indent 8 }}
       configs:
       - name: {{ .Values.metrics.instanceName }}
@@ -24,32 +23,15 @@ data:
 {{ include "daemonsetjobs.kubernetes" . | indent 8 }}
 
     integrations:
-      node_exporter:
-        enabled: true
-        {{- if .Values.metrics.integrations.nodeExporter.collectorSet }}
-        set_collectors: 
-          {{- range $set := .Values.metrics.integrations.nodeExporter.collectorSet }}
-          - {{ $set }}
-          {{- end }}
-        {{- end }}
-        {{- if .Values.metrics.filters.nodeExporter }}
-        metric_relabel_configs:
-          {{ range $.Values.metrics.filters.nodeExporter -}}
-          - action: {{ .action }}
-            source_labels: {{ .source_labels }}
-            regex: {{ .regex | quote }}
-          {{- end }}
-        {{- end}}
+{{ include "integrations.metrics" . | indent 6 }}
+{{ include "integrations.nodeExporter" . | indent 6 }}
 
-    {{- if .Values.logs.enabled }}
     logs:
       positions_directory: "{{ .Values.global.agentVarDirectory }}/positions"
       configs:
       - name: {{ .Values.logs.instanceName }}
-        clients:
 {{ include "loki.authentication" . | indent 8 }}
-          external_labels:
-{{- include "agentConfig.externalLabels" . | indent 12 }}
+{{ include "agentConfig.externalLabels" . | indent 10 }}
         target_config:
           sync_period: 10s
         scrape_configs:
@@ -58,5 +40,4 @@ data:
 {{ include "daemonsetjobs.kubernetesPodsLogsDirectController" . | indent 8 }}
 {{ include "daemonsetjobs.kubernetesPodsLogsIndirectController" . | indent 8 }}
 {{ include "daemonsetjobs.kubernetesPodsLogsStatic" . | indent 8 }}
-    {{- end }}
 {{- end }}

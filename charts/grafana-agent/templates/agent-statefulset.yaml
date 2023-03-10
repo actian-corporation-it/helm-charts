@@ -9,6 +9,8 @@ kind: Service
 metadata:
   labels:
     name: {{ $statefulsetServiceName }}
+  annotations:
+{{ include "annotations.versions" . | indent 4 }}
   name: {{ $statefulsetServiceName }}
   namespace: {{ .Values.global.namespace }}
 spec:
@@ -25,6 +27,8 @@ kind: StatefulSet
 metadata:
   name: grafana-agent
   namespace: {{ .Values.global.namespace }}
+  annotations:
+{{ include "annotations.versions" . | indent 4 }}
 spec:
   replicas: 1
   selector:

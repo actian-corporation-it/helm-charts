@@ -1,3 +1,8 @@
+{{/*
+*****************************************
+Common service job helpers
+*****************************************
+*/}}
 {{- define "metrics.metricRelabelDefaultConfigs" -}}
 metric_relabel_configs:
 - action: drop
@@ -16,9 +21,43 @@ metric_relabel_configs:
 {{- end -}}
 {{- end -}}
 
+{{/*
+*****************************************
+Statefulset Integration definitions
+*****************************************
+*/}}
+{{- define "integrations.redisExporter" -}}
+{{ printf "" }}
+redis_configs:
+{{- range $redisInstance := .Values.metrics.integrations.redis.instances -}}
+{{- with $redisInstance -}}
+{{- $redisTarget := (include "redis.target" . ) }}
+- redis_addr: {{ $redisTarget }}
+  instance: {{ .releaseName }}
+{{- end -}}
+{{- end -}}
+{{- end -}}
+
+{{- define "integrations.hashicorpConsulExporter" -}}
+{{- $hashicorpConsulTarget := (include "hashicorpConsul.target" .) }}
+consul_configs:
+- server: {{ $hashicorpConsulTarget }}
+  instance: {{ .Values.metrics.integrations.hashicorpConsul.releaseName }}
+{{- end -}}
+
+{{- define "integrations.eventHandler" -}}
+eventhandler:
+  cache_path: "{{ .Values.global.agentVarDirectory }}/eventhandler/eventhandler.cache"
+  logs_instance: {{ .Values.logs.eventHandlerInstanceName }}
+{{- end -}}
+
+{{/*
+*****************************************
+Statefulset service job definitions
+*****************************************
+*/}}
 {{- define "statefulsetjobs.hashicorpVault" -}}
-{{- if .Values.metrics.services.hashicorpVault.enabled -}}
-{{- $hashicorpVaultTarget := (include "hashicorpVault.target" .) -}}
+{{- $hashicorpVaultTarget := (include "hashicorpVault.target" .) }}
 # Vault Server
 - job_name: vault
   static_configs:
@@ -33,20 +72,9 @@ metric_relabel_configs:
     target_label: instance
 {{ include "metrics.metricRelabelConfigs" .Values.metrics.filters.hashicorpVault | indent 2 }}
 {{- end -}}
-{{- end -}}
-
-{{- define "statefulsetjobs.hashicorpConsul" -}}
-{{- if .Values.metrics.services.hashicorpConsul.enabled -}}
-{{- $hashicorpConsulTarget := (include "hashicorpConsul.target" .) -}}
-consul_configs:
-- server: {{ $hashicorpConsulTarget }}
-  instance: {{ .Values.metrics.services.hashicorpConsul.releaseName }}
-{{- end -}}
-{{- end -}}
 
 {{- define "statefulsetjobs.ingressNginx" -}}
-{{- if .Values.metrics.services.ingressNginx.enabled -}}
-{{- $ingressNginxTarget := (include "ingressNginx.target" .) -}}
+{{- $ingressNginxTarget := (include "ingressNginx.target" .) }}
 # NGINX Ingress Controller
 - job_name: nginx-ingress
   static_configs:
@@ -60,11 +88,9 @@ consul_configs:
     target_label: instance
 {{ include "metrics.metricRelabelConfigs" .Values.metrics.filters.ingressNginx | indent 2 }}
 {{- end -}}
-{{- end -}}
 
 {{- define "statefulsetjobs.trivy" -}}
-{{- if .Values.metrics.services.trivy.enabled -}}
-{{- $trivyTarget := (include "trivy.target" .) -}}
+{{- $trivyTarget := (include "trivy.target" .) }}
 # Trivy
 - job_name: trivy
   static_configs:
@@ -78,11 +104,9 @@ consul_configs:
     target_label: instance
 {{ include "metrics.metricRelabelConfigs" .Values.metrics.filters.trivy | indent 2 }}
 {{- end -}}
-{{- end -}}
 
 {{- define "statefulsetjobs.velero" -}}
-{{- if .Values.metrics.services.velero.enabled -}}
-{{- $veleroTarget := (include "velero.target" .) -}}
+{{- $veleroTarget := (include "velero.target" .) }}
 # Velero
 - job_name: velero
   static_configs:
@@ -96,11 +120,9 @@ consul_configs:
     target_label: instance
 {{ include "metrics.metricRelabelConfigs" .Values.metrics.filters.velero | indent 2 }}
 {{- end -}}
-{{- end -}}
 
 {{- define "statefulsetjobs.certManager" -}}
-{{- if .Values.metrics.services.certManager.enabled -}}
-{{- $certManagerTarget := (include "certManager.target" .) -}}
+{{- $certManagerTarget := (include "certManager.target" .) }}
 # Cert-Manager
 - job_name: cert-manager
   static_configs:
@@ -114,11 +136,9 @@ consul_configs:
     target_label: instance
 {{ include "metrics.metricRelabelConfigs" .Values.metrics.filters.certManager | indent 2 }}
 {{- end -}}
-{{- end -}}
 
 {{- define "statefulsetjobs.externalSecrets" -}}
-{{- if .Values.metrics.services.externalSecrets.enabled -}}
-{{- $externalSecretsTarget := (include "externalSecrets.target" .) -}}
+{{- $externalSecretsTarget := (include "externalSecrets.target" .) }}
 # External-Secrets-Operator
 - job_name: external-secrets
   static_configs:
@@ -132,11 +152,9 @@ consul_configs:
     target_label: instance
 {{ include "metrics.metricRelabelConfigs" .Values.metrics.filters.externalSecrets | indent 2 }}
 {{- end -}}
-{{- end -}}
 
 {{- define "statefulsetjobs.rabbitmq" -}}
-{{- if .Values.metrics.services.rabbitmq.enabled -}}
-{{- $rabbitmqTarget := (include "rabbitmq.target" .) -}}
+{{- $rabbitmqTarget := (include "rabbitmq.target" .) }}
 # RabbitMQ
 - job_name: rabbitmq
   static_configs:
@@ -151,15 +169,14 @@ consul_configs:
     target_label: instance
 {{ include "metrics.metricRelabelConfigs" .Values.metrics.filters.rabbitmq | indent 2 }}
 {{- end -}}
-{{- end -}}
 
 {{- define "statefulsetjobs.redpanda" -}}
-{{- if .Values.metrics.services.redpanda.enabled -}}
+{{- $redpandaTarget := (include "redpanda.target" .) }}
 # RedPanda Kafka
 - job_name: redpanda
   static_configs:
   - targets:
-    - {{ .Values.metrics.services.redpanda.releaseName }}.{{ .Values.metrics.services.redpanda.namespace }}.svc.cluster.local:{{ .Values.metrics.services.redpanda.metricPort}}
+    - {{ $redpandaTarget }}
   metrics_path: /metrics
   relabel_configs:
   - source_labels: [__address__]
@@ -169,24 +186,17 @@ consul_configs:
     target_label: instance
 {{ include "metrics.metricRelabelConfigs" .Values.metrics.filters.redpanda | indent 2 }}
 {{- end -}}
-{{- end -}}
 
 {{- define "statefulsetjobs.mimir" -}}
-{{- if and .Values.metrics.services.mimir .Values.metrics.services.mimir.enabled -}}
 # Mimir will be here soon
-{{- end -}}
 {{- end -}}
 
 {{- define "statefulsetjobs.loki" -}}
-{{- if and .Values.metrics.services.loki .Values.metrics.services.loki.enabled -}}
 # Loki will be here soon
-{{- end -}}
 {{- end -}}
 
 {{- define "statefulsetjobs.grafana" -}}
-{{- if and .Values.metrics.services.grafana .Values.metrics.services.grafana.enabled -}}
 # Grafana will be here soon
-{{- end -}}
 {{- end -}}
 
 {{- define "statefulsetjobs.cadvisor" -}}
@@ -244,47 +254,29 @@ consul_configs:
 {{ include "metrics.metricRelabelConfigs" .Values.metrics.filters.kubeStateMetrics | indent 2 }}
 {{- end -}}
 
-{{- define "statefulsetjobs.argocdTemplate" -}}
-{{- $root := .root -}}
-{{- $env := .env -}}
-{{- $jobName := printf "argocd-%s" $env -}}
-# {{ $jobName }}
-- job_name: {{ $jobName }}
+{{- define "statefulsetjobs.argocd" -}}
+{{- $root := . -}}
+{{- range $argocdNamespace := .Values.metrics.services.argocd.namespaces }}
+# {{ $argocdNamespace }}
+- job_name: {{ $argocdNamespace }}
   static_configs:
   - targets:
-    - argocd-applicationset-controller.{{ $jobName }}.svc.cluster.local:8080
-    - argocd-metrics.{{ $jobName }}.svc.cluster.local:8082
-    - argocd-server-metrics.{{ $jobName }}.svc.cluster.local:8083
-    - argocd-repo-server.{{ $jobName }}.svc.cluster.local:8084
+    - argocd-applicationset-controller.{{ $argocdNamespace }}.svc.cluster.local:8080
+    - argocd-metrics.{{ $argocdNamespace }}.svc.cluster.local:8082
+    - argocd-server-metrics.{{ $argocdNamespace }}.svc.cluster.local:8083
+    - argocd-repo-server.{{ $argocdNamespace }}.svc.cluster.local:8084
   relabel_configs:
   - source_labels: [__address__]
     target_label: __param_target
     regex: ([\w\-\_]+)\..+:\d+
   - source_labels: [__param_target]
     target_label: instance
-{{- end -}}
-
-{{- define "statefulsetjobs.argocd" -}}
-{{- if .Values.metrics.services.argocdDev.enabled -}}
-{{ include "statefulsetjobs.argocdTemplate" (dict "root" . "env" "dev") }}
-{{ include "metrics.metricRelabelConfigs" .Values.metrics.filters.argocdDev | indent 2 }}
-{{- end }}
-{{- if .Values.metrics.services.argocdTest.enabled }}
-{{ include "statefulsetjobs.argocdTemplate" (dict "root" . "env" "test") }}
-{{ include "metrics.metricRelabelConfigs" .Values.metrics.filters.argocdTest | indent 2 }}
-{{- end }}
-{{- if .Values.metrics.services.argocdStage.enabled }}
-{{ include "statefulsetjobs.argocdTemplate" (dict "root" . "env" "stage") }}
-{{ include "metrics.metricRelabelConfigs" .Values.metrics.filters.argocdStage | indent 2 }}
-{{- end }}
-{{- if .Values.metrics.services.argocdProduction.enabled }}
-{{ include "statefulsetjobs.argocdTemplate" (dict "root" . "env" "production") }}
-{{ include "metrics.metricRelabelConfigs" .Values.metrics.filters.argocdProduction | indent 2 }}
+{{ include "metrics.metricRelabelConfigs" $root.Values.metrics.filters.argocd | indent 2 }}
 {{- end }}
 {{- end -}}
 
 {{- define "statefulsetjobs.istio" -}}
-{{- if .Values.metrics.services.istio.enabled -}}
+{{ printf "" }}
 {{ include "statefulsetjobs.istioMesh" . }}
 {{ include "statefulsetjobs.istioEnvoyStats" . }}
 {{ include "statefulsetjobs.istioPolicy" . }}
@@ -293,7 +285,6 @@ consul_configs:
 {{ include "statefulsetjobs.istioGalley" . }}
 {{ include "statefulsetjobs.istioCitadel" . }}
 {{ include "statefulsetjobs.istioSidecarInjector" . }}
-{{- end -}}
 {{- end -}}
 
 {{- define "statefulsetjobs.istioMesh" -}}
