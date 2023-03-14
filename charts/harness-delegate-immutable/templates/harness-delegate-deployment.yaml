@@ -75,6 +75,9 @@ spec:
             machine alm.actian.com
             login {{ .Values.bitBucket_user }}
             password {{ .Values.bitBucket_token }}
+            machine bitbucket.org
+            login harnessio
+            password {{ .Values.bitBucket_cloud_token }}
             EOM
         - name: DELEGATE_DESCRIPTION
           value: ""
