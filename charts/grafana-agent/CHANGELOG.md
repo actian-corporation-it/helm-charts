@@ -24,6 +24,30 @@ are not present.
 
 - N/A
 
+## v3.0.1 (2023-03-20 - Suleyman Kutlu)
+
+-----------------
+
+### Breaking changes
+
+- N/A
+
+### Features
+
+- N/A
+
+### Enhancements
+
+- N/A
+
+### Bugfixes
+
+- ArgoCD namespaces list is provided as comma seperated string from the pipeline, we need to split it into an array before processing
+
+### Other changes
+
+- N/A
+
 ## v3.0.0 (2023-03-10 - Suleyman Kutlu)
 
 -----------------

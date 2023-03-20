@@ -256,7 +256,8 @@ Statefulset service job definitions
 
 {{- define "statefulsetjobs.argocd" -}}
 {{- $root := . -}}
-{{- range $argocdNamespace := .Values.metrics.services.argocd.namespaces }}
+{{- $namespaces := split "," .Values.metrics.services.argocd.namespaces -}}
+{{- range $argocdNamespace := $namespaces }}
 # {{ $argocdNamespace }}
 - job_name: {{ $argocdNamespace }}
   static_configs:
