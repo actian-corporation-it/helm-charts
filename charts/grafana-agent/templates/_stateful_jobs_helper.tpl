@@ -29,7 +29,8 @@ Statefulset Integration definitions
 {{- define "integrations.redisExporter" -}}
 {{ printf "" }}
 redis_configs:
-{{- range $redisInstance := .Values.metrics.integrations.redis.instances -}}
+{{- $instances := split "," .Values.metrics.integrations.redis.instances -}}
+{{- range $redisInstance := $instances -}}
 {{- with $redisInstance -}}
 {{- $redisTarget := (include "redis.target" . ) }}
 - redis_addr: {{ $redisTarget }}
