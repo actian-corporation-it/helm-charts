@@ -24,6 +24,30 @@ are not present.
 
 - N/A
 
+## v3.1.0 (2023-04-03 - Suleyman Kutlu)
+
+-----------------
+
+### Breaking changes
+
+- N/A
+
+### Features
+
+- Added "cloudops-dev" as an accepted environment. This environment will send metrics / logs to grafana-dev deployment
+
+### Enhancements
+
+- N/A
+
+### Bugfixes
+
+- N/A
+
+### Other changes
+
+- N/A
+
 ## v3.0.1 (2023-03-20 - Suleyman Kutlu)
 
 -----------------

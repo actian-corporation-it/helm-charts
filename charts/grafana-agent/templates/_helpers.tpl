@@ -9,7 +9,10 @@ Authentication blocks
 {{- $prometheusPassword := (include "credentials.prometheusPassword" .) -}}
 remote_write:
 - url: {{ $prometheusRemoteWriteUrl }}
-  {{- if or (eq .Values.global.environment "dev") (eq .Values.global.environment "test") }}
+  {{- if eq .Values.global.environment "cloudops-dev" }}
+  headers:
+    X-Scope-OrgId: cloudops-dev
+  {{- else if or (eq .Values.global.environment "dev") (eq .Values.global.environment "test") }}
   headers:
     X-Scope-OrgId: engineering
   {{- else if eq .Values.global.environment "stage" }}
@@ -27,7 +30,9 @@ remote_write:
 {{- $lokiPassword := (include "credentials.lokiPassword" .) -}}
 clients:
 - url: {{ $lokiUrl }}
-  {{- if or (eq .Values.global.environment "dev") (eq .Values.global.environment "test")  }}
+  {{- if eq .Values.global.environment "cloudops-dev" }}
+  tenant_id: cloudops-dev
+  {{- else if or (eq .Values.global.environment "dev") (eq .Values.global.environment "test")  }}
   tenant_id: engineering
   {{- else if eq .Values.global.environment "stage" }}
   tenant_id: stage
@@ -209,11 +214,7 @@ URLs for Prometheus and Loki
 *****************************************
 */}}
 {{- define "urls.prometheusRemoteWriteUrl" -}}
-  {{- if eq .Values.global.environment "dev" -}}
-    {{- printf "%s" .Values.urls.us.prometheusRemoteWriteUrl -}}
-  {{- else if eq .Values.global.environment "test" -}}
-    {{- printf "%s" .Values.urls.us.prometheusRemoteWriteUrl -}}
-  {{- else if or (eq .Values.global.environment "stage") (eq .Values.global.environment "staging") -}}
+  {{- if or (eq .Values.global.environment "cloudops-dev") (eq .Values.global.environment "dev") (eq .Values.global.environment "test") (eq .Values.global.environment "stage") -}}
     {{- printf "%s" .Values.urls.us.prometheusRemoteWriteUrl -}}
   {{- else -}}
     {{- if eq .Values.global.grafanaRegion "eu" -}}
@@ -225,11 +226,7 @@ URLs for Prometheus and Loki
 {{- end -}}
 
 {{- define "urls.lokiUrl" -}}
-  {{- if eq .Values.global.environment "dev" -}}
-    {{- printf "%s" .Values.urls.us.lokiUrl -}}
-  {{- else if eq .Values.global.environment "test" -}}
-    {{- printf "%s" .Values.urls.us.lokiUrl -}}
-  {{- else if or (eq .Values.global.environment "stage") (eq .Values.global.environment "staging") -}}
+  {{- if or (eq .Values.global.environment "cloudops-dev") (eq .Values.global.environment "dev") (eq .Values.global.environment "test") (eq .Values.global.environment "stage") -}}
     {{- printf "%s" .Values.urls.us.lokiUrl -}}
   {{- else -}}
     {{- if eq .Values.global.grafanaRegion "eu" -}}
@@ -246,11 +243,7 @@ Prometheus and Loki IDs and passwords
 *****************************************
 */}}
 {{- define "credentials.prometheusId" -}}
-  {{- if eq .Values.global.environment "dev" -}}
-    {{- printf "%s" .Values.credentials.us.prometheusId -}}
-  {{- else if eq .Values.global.environment "test" -}}
-    {{- printf "%s" .Values.credentials.us.prometheusId -}}
-  {{- else if or (eq .Values.global.environment "stage") (eq .Values.global.environment "staging") -}}
+  {{- if or (eq .Values.global.environment "cloudops-dev") (eq .Values.global.environment "dev") (eq .Values.global.environment "test") (eq .Values.global.environment "stage") -}}
     {{- printf "%s" .Values.credentials.us.prometheusId -}}
   {{- else -}}
     {{- if eq .Values.global.grafanaRegion "eu" -}}
@@ -266,11 +259,7 @@ Prometheus and Loki IDs and passwords
 {{- end -}}
 
 {{- define "credentials.lokiId" -}}
-  {{- if eq .Values.global.environment "dev" -}}
-    {{- printf "%s" .Values.credentials.us.lokiId -}}
-  {{- else if eq .Values.global.environment "test" -}}
-    {{- printf "%s" .Values.credentials.us.lokiId -}}
-  {{- else if or (eq .Values.global.environment "stage") (eq .Values.global.environment "staging") -}}
+  {{- if or (eq .Values.global.environment "cloudops-dev") (eq .Values.global.environment "dev") (eq .Values.global.environment "test") (eq .Values.global.environment "stage") -}}
     {{- printf "%s" .Values.credentials.us.lokiId -}}
   {{- else -}}
     {{- if eq .Values.global.grafanaRegion "eu" -}}
@@ -292,11 +281,9 @@ Vault paths for Prometheus and Loki secrets
 *****************************************
 */}}
 {{- define "vaultSecrets.prometheusPasswordPath" -}}
-  {{- if eq .Values.global.environment "dev" -}}
-    {{- printf "grafana_oss_passwords/production" -}}
-  {{- else if eq .Values.global.environment "test" -}}
-    {{- printf "grafana_oss_passwords/production" -}}
-  {{- else if or (eq .Values.global.environment "stage") (eq .Values.global.environment "staging") -}}
+  {{- if or (eq .Values.global.environment "cloudops-dev") -}}
+    {{- printf "grafana_oss_passwords/cloudops-dev" -}}
+  {{- else if or (eq .Values.global.environment "dev") (eq .Values.global.environment "test") (eq .Values.global.environment "stage") -}}
     {{- printf "grafana_oss_passwords/production" -}}
   {{- else -}}
     {{- printf "portal_api_keys" -}}
@@ -304,11 +291,7 @@ Vault paths for Prometheus and Loki secrets
 {{- end -}}
 
 {{- define "vaultSecrets.prometheusPasswordKey" -}}
-  {{- if eq .Values.global.environment "dev" -}}
-    {{- printf "prometheus_password" -}}
-  {{- else if eq .Values.global.environment "test" -}}
-    {{- printf "prometheus_password" -}}
-  {{- else if or (eq .Values.global.environment "stage") (eq .Values.global.environment "staging") -}}
+  {{- if or (eq .Values.global.environment "cloudops-dev") (eq .Values.global.environment "dev") (eq .Values.global.environment "test") (eq .Values.global.environment "stage") -}}
     {{- printf "prometheus_password" -}}
   {{- else -}}
     {{- printf "agent_authentication" -}}
@@ -316,6 +299,10 @@ Vault paths for Prometheus and Loki secrets
 {{- end -}}
 
 {{- define "vaultSecrets.lokiPasswordPath" -}}
+  {{- if or (eq .Values.global.environment "cloudops-dev") -}}
+    {{- printf "grafana_oss_passwords/cloudops-dev" -}}
+  {{- else if or (eq .Values.global.environment "dev") (eq .Values.global.environment "test") (eq .Values.global.environment "stage") -}}
+    {{- printf "grafana_oss_passwords/production" -}}
   {{- if eq .Values.global.environment "dev" -}}
     {{- printf "grafana_oss_passwords/production" -}}
   {{- else if eq .Values.global.environment "test" -}}
@@ -328,14 +315,9 @@ Vault paths for Prometheus and Loki secrets
 {{- end -}}
 
 {{- define "vaultSecrets.lokiPasswordKey" -}}
-  {{- if eq .Values.global.environment "dev" -}}
-    {{- printf "loki_password" -}}
-  {{- else if eq .Values.global.environment "test" -}}
-    {{- printf "loki_password" -}}
-  {{- else if or (eq .Values.global.environment "stage") (eq .Values.global.environment "staging") -}}
+  {{- if or (eq .Values.global.environment "cloudops-dev") (eq .Values.global.environment "dev") (eq .Values.global.environment "test") (eq .Values.global.environment "stage") -}}
     {{- printf "loki_password" -}}
   {{- else -}}
     {{- printf "agent_authentication" -}}
   {{- end -}}
 {{- end -}}
-
