@@ -24,6 +24,30 @@ are not present.
 
 - N/A
 
+## v3.1.1 (2023-04-04 - Suleyman Kutlu)
+
+-----------------
+
+### Breaking changes
+
+- N/A
+
+### Features
+
+- N/A
+
+### Enhancements
+
+- N/A
+
+### Bugfixes
+
+- Environment names in Harness CD cannot contain "-", environment name renamed to "cloudopsdev"
+
+### Other changes
+
+- N/A
+
 ## v3.1.0 (2023-04-03 - Suleyman Kutlu)
 
 -----------------
