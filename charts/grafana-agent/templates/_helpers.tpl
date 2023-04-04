@@ -303,12 +303,6 @@ Vault paths for Prometheus and Loki secrets
     {{- printf "grafana_oss_passwords/cloudopsdev" -}}
   {{- else if or (eq .Values.global.environment "dev") (eq .Values.global.environment "test") (eq .Values.global.environment "stage") -}}
     {{- printf "grafana_oss_passwords/production" -}}
-  {{- if eq .Values.global.environment "dev" -}}
-    {{- printf "grafana_oss_passwords/production" -}}
-  {{- else if eq .Values.global.environment "test" -}}
-    {{- printf "grafana_oss_passwords/production" -}}
-  {{- else if or (eq .Values.global.environment "stage") (eq .Values.global.environment "staging") -}}
-    {{- printf "grafana_oss_passwords/production" -}}
   {{- else -}}
     {{- printf "portal_api_keys" -}}
   {{- end -}}
