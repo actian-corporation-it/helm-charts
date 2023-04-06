@@ -17,5 +17,5 @@ resources:
   limits:
     memory: 4096Mi
   requests:
-    cpu: 2
+    cpu: 1500m
     memory: "4096Mi"
