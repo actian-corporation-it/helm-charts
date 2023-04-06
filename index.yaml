@@ -947,6 +947,16 @@ entries:
   harness-delegate-immutable:
   - apiVersion: v2
     appVersion: 0.1.0
+    created: "2023-04-06T14:06:56.475001442Z"
+    description: A Helm chart for Kubernetes
+    digest: 1c095dfb12b9c5e66e533cccfddd3ef8e2f03c2b79e315064fcdfd61fecb4c08
+    name: harness-delegate-immutable
+    type: application
+    urls:
+    - https://github.com/actian-corporation-it/helm-charts/releases/download/harness-delegate-immutable-0.2.2/harness-delegate-immutable-0.2.2.tgz
+    version: 0.2.2
+  - apiVersion: v2
+    appVersion: 0.1.0
     created: "2023-03-14T21:53:23.806712447Z"
     description: A Helm chart for Kubernetes
     digest: d18e441aa26d3dcc4186e4df68c87191b773a091d75413e116b1c14d66ad6b29
@@ -1129,4 +1139,4 @@ entries:
     urls:
     - https://github.com/actian-corporation-it/helm-charts/releases/download/prometheus-15.10.1002/prometheus-15.10.1002.tgz
     version: 15.10.1002
-generated: "2023-04-04T14:09:25.615372644Z"
+generated: "2023-04-06T14:06:56.476404155Z"
