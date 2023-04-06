@@ -13,3 +13,9 @@ github_user: "cloudops-automation"
 github_token: ""
 harnessNumTask: "1"
 delegateVersion: "1.0.2"
+resources:
+  limits:
+    memory: 4096Mi
+  requests:
+    cpu: 2"
+    memory: "4096Mi"
