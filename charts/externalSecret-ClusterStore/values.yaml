@@ -1,3 +1,4 @@
+saReference: true
 namespace: ""
 vault_server: ""
 vault_kv_path: ""
