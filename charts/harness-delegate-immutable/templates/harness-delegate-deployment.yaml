@@ -94,7 +94,7 @@ spec:
               value: "https://app.harness.io/gratis/log-service/"
           volumeMounts:
             - mountPath: "/tmp"
-              name: task-pv-storage
+              name: tmp-dir
       volumes:
         - name: tmp-dir
           persistentVolumeClaim:
