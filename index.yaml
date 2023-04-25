@@ -14,6 +14,16 @@ entries:
   clusterSecretStore:
   - apiVersion: v2
     appVersion: 0.2.0
+    created: "2023-04-25T15:54:03.386379719Z"
+    description: Helm chart to deploy clusterSecertStore in a Kubernetes cluster
+    digest: 72615c5f6f4166b55734ea619599c98217923467705fc4667ea79929cc312d43
+    name: clusterSecretStore
+    type: application
+    urls:
+    - https://github.com/actian-corporation-it/helm-charts/releases/download/clusterSecretStore-0.2.1/clusterSecretStore-0.2.1.tgz
+    version: 0.2.1
+  - apiVersion: v2
+    appVersion: 0.2.0
     created: "2023-04-11T13:28:13.518859161Z"
     description: Helm chart to deploy clusterSecertStore in a Kubernetes cluster
     digest: f59b99061a073abd142a53e7040eb363a7f7e9f1a7b97e8a2928ed48263447a4
@@ -1189,4 +1199,4 @@ entries:
     urls:
     - https://github.com/actian-corporation-it/helm-charts/releases/download/prometheus-15.10.1002/prometheus-15.10.1002.tgz
     version: 15.10.1002
-generated: "2023-04-17T23:34:41.903246367Z"
+generated: "2023-04-25T15:54:03.387053727Z"
