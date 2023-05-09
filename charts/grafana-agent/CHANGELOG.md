@@ -33,7 +33,23 @@ are not present.
 
 ## Changes
 
-### v3.1.3 (2023-04-04 - Suleyman Kutlu)
+### v3.2.0 (2023-05-09 - Suleyman Kutlu)
+
+-----------------
+
+#### Enhancements
+
+- User / URL information is retrieved from Vault paramstore paths
+  - ClusterSecretStore retrieves those information from Vault and sync to grafana-secret
+  - Daemonset and Statefulset defines environment variables for those
+  - Configmaps will use these environment variables where needed
+- Grafana Agent version upgraded to v0.33.1
+
+#### Bugfixes
+
+- Vault paths for passwords updated
+
+### v3.1.3 (2023-05-09 - Suleyman Kutlu)
 
 -----------------
 
@@ -81,6 +97,7 @@ are not present.
 
 - Grafana-Agent version upgraded to v0.32.1
 - Node Explorer configuration changed
+- This version requires deletion of old grafana-agent deployment from clusters before deployment. This can be achieved via setting `global.deleteOldDeployment` value to `true` in environment or cluster configuration file for Harness pipeline automation
 
 #### Features
 
