@@ -316,7 +316,7 @@ Statefulset service job definitions
   - source_labels: [__address__, __meta_kubernetes_pod_annotation_prometheus_io_port]
     action: replace
     regex: ([^:]+)(?::\d+)?;(\d+)
-    replacement: $1:15090
+    replacement: $1:$2
     target_label: __address__
   - action: labeldrop
     regex: __meta_kubernetes_pod_label_(.+)

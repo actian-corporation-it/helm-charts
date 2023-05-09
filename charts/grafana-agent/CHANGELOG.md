@@ -33,6 +33,14 @@ are not present.
 
 ## Changes
 
+### v3.1.3 (2023-04-04 - Suleyman Kutlu)
+
+-----------------
+
+#### Bugfixes
+
+- Istio Envoy Stats monitoring uses hard coded port number to scrape metrics. It should use the port defioned in pod annotations, instead.
+
 ### v3.1.2 (2023-04-04 - Suleyman Kutlu)
 
 -----------------
