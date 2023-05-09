@@ -294,7 +294,7 @@ Vault paths for Prometheus and Loki secrets
 
 {{- define "vaultSecrets.prometheusPasswordPath" -}}
   {{- if or (eq .Values.global.environment "cloudopsdev") -}}
-    {{- printf "grafana_oss_passwords/cloudopsdev" -}}
+    {{- printf "grafana_oss_passwords/dev" -}}
   {{- else if or (eq .Values.global.environment "dev") (eq .Values.global.environment "test") (eq .Values.global.environment "stage") -}}
     {{- printf "grafana_oss_passwords/production" -}}
   {{- else -}}
@@ -324,7 +324,7 @@ Vault paths for Prometheus and Loki secrets
 
 {{- define "vaultSecrets.lokiPasswordPath" -}}
   {{- if or (eq .Values.global.environment "cloudopsdev") -}}
-    {{- printf "grafana_oss_passwords/cloudopsdev" -}}
+    {{- printf "grafana_oss_passwords/dev" -}}
   {{- else if or (eq .Values.global.environment "dev") (eq .Values.global.environment "test") (eq .Values.global.environment "stage") -}}
     {{- printf "grafana_oss_passwords/production" -}}
   {{- else -}}
