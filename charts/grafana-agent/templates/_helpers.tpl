@@ -280,6 +280,18 @@ Prometheus and Loki IDs and passwords
 Vault paths for Prometheus and Loki secrets
 *****************************************
 */}}
+{{- define "vaultSecrets.prometheusUserPath" -}}
+  {{- if or (eq .Values.global.environment "dev") (eq .Values.global.environment "test") -}}
+    {{- printf "paramstore/engineering/%s" .Values.global.grafanaRegion -}}
+  {{- else -}}
+    {{- printf "paramstore/%s/%s" .Values.global.environment  .Values.global.grafanaRegion -}}
+  {{- end -}}
+{{- end -}}
+
+{{- define "vaultSecrets.prometheusUserKey" -}}
+  {{- printf "prometheus_user" -}}
+{{- end -}}
+
 {{- define "vaultSecrets.prometheusPasswordPath" -}}
   {{- if or (eq .Values.global.environment "cloudopsdev") -}}
     {{- printf "grafana_oss_passwords/cloudopsdev" -}}
@@ -298,6 +310,18 @@ Vault paths for Prometheus and Loki secrets
   {{- end -}}
 {{- end -}}
 
+{{- define "vaultSecrets.lokiUserPath" -}}
+  {{- if or (eq .Values.global.environment "dev") (eq .Values.global.environment "test") -}}
+    {{- printf "paramstore/engineering/%s" .Values.global.grafanaRegion -}}
+  {{- else -}}
+    {{- printf "paramstore/%s/%s" .Values.global.environment .Values.global.grafanaRegion -}}
+  {{- end -}}
+{{- end -}}
+
+{{- define "vaultSecrets.lokiUserKey" -}}
+  {{- printf "loki_user" -}}
+{{- end -}}
+
 {{- define "vaultSecrets.lokiPasswordPath" -}}
   {{- if or (eq .Values.global.environment "cloudopsdev") -}}
     {{- printf "grafana_oss_passwords/cloudopsdev" -}}
@@ -314,4 +338,28 @@ Vault paths for Prometheus and Loki secrets
   {{- else -}}
     {{- printf "agent_authentication" -}}
   {{- end -}}
+{{- end -}}
+
+{{- define "vaultSecrets.prometheusRemoteWriteUrlPath" -}}
+  {{- if or (eq .Values.global.environment "dev") (eq .Values.global.environment "test") -}}
+    {{- printf "paramstore/engineering/%s" .Values.global.grafanaRegion -}}
+  {{- else -}}
+    {{- printf "paramstore/%s/%s" .Values.global.environment .Values.global.grafanaRegion -}}
+  {{- end -}}
+{{- end -}}
+
+{{- define "vaultSecrets.prometheusRemoteWriteUrlKey" -}}
+  {{- printf "prometheus_remote_write_url" -}}
+{{- end -}}
+
+{{- define "vaultSecrets.lokiWriteUrlPath" -}}
+  {{- if or (eq .Values.global.environment "dev") (eq .Values.global.environment "test") -}}
+    {{- printf "paramstore/engineering/%s" .Values.global.grafanaRegion -}}
+  {{- else -}}
+    {{- printf "paramstore/%s/%s" .Values.global.environment .Values.global.grafanaRegion -}}
+  {{- end -}}
+{{- end -}}
+
+{{- define "vaultSecrets.lokiWriteUrlKey" -}}
+  {{- printf "loki_write_url" -}}
 {{- end -}}
