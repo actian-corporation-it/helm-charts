@@ -30,7 +30,7 @@ spec:
         - -server.http.address=0.0.0.0:{{ .Values.daemonset.serverPort }}
         - -config.expand-env
         command:
-        - /bin/agent
+        - /bin/grafana-agent
         env:
         - name: HOSTNAME
           valueFrom:
