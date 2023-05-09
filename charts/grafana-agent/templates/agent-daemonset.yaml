@@ -36,16 +36,36 @@ spec:
           valueFrom:
             fieldRef:
               fieldPath: spec.nodeName
+        - name: PROMETHEUS_USER
+          valueFrom:
+            secretKeyRef:
+              name: {{ .Values.global.externalSecretName }}
+              key: prometheus-user
         - name: PROMETHEUS_PASSWORD
           valueFrom:
             secretKeyRef:
               name: {{ .Values.global.externalSecretName }}
               key: prometheus-password
+        - name: PROMETHEUS_REMOTE_WRITE_URL
+          valueFrom:
+            secretKeyRef:
+              name: {{ .Values.global.externalSecretName }}
+              key: prometheus-remote-write-url
+        - name: LOKI_USER
+          valueFrom:
+            secretKeyRef:
+              name: {{ .Values.global.externalSecretName }}
+              key: loki-user
         - name: LOKI_PASSWORD
           valueFrom:
             secretKeyRef:
               name: {{ .Values.global.externalSecretName }}
               key: loki-password
+        - name: LOKI_WRITE_URL
+          valueFrom:
+            secretKeyRef:
+              name: {{ .Values.global.externalSecretName }}
+              key: loki-write-url
         image: grafana/agent:{{ $grafanaAgentVersion }}
         imagePullPolicy: IfNotPresent
         name: {{ $daemonsetServiceName }}
