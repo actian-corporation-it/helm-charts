@@ -33,6 +33,14 @@ are not present.
 
 ## Changes
 
+### v3.2.1 (2023-05-09 - Suleyman Kutlu)
+
+-----------------
+
+#### Bugfixes
+
+- Grafana Agent v0.33.1 has binary in `/bin/grafana-agent`
+
 ### v3.2.0 (2023-05-09 - Suleyman Kutlu)
 
 -----------------
