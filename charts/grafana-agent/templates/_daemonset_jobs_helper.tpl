@@ -128,6 +128,50 @@ Daemonset service job definitions
   - {{ .Values.logs.defaultPipelineStage }}: {}
   relabel_configs:
   - source_labels:
+      - __meta_kubernetes_pod_name
+    target_label: __service__
+  - source_labels:
+      - __meta_kubernetes_pod_node_name
+    target_label: __host__
+  - action: drop
+    regex: ""
+    source_labels:
+      - __service__
+  - action: replace
+    replacement: $1
+    separator: /
+    source_labels:
+      - __meta_kubernetes_namespace
+      - __service__
+    target_label: job
+  - action: replace
+    source_labels:
+      - __meta_kubernetes_namespace
+    target_label: namespace
+  - action: replace
+    source_labels:
+      - __meta_kubernetes_pod_name
+    target_label: pod
+  - action: replace
+    source_labels:
+      - __meta_kubernetes_pod_container_name
+    target_label: container
+  - replacement: /var/log/pods/*$1/*.log
+    separator: /
+    source_labels:
+      - __meta_kubernetes_pod_uid
+      - __meta_kubernetes_pod_container_name
+    target_label: __path__
+{{- end -}}
+
+{{- define "daemonsetjobs.kubernetesPodsLogsLabelName" -}}
+- job_name: kubernetes-pods-logs-label-name
+  kubernetes_sd_configs:
+  - role: pod
+  pipeline_stages:
+  - {{ .Values.logs.defaultPipelineStage }}: {}
+  relabel_configs:
+  - source_labels:
       - __meta_kubernetes_pod_label_name
     target_label: __service__
   - source_labels:
