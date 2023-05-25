@@ -36,6 +36,7 @@ data:
           sync_period: 10s
         scrape_configs:
 {{ include "daemonsetjobs.kubernetesPodsLogsName" . | indent 8 }}
+{{ include "daemonsetjobs.kubernetesPodsLogsLabelName" . | indent 8 }}
 {{ include "daemonsetjobs.kubernetesPodsLogsApp" . | indent 8 }}
 {{ include "daemonsetjobs.kubernetesPodsLogsDirectController" . | indent 8 }}
 {{ include "daemonsetjobs.kubernetesPodsLogsIndirectController" . | indent 8 }}
