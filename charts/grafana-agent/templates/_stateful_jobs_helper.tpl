@@ -155,12 +155,33 @@ Statefulset service job definitions
 
 {{- define "statefulsetjobs.rabbitmq" -}}
 {{- $rabbitmqTarget := (include "rabbitmq.target" .) }}
+{{- $rabbitmqTarget0 := (include "rabbitmq.target0" .) }}
+{{- $rabbitmqTarget1 := (include "rabbitmq.target1" .) }}
+{{- $rabbitmqTarget2 := (include "rabbitmq.target2" .) }}
 # RabbitMQ
+- job_name: rabbitmq-detailed-per-pod
+  static_configs:
+  - targets:
+    - {{ $rabbitmqTarget0 }}
+    - {{ $rabbitmqTarget1 }}
+    - {{ $rabbitmqTarget2 }}
+  metrics_path: /metrics/detailed
+  params:
+    family: 
+      - queue_coarse_metrics
+      - queue_consumer_count
+  relabel_configs:
+  - source_labels: [__address__]
+    target_label: __param_target
+    regex: ([\w\-\_]+)\..+:\d+
+  - source_labels: [__param_target]
+    target_label: instance
+
 - job_name: rabbitmq
   static_configs:
   - targets:
     - {{ $rabbitmqTarget }}
-  metrics_path: /metrics/per-object
+  metrics_path: /metrics
   relabel_configs:
   - source_labels: [__address__]
     target_label: __param_target

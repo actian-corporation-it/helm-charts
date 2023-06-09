@@ -132,6 +132,21 @@ Application target definitions
   {{- printf "%s.%s.svc.cluster.local:%s" .Values.metrics.services.rabbitmq.releaseName .Values.metrics.services.rabbitmq.namespace $port -}}
 {{- end -}}
 
+{{- define "rabbitmq.target0" -}}
+  {{- $port := .Values.metrics.services.rabbitmq.metricPort | toString -}}
+  {{- printf "%s-0.%s-headless.%s.svc.cluster.local:%s" .Values.metrics.services.rabbitmq.releaseName .Values.metrics.services.rabbitmq.releaseName .Values.metrics.services.rabbitmq.namespace $port -}}
+{{- end -}}
+
+{{- define "rabbitmq.target1" -}}
+  {{- $port := .Values.metrics.services.rabbitmq.metricPort | toString -}}
+  {{- printf "%s-1.%s-headless.%s.svc.cluster.local:%s" .Values.metrics.services.rabbitmq.releaseName .Values.metrics.services.rabbitmq.releaseName .Values.metrics.services.rabbitmq.namespace $port -}}
+{{- end -}}
+
+{{- define "rabbitmq.target2" -}}
+  {{- $port := .Values.metrics.services.rabbitmq.metricPort | toString -}}
+  {{- printf "%s-2.%s-headless.%s.svc.cluster.local:%s" .Values.metrics.services.rabbitmq.releaseName .Values.metrics.services.rabbitmq.releaseName .Values.metrics.services.rabbitmq.namespace $port -}}
+{{- end -}}
+
 {{- define "externalSecrets.target" -}}
   {{- $port := .Values.metrics.services.externalSecrets.metricPort | toString -}}
   {{- printf "%s-metrics.%s.svc.cluster.local:%s" .Values.metrics.services.externalSecrets.releaseName .Values.metrics.services.externalSecrets.namespace $port -}}
