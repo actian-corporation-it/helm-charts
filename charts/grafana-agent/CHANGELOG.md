@@ -33,6 +33,26 @@ are not present.
 
 ## Changes
 
+### v3.4.0 (2023-06-09 - Suleyman Kutlu)
+
+-----------------
+
+#### Bugfixes
+
+- Grafana Agent was not able to scrape RabbitMQ detailed queue metrics consistently (COR-834)
+
+### v3.3.0 (2023-25-09 - Suleyman Kutlu)
+
+-----------------
+
+#### Bugfixes
+
+- Grafana Agent was not able to scrape spark-driver logs from Dataplane Clusters
+
+#### Other changes
+
+- Grafana Agwent version upgraded to v0.33.2
+
 ### v3.2.1 (2023-05-09 - Suleyman Kutlu)
 
 -----------------
