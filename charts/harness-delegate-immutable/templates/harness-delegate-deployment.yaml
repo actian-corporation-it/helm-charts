@@ -26,6 +26,10 @@ spec:
       restartPolicy: Always
       nodeSelector:
         eks.amazonaws.com/capacityType: {{ .Values.node_type }}
+      tolerations:
+      - effect: NoSchedule
+        key: {{ .Values.toleration_key }}
+        value: {{ .Values.toleration_value }}
       containers:
         - image: actian/harness-delegate-immutable:{{ .Values.delegateVersion }}
           imagePullPolicy: Always
