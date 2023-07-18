@@ -24,6 +24,8 @@ spec:
         - name: dockerhub-image-pull
       terminationGracePeriodSeconds: 600
       restartPolicy: Always
+      nodeSelector:
+        eks.amazonaws.com/capacityType: {{ .Values.node_type }}
       containers:
         - image: actian/harness-delegate-immutable:{{ .Values.delegateVersion }}
           imagePullPolicy: Always
@@ -92,8 +94,6 @@ spec:
               value: "true"
             - name: LOG_STREAMING_SERVICE_URL
               value: "https://app.harness.io/gratis/log-service/"
-          nodeSelector:
-            eks.amazonaws.com/capacityType: {{ .Values.node_type }}
           volumeMounts:
             - mountPath: "/tmp"
               name: tmp-dir
