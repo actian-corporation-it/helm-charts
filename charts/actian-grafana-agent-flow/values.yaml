@@ -1,0 +1,73 @@
+actian:
+  externalSecretName: 'grafana-secrets'
+  environment: 'environment'
+  grafanaStack: 'grafana_stack'
+  cloudProvider: 'csp'
+  clusterName: 'cluster_name'
+
+clusterSecretStore:
+  saReference: false
+  cabundle_secretName: 'vault.cabundle'
+  clusterStore_name: 'grafana-secret-store'
+  k8s_sa: 'change_me'
+  k8s_sa_auth_token: 'change_me'
+  namespace: 'change_me'
+  vault_auth_path: 'change_me'
+  vault_role: 'change_me'
+  vault_kv_path: 'secret/grafana'
+  vault_server: 'vault.cloudops.actiandatacloud.com'
+
+grafana-agent:
+  agent:
+    # -- Mode to run Grafana Agent in. Can be "flow" or "static".
+    mode: 'flow'
+    configMap:
+      create: true
+      content: ''
+
+    enableReporting: false
+    extraEnv:
+      - name: PROMETHEUS_USER
+        valueFrom:
+          secretKeyRef:
+            name: grafana-secrets
+            key: prometheus-user
+      - name: PROMETHEUS_PASSWORD
+        valueFrom:
+          secretKeyRef:
+            name: grafana-secrets
+            key: prometheus-password
+      - name: PROMETHEUS_REMOTE_WRITE_URL
+        valueFrom:
+          secretKeyRef:
+            name: grafana-secrets
+            key: prometheus-remote-write-url
+      - name: LOKI_USER
+        valueFrom:
+          secretKeyRef:
+            name: grafana-secrets
+            key: loki-user
+      - name: LOKI_PASSWORD
+        valueFrom:
+          secretKeyRef:
+            name: grafana-secrets
+            key: loki-password
+      - name: LOKI_WRITE_URL
+        valueFrom:
+          secretKeyRef:
+            name: grafana-secrets
+            key: loki-write-url
+    mounts:
+      varlog: true
+      dockercontainers: false
+      extra:
+        - name: flow-modules
+          mountPath: /var/flow_modules
+
+  controller:
+    type: 'controller_type'
+    volumes:
+      extra:
+        - name: flow-modules
+          configMap:
+            name: grafana-agent-flow-modules

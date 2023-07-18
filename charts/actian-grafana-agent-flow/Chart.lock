@@ -1,0 +1,9 @@
+dependencies:
+- name: clusterSecretStore
+  repository: https://actian-corporation-it.github.io/helm-charts
+  version: 0.2.1
+- name: grafana-agent
+  repository: https://grafana.github.io/helm-charts
+  version: 0.16.0
+digest: sha256:517883848470729d32f62b745279af13b95ce3a227da1715992195847696b81d
+generated: "2023-07-17T16:36:18.191362+01:00"

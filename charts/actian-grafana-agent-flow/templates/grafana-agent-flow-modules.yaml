@@ -1,0 +1,28 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: grafana-agent-flow-modules
+  labels:
+    app.kubernetes.io/instance: grafana-agent-flow-modules
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: {{ .Chart.Name }}
+    app.kubernetes.io/version: {{ .Chart.Version }}
+    helm.sh/chart: grafana-agent-flow-modules-0.0.1
+data:
+  prometheus_remote_write_metrics.river: |- {{- .Files.Get "files/prometheus_remote_write_metrics.river" | trim | nindent 4 -}}
+
+  loki_write_logs.river: |- {{- .Files.Get "files/loki_write_logs.river" | trim | nindent 4 -}}
+
+  discovery_relabel_pods.river: |- {{ .Files.Get "files/discovery_relabel_pods.river" | trim | nindent 4 -}}
+
+  pods_metrics.river: |- {{- .Files.Get "files/pods_metrics.river" | trim | nindent 4 -}}
+
+  pods_logs.river: |- {{- .Files.Get "files/pods_logs.river" | trim | nindent 4 -}}
+
+  unix_exporter_metrics.river: |- {{- .Files.Get "files/unix_exporter_metrics.river" | trim | nindent 4 -}}
+
+  process_exporter_metrics.river: |- {{- .Files.Get "files/process_exporter_metrics.river" | trim | nindent 4 -}}
+
+  k8s_api_metrics.river: |- {{- .Files.Get "files/k8s_api_metrics.river" | trim | nindent 4 -}}
+
+  k8s_event_monitoring.river: |- {{- .Files.Get "files/k8s_event_monitoring.river" | trim | nindent 4 -}}
