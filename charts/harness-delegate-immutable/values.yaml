@@ -13,6 +13,7 @@ github_user: "cloudops-automation"
 github_token: ""
 harnessNumTask: "1"
 delegateVersion: "1.0.2"
+node_type: "ON_DEMAND"
 resources:
   limits:
     memory: 4096Mi

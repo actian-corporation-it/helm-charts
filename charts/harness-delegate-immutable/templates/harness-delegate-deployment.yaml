@@ -6,7 +6,7 @@ metadata:
   name: {{ .Values.delegateName }}
   namespace: {{ .Values.namespace }}
 spec:
-  replicas: 2
+  replicas: {{ .Values.replicas }}
   selector:
     matchLabels:
       harness.io/name: {{ .Values.delegateName }}
@@ -92,6 +92,8 @@ spec:
               value: "true"
             - name: LOG_STREAMING_SERVICE_URL
               value: "https://app.harness.io/gratis/log-service/"
+          nodeSelector:
+            eks.amazonaws.com/capacityType: {{ .Values.node_type }}
           volumeMounts:
             - mountPath: "/tmp"
               name: tmp-dir
