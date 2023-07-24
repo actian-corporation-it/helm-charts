@@ -208,6 +208,24 @@ Statefulset service job definitions
 {{ include "metrics.metricRelabelConfigs" .Values.metrics.filters.redpanda | indent 2 }}
 {{- end -}}
 
+{{- define "statefulsetjobs.zookeeper" -}}
+{{- $zookeeperTarget := (include "zookeeper.target" .) }}
+# Zookeeper
+- job_name: zookeeper
+  static_configs:
+  - targets:
+    - {{ $zookeeperTarget }}
+  metrics_path: /metrics
+  relabel_configs:
+  - source_labels: [__address__]
+    target_label: __param_target
+    regex: ([\w\-\_]+)\..+:\d+
+  - source_labels: [__param_target]
+    target_label: instance
+
+{{ include "metrics.metricRelabelConfigs" .Values.metrics.filters.zookeeper | indent 2 }}
+{{- end -}}
+
 {{- define "statefulsetjobs.mimir" -}}
 # Mimir will be here soon
 {{- end -}}
