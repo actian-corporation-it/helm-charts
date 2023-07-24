@@ -33,6 +33,14 @@ are not present.
 
 ## Changes
 
+### v3.5.0 (2023-07-24 - Suleyman Kutlu)
+
+-----------------
+
+#### Features
+
+- Adding cofiguration to scrape zookeeper
+
 ### v3.4.0 (2023-06-09 - Suleyman Kutlu)
 
 -----------------

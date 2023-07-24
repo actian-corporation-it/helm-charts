@@ -32,6 +32,7 @@ data:
 {{- if .Values.metrics.services.velero.enabled -}}{{ include "statefulsetjobs.velero" . | indent 8 }}{{- end -}}
 {{- if .Values.metrics.services.rabbitmq.enabled -}}{{ include "statefulsetjobs.rabbitmq" . | indent 8 }}{{- end -}}
 {{- if .Values.metrics.services.redpanda.enabled -}}{{ include "statefulsetjobs.redpanda" . | indent 8 }}{{- end -}}
+{{- if .Values.metrics.services.zookeeper.enabled -}}{{ include "statefulsetjobs.zookeeper" . | indent 8 }}{{- end -}}
 {{- if and .Values.metrics.services.mimir .Values.metrics.services.mimir.enabled -}}{{ include "statefulsetjobs.mimir" . | indent 8 }}{{- end -}}
 {{- if and .Values.metrics.services.loki .Values.metrics.services.loki.enabled -}}{{ include "statefulsetjobs.loki" . | indent 8 }}{{- end -}}
 {{- if and .Values.metrics.services.grafana .Values.metrics.services.grafana.enabled -}}{{ include "statefulsetjobs.grafana" . | indent 8 }}{{- end -}}

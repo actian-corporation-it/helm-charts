@@ -147,6 +147,11 @@ Application target definitions
   {{- printf "%s-2.%s-headless.%s.svc.cluster.local:%s" .Values.metrics.services.rabbitmq.releaseName .Values.metrics.services.rabbitmq.releaseName .Values.metrics.services.rabbitmq.namespace $port -}}
 {{- end -}}
 
+{{- define "zookeeper.target" -}}
+  {{- $port := .Values.metrics.services.zookeeper.metricPort | toString -}}
+  {{- printf "%s.%s.svc.cluster.local:%s" .Values.metrics.services.zookeeper.releaseName .Values.metrics.services.zookeeper.namespace $port -}}
+{{- end -}}
+
 {{- define "externalSecrets.target" -}}
   {{- $port := .Values.metrics.services.externalSecrets.metricPort | toString -}}
   {{- printf "%s-metrics.%s.svc.cluster.local:%s" .Values.metrics.services.externalSecrets.releaseName .Values.metrics.services.externalSecrets.namespace $port -}}
