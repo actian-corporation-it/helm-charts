@@ -94,13 +94,11 @@ grafana-agent-flow-daemonset:
           filename = "/var/flow_modules/prometheus_remote_write_metrics.river"
 
           arguments {
-            url            = env("PROMETHEUS_REMOTE_WRITE_URL")
-            username       = env("PROMETHEUS_USER")
-            password       = env("PROMETHEUS_PASSWORD")
-            cluster_name   = "{{ .Values.global.actian.externalLabels.cluster }}"
-            cloud_provider = "{{ .Values.global.actian.externalLabels.cloudProvider }}"
-            environment    = "{{ .Values.global.actian.environment }}"
-            grafana_stack  = "{{ .Values.global.actian.grafanaStack }}"
+            url             = env("PROMETHEUS_REMOTE_WRITE_URL")
+            username        = env("PROMETHEUS_USER")
+            password        = env("PROMETHEUS_PASSWORD")
+            grafana_stack   = "{{- include "actian.grafanaStack" . }}"
+            external_labels = "{{ .Values.global.actian.externalLabels }}"
           }
         }
 
@@ -108,13 +106,11 @@ grafana-agent-flow-daemonset:
           filename = "/var/flow_modules/loki_write_logs.river"
 
           arguments {
-            url            = env("LOKI_WRITE_URL")
-            username       = env("LOKI_USER")
-            password       = env("LOKI_PASSWORD")
-            cluster_name   = "{{ .Values.global.actian.externalLabels.cluster }}"
-            cloud_provider = "{{ .Values.global.actian.externalLabels.cloudProvider }}"
-            environment    = "{{ .Values.global.actian.environment }}"
-            grafana_stack  = "{{ .Values.global.actian.grafanaStack }}"
+            url             = env("LOKI_WRITE_URL")
+            username        = env("LOKI_USER")
+            password        = env("LOKI_PASSWORD")
+            grafana_stack   = "{{- include "actian.grafanaStack" . }}"
+            external_labels = "{{ .Values.global.actian.externalLabels }}"
           }
         }
 
@@ -242,13 +238,11 @@ grafana-agent-flow-statefulset:
           filename = "/var/flow_modules/prometheus_remote_write_metrics.river"
 
           arguments {
-            url            = env("PROMETHEUS_REMOTE_WRITE_URL")
-            username       = env("PROMETHEUS_USER")
-            password       = env("PROMETHEUS_PASSWORD")
-            cluster_name   = "{{ .Values.global.actian.externalLabels.cluster }}"
-            cloud_provider = "{{ .Values.global.actian.externalLabels.cloudProvider }}"
-            environment    = "{{ .Values.global.actian.environment }}"
-            grafana_stack  = "{{ .Values.global.actian.grafanaStack }}"
+            url             = env("PROMETHEUS_REMOTE_WRITE_URL")
+            username        = env("PROMETHEUS_USER")
+            password        = env("PROMETHEUS_PASSWORD")
+            grafana_stack   = "{{ include "actian.grafanaStack" . }}"
+            external_labels = "{{ .Values.global.actian.externalLabels }}"
           }
         }
 
@@ -256,13 +250,11 @@ grafana-agent-flow-statefulset:
           filename = "/var/flow_modules/loki_write_logs.river"
 
           arguments {
-            url            = env("LOKI_WRITE_URL")
-            username       = env("LOKI_USER")
-            password       = env("LOKI_PASSWORD")
-            cluster_name   = "{{ .Values.global.actian.externalLabels.cluster }}"
-            cloud_provider = "{{ .Values.global.actian.externalLabels.cloudProvider }}"
-            environment    = "{{ .Values.global.actian.environment }}"
-            grafana_stack  = "{{ .Values.global.actian.grafanaStack }}"
+            url             = env("LOKI_WRITE_URL")
+            username        = env("LOKI_USER")
+            password        = env("LOKI_PASSWORD")
+            grafana_stack   = "{{- include "actian.grafanaStack" . }}"
+            external_labels = "{{ .Values.global.actian.externalLabels }}"
           }
         }
 

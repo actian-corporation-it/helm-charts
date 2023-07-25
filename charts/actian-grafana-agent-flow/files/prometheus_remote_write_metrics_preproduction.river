@@ -13,23 +13,13 @@ argument "password" {
 	optional = false
 }
 
-// Cluster name
-argument "cluster_name" {
-	optional = false
-}
-
-// Cluster environment (cloudopsdev, dev, test, stage, production)
-argument "environment" {
-	optional = false
-}
-
 // Grafana Stack name (for Mimir Tenant Id)
 argument "grafana_stack" {
 	optional = false
 }
 
-// Cluster Service Provider namne (aws, gcp, azure)
-argument "cloud_provider" {
+// External labels to add to metrics
+argument "external_labels" {
 	optional = false
 }
 
@@ -38,11 +28,8 @@ export "receiver" {
 }
 
 prometheus.remote_write "metrics" {
-	external_labels = {
-		cluster = argument.cluster_name.value,
-		cloudProvider = argument.cloud_provider.value,
-	}
-	
+	external_labels = json_decode(argument.external_labels.value)
+
 	endpoint {
 		url = argument.url.value
 

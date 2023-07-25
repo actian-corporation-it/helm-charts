@@ -42,9 +42,9 @@ discovery.relabel "services_clean_unwanted" {
 	}
 
 	rule {
-	        action        = "drop"
-	        regex         = "grafana-agent-flow"
-	        source_labels = ["__meta_kubernetes_service_label_app_kubernetes_io_instance"]
+		action        = "drop"
+		regex         = "grafana-agent-flow"
+		source_labels = ["__meta_kubernetes_service_label_app_kubernetes_io_instance"]
 	}
 }
 
