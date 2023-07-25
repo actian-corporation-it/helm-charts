@@ -98,7 +98,7 @@ grafana-agent-flow-daemonset:
             username        = env("PROMETHEUS_USER")
             password        = env("PROMETHEUS_PASSWORD")
             grafana_stack   = "{{- include "actian.grafanaStack" . }}"
-            external_labels = "{{ .Values.global.actian.externalLabels }}"
+            external_labels = "{{ .Values.global.actian.externalLabels | toJson | replace "\"" "\\\"" }}"
           }
         }
 
@@ -110,7 +110,7 @@ grafana-agent-flow-daemonset:
             username        = env("LOKI_USER")
             password        = env("LOKI_PASSWORD")
             grafana_stack   = "{{- include "actian.grafanaStack" . }}"
-            external_labels = "{{ .Values.global.actian.externalLabels }}"
+            external_labels = "{{ .Values.global.actian.externalLabels | toJson | replace "\"" "\\\"" }}"
           }
         }
 
@@ -242,7 +242,7 @@ grafana-agent-flow-statefulset:
             username        = env("PROMETHEUS_USER")
             password        = env("PROMETHEUS_PASSWORD")
             grafana_stack   = "{{ include "actian.grafanaStack" . }}"
-            external_labels = "{{ .Values.global.actian.externalLabels }}"
+            external_labels = "{{ .Values.global.actian.externalLabels | toJson | replace "\"" "\\\"" }}"
           }
         }
 
@@ -254,7 +254,7 @@ grafana-agent-flow-statefulset:
             username        = env("LOKI_USER")
             password        = env("LOKI_PASSWORD")
             grafana_stack   = "{{- include "actian.grafanaStack" . }}"
-            external_labels = "{{ .Values.global.actian.externalLabels }}"
+            external_labels = "{{ .Values.global.actian.externalLabels | toJson | replace "\"" "\\\"" }}"
           }
         }
 
