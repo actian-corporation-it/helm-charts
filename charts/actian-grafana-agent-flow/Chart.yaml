@@ -11,3 +11,8 @@ dependencies:
   - name: grafana-agent
     repository: https://grafana.github.io/helm-charts
     version: 0.16.0
+    alias: grafana-agent-flow-daemonset
+  - name: grafana-agent
+    repository: https://grafana.github.io/helm-charts
+    version: 0.16.0
+    alias: grafana-agent-flow-statefulset

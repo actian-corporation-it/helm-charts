@@ -1,29 +1,122 @@
-actian:
-  externalSecretName: 'grafana-secrets'
-  environment: 'environment'
-  grafanaStack: 'grafana_stack'
-  cloudProvider: 'csp'
-  clusterName: 'cluster_name'
+global:
+  actian:
+    externalSecretName: grafana-secrets
+    environment: environment
+    grafanaStack: grafana_stack
+    grafanaRegion: grafana_region
+    externalLabels:
+      cloudProvider: csp
+      cluster: cluster_name
 
 clusterSecretStore:
   saReference: false
-  cabundle_secretName: 'vault.cabundle'
-  clusterStore_name: 'grafana-secret-store'
-  k8s_sa: 'change_me'
-  k8s_sa_auth_token: 'change_me'
-  namespace: 'change_me'
-  vault_auth_path: 'change_me'
-  vault_role: 'change_me'
-  vault_kv_path: 'secret/grafana'
-  vault_server: 'vault.cloudops.actiandatacloud.com'
+  cabundle_secretName: vault.cabundle
+  clusterStore_name: grafana-secret-store
+  k8s_sa: change_me
+  k8s_sa_auth_token: change_me
+  namespace: change_me
+  vault_auth_path: change_me
+  vault_role: change_me
+  vault_kv_path: secret/grafana
+  vault_server: vault.cloudops.actiandatacloud.com
 
-grafana-agent:
+grafana-agent-flow-daemonset:
+  fullnameOverride: grafana-agent-flow-daemonset
   agent:
     # -- Mode to run Grafana Agent in. Can be "flow" or "static".
     mode: 'flow'
     configMap:
       create: true
-      content: ''
+      content: |
+        logging {
+          level  = "warn"
+          format = "logfmt"
+        }
+
+        discovery.kubernetes "pods" {
+          role = "pod"
+        }
+
+        prometheus.exporter.unix {
+          set_collectors = [
+            "cpu",
+            "filesystem",
+            "loadavg",
+            "meminfo",
+            "netstat",
+          ]
+        }
+
+        module.file "discovery_relabel_pods" {
+          filename = "/var/flow_modules/discovery_relabel_pods.river"
+
+          arguments {
+            targets = discovery.kubernetes.pods.targets
+          }
+        }
+
+        module.file "pods_metrics" {
+          filename = "/var/flow_modules/pods_metrics.river"
+
+          arguments {
+            targets            = module.file.discovery_relabel_pods.exports.output
+            forward_metrics_to = [module.file.prometheus_remote_write_metrics.exports.receiver]
+          }
+        }
+
+        module.file "pods_logs" {
+          filename = "/var/flow_modules/pods_logs.river"
+
+          arguments {
+            targets         = module.file.discovery_relabel_pods.exports.output
+            forward_logs_to = [module.file.loki_write_logs.exports.receiver]
+          }
+        }
+
+        module.file "unix_exporter_metrics" {
+          filename = "/var/flow_modules/unix_exporter_metrics.river"
+
+          arguments {
+            targets            = prometheus.exporter.unix.targets
+            forward_metrics_to = [module.file.prometheus_remote_write_metrics.exports.receiver]
+          }
+        }
+
+        // module.file "prometheus_process_exporter_metrics" {
+        //     filename = "/var/flow_modules/process_exporter_metrics.river"
+
+        //     arguments {
+        //         forward_metrics_to = [module.file.prometheus_remote_write_metrics.exports.receiver]
+        //     }
+        // }
+
+        module.file "prometheus_remote_write_metrics" {
+          filename = "/var/flow_modules/prometheus_remote_write_metrics.river"
+
+          arguments {
+            url            = env("PROMETHEUS_REMOTE_WRITE_URL")
+            username       = env("PROMETHEUS_USER")
+            password       = env("PROMETHEUS_PASSWORD")
+            cluster_name   = "{{ .Values.global.actian.externalLabels.cluster }}"
+            cloud_provider = "{{ .Values.global.actian.externalLabels.cloudProvider }}"
+            environment    = "{{ .Values.global.actian.environment }}"
+            grafana_stack  = "{{ .Values.global.actian.grafanaStack }}"
+          }
+        }
+
+        module.file "loki_write_logs" {
+          filename = "/var/flow_modules/loki_write_logs.river"
+
+          arguments {
+            url            = env("LOKI_WRITE_URL")
+            username       = env("LOKI_USER")
+            password       = env("LOKI_PASSWORD")
+            cluster_name   = "{{ .Values.global.actian.externalLabels.cluster }}"
+            cloud_provider = "{{ .Values.global.actian.externalLabels.cloudProvider }}"
+            environment    = "{{ .Values.global.actian.environment }}"
+            grafana_stack  = "{{ .Values.global.actian.grafanaStack }}"
+          }
+        }
 
     enableReporting: false
     extraEnv:
@@ -65,7 +158,156 @@ grafana-agent:
           mountPath: /var/flow_modules
 
   controller:
-    type: 'controller_type'
+    type: 'daemonset'
+    tolerations:
+      - effect: NoSchedule
+        operator: Exists
+    volumes:
+      extra:
+        - name: flow-modules
+          configMap:
+            name: grafana-agent-flow-modules
+
+grafana-agent-flow-statefulset:
+  fullnameOverride: grafana-agent-flow-statefulset
+  agent:
+    # -- Mode to run Grafana Agent in. Can be "flow" or "static".
+    mode: 'flow'
+    configMap:
+      create: true
+      content: |
+        logging {
+          level  = "warn"
+          format = "logfmt"
+        }
+
+        discovery.kubernetes "pods" {
+          role = "pod"
+        }
+
+        discovery.kubernetes "nodes" {
+          role = "node"
+        }
+
+        discovery.kubernetes "services" {
+          role = "service"
+        }
+
+        discovery.kubernetes "endpoints" {
+          role = "endpoints"
+        }
+
+        discovery.kubernetes "ingresses" {
+          role = "ingress"
+        }
+
+        module.file "k8s_api" {
+          filename = "/var/flow_modules/k8s_api_metrics.river"
+
+          arguments {
+            pods_targets       = discovery.kubernetes.pods.targets
+            nodes_targets      = discovery.kubernetes.nodes.targets
+            endpoints_targets  = discovery.kubernetes.endpoints.targets
+            forward_metrics_to = [module.file.prometheus_remote_write_metrics.exports.receiver]
+          }
+        }
+
+        module.file "k8s_event_monitoring" {
+          filename = "/var/flow_modules/k8s_event_monitoring.river"
+
+          arguments {
+            forward_logs_to = [module.file.loki_write_logs.exports.receiver]
+          }
+        }
+
+        module.file "k8s_services_monitoring" {
+          filename = "/var/flow_modules/k8s_services_monitoring.river"
+
+          arguments {
+            targets            = discovery.kubernetes.services.targets
+            forward_metrics_to = [module.file.prometheus_remote_write_metrics.exports.receiver]
+          }
+        }
+
+        module.file "k8s_ingresses_monitoring" {
+          filename = "/var/flow_modules/k8s_ingresses_monitoring.river"
+
+          arguments {
+            targets            = discovery.kubernetes.ingresses.targets
+            forward_metrics_to = [module.file.prometheus_remote_write_metrics.exports.receiver]
+          }
+        }
+
+        module.file "prometheus_remote_write_metrics" {
+          filename = "/var/flow_modules/prometheus_remote_write_metrics.river"
+
+          arguments {
+            url            = env("PROMETHEUS_REMOTE_WRITE_URL")
+            username       = env("PROMETHEUS_USER")
+            password       = env("PROMETHEUS_PASSWORD")
+            cluster_name   = "{{ .Values.global.actian.externalLabels.cluster }}"
+            cloud_provider = "{{ .Values.global.actian.externalLabels.cloudProvider }}"
+            environment    = "{{ .Values.global.actian.environment }}"
+            grafana_stack  = "{{ .Values.global.actian.grafanaStack }}"
+          }
+        }
+
+        module.file "loki_write_logs" {
+          filename = "/var/flow_modules/loki_write_logs.river"
+
+          arguments {
+            url            = env("LOKI_WRITE_URL")
+            username       = env("LOKI_USER")
+            password       = env("LOKI_PASSWORD")
+            cluster_name   = "{{ .Values.global.actian.externalLabels.cluster }}"
+            cloud_provider = "{{ .Values.global.actian.externalLabels.cloudProvider }}"
+            environment    = "{{ .Values.global.actian.environment }}"
+            grafana_stack  = "{{ .Values.global.actian.grafanaStack }}"
+          }
+        }
+
+    enableReporting: false
+    extraEnv:
+      - name: PROMETHEUS_USER
+        valueFrom:
+          secretKeyRef:
+            name: grafana-secrets
+            key: prometheus-user
+      - name: PROMETHEUS_PASSWORD
+        valueFrom:
+          secretKeyRef:
+            name: grafana-secrets
+            key: prometheus-password
+      - name: PROMETHEUS_REMOTE_WRITE_URL
+        valueFrom:
+          secretKeyRef:
+            name: grafana-secrets
+            key: prometheus-remote-write-url
+      - name: LOKI_USER
+        valueFrom:
+          secretKeyRef:
+            name: grafana-secrets
+            key: loki-user
+      - name: LOKI_PASSWORD
+        valueFrom:
+          secretKeyRef:
+            name: grafana-secrets
+            key: loki-password
+      - name: LOKI_WRITE_URL
+        valueFrom:
+          secretKeyRef:
+            name: grafana-secrets
+            key: loki-write-url
+    mounts:
+      varlog: true
+      dockercontainers: false
+      extra:
+        - name: flow-modules
+          mountPath: /var/flow_modules
+
+  controller:
+    type: 'statefulset'
+    replicas: 1
     volumes:
       extra:
         - name: flow-modules

@@ -9,13 +9,13 @@ Authentication blocks
 {{- $prometheusPassword := (include "credentials.prometheusPassword" .) -}}
 remote_write:
 - url: {{ $prometheusRemoteWriteUrl }}
-  {{- if eq .Values.actian.environment "cloudopsdev" }}
+  {{- if eq .Values.global.actian.environment "cloudopsdev" }}
   headers:
     X-Scope-OrgId: cloudopsdev
-  {{- else if or (eq .Values.actian.environment "dev") (eq .Values.actian.environment "test") }}
+  {{- else if or (eq .Values.global.actian.environment "dev") (eq .Values.global.actian.environment "test") }}
   headers:
     X-Scope-OrgId: engineering
-  {{- else if eq .Values.actian.environment "stage" }}
+  {{- else if eq .Values.global.actian.environment "stage" }}
   headers:
     X-Scope-OrgId: stage
   {{- end }}
@@ -30,11 +30,11 @@ remote_write:
 {{- $lokiPassword := (include "credentials.lokiPassword" .) -}}
 clients:
 - url: {{ $lokiUrl }}
-  {{- if eq .Values.actian.environment "cloudopsdev" }}
+  {{- if eq .Values.global.actian.environment "cloudopsdev" }}
   tenant_id: cloudopsdev
-  {{- else if or (eq .Values.actian.environment "dev") (eq .Values.actian.environment "test")  }}
+  {{- else if or (eq .Values.global.actian.environment "dev") (eq .Values.global.actian.environment "test")  }}
   tenant_id: engineering
-  {{- else if eq .Values.actian.environment "stage" }}
+  {{- else if eq .Values.global.actian.environment "stage" }}
   tenant_id: stage
   {{- end }}
   basic_auth:
@@ -50,7 +50,7 @@ Misc definitions
 
 {{- define "annotations.versions" -}}
 {{- $grafanaAgentVersion := (include "grafanaAgent.Version" .) -}}
-grafana_agent_versions: "Chart: {{ $.Chart.Name }} / {{ $.Chart.Version }}; App: {{ $grafanaAgentVersion }}"
+grafana_agent_versions: "Chart: {{ $.Chart.Name }} / {{ $.Chart.Version }}; Agent_Chart: {{ $grafanaAgentVersion }}"
 {{- end -}}
 
 {{- define "statefulset.ServiceName" -}}
@@ -70,10 +70,8 @@ grafana_agent_versions: "Chart: {{ $.Chart.Name }} / {{ $.Chart.Version }}; App:
 {{- end -}}
 
 {{- define "grafanaAgent.Version" -}}
-  {{- if eq .Values.global.agentVersion "" -}}
-    {{- printf "%s" $.Chart.AppVersion -}}
-  {{- else -}}
-    {{- printf "%s" .Values.global.agentVersion -}}
+  {{- with (index $.Chart.Dependencies 1) }}
+    {{- printf "%s" .Version -}}
   {{- end -}}
 {{- end -}}
 
@@ -84,7 +82,7 @@ Agent Configuration definitions
 */}}
 {{- define "agentConfig.externalLabels" -}}
 external_labels:
-  {{- range $key, $value := $.Values.global.externalLabels }}
+  {{- range $key, $value := $.Values.global.actian.externalLabels }}
     {{- if $value }}
   {{ $key }}: {{ $value }}
     {{- else }}
@@ -264,10 +262,10 @@ Vault paths for Prometheus and Loki secrets
 *****************************************
 */}}
 {{- define "vaultSecrets.prometheusUserPath" -}}
-  {{- if or (eq .Values.actian.environment "dev") (eq .Values.actian.environment "test") -}}
-    {{- printf "paramstore/engineering/%s" .Values.global.grafanaRegion -}}
+  {{- if or (eq .Values.global.actian.environment "dev") (eq .Values.global.actian.environment "test") -}}
+    {{- printf "paramstore/engineering/%s" .Values.global.actian.grafanaRegion -}}
   {{- else -}}
-    {{- printf "paramstore/%s/%s" .Values.actian.environment  .Values.global.grafanaRegion -}}
+    {{- printf "paramstore/%s/%s" .Values.global.actian.environment  .Values.global.actian.grafanaRegion -}}
   {{- end -}}
 {{- end -}}
 
@@ -276,9 +274,9 @@ Vault paths for Prometheus and Loki secrets
 {{- end -}}
 
 {{- define "vaultSecrets.prometheusPasswordPath" -}}
-  {{- if or (eq .Values.actian.environment "cloudopsdev") -}}
+  {{- if or (eq .Values.global.actian.environment "cloudopsdev") -}}
     {{- printf "grafana_oss_passwords/dev" -}}
-  {{- else if or (eq .Values.actian.environment "dev") (eq .Values.actian.environment "test") (eq .Values.actian.environment "stage") -}}
+  {{- else if or (eq .Values.global.actian.environment "dev") (eq .Values.global.actian.environment "test") (eq .Values.global.actian.environment "stage") -}}
     {{- printf "grafana_oss_passwords/production" -}}
   {{- else -}}
     {{- printf "portal_api_keys" -}}
@@ -286,7 +284,7 @@ Vault paths for Prometheus and Loki secrets
 {{- end -}}
 
 {{- define "vaultSecrets.prometheusPasswordKey" -}}
-  {{- if or (eq .Values.actian.environment "cloudopsdev") (eq .Values.actian.environment "dev") (eq .Values.actian.environment "test") (eq .Values.actian.environment "stage") -}}
+  {{- if or (eq .Values.global.actian.environment "cloudopsdev") (eq .Values.global.actian.environment "dev") (eq .Values.global.actian.environment "test") (eq .Values.global.actian.environment "stage") -}}
     {{- printf "prometheus_password" -}}
   {{- else -}}
     {{- printf "agent_authentication" -}}
@@ -294,10 +292,10 @@ Vault paths for Prometheus and Loki secrets
 {{- end -}}
 
 {{- define "vaultSecrets.lokiUserPath" -}}
-  {{- if or (eq .Values.actian.environment "dev") (eq .Values.actian.environment "test") -}}
-    {{- printf "paramstore/engineering/%s" .Values.global.grafanaRegion -}}
+  {{- if or (eq .Values.global.actian.environment "dev") (eq .Values.global.actian.environment "test") -}}
+    {{- printf "paramstore/engineering/%s" .Values.global.actian.grafanaRegion -}}
   {{- else -}}
-    {{- printf "paramstore/%s/%s" .Values.actian.environment .Values.global.grafanaRegion -}}
+    {{- printf "paramstore/%s/%s" .Values.global.actian.environment .Values.global.actian.grafanaRegion -}}
   {{- end -}}
 {{- end -}}
 
@@ -306,9 +304,9 @@ Vault paths for Prometheus and Loki secrets
 {{- end -}}
 
 {{- define "vaultSecrets.lokiPasswordPath" -}}
-  {{- if or (eq .Values.actian.environment "cloudopsdev") -}}
+  {{- if or (eq .Values.global.actian.environment "cloudopsdev") -}}
     {{- printf "grafana_oss_passwords/dev" -}}
-  {{- else if or (eq .Values.actian.environment "dev") (eq .Values.actian.environment "test") (eq .Values.actian.environment "stage") -}}
+  {{- else if or (eq .Values.global.actian.environment "dev") (eq .Values.global.actian.environment "test") (eq .Values.global.actian.environment "stage") -}}
     {{- printf "grafana_oss_passwords/production" -}}
   {{- else -}}
     {{- printf "portal_api_keys" -}}
@@ -316,7 +314,7 @@ Vault paths for Prometheus and Loki secrets
 {{- end -}}
 
 {{- define "vaultSecrets.lokiPasswordKey" -}}
-  {{- if or (eq .Values.actian.environment "cloudopsdev") (eq .Values.actian.environment "dev") (eq .Values.actian.environment "test") (eq .Values.actian.environment "stage") -}}
+  {{- if or (eq .Values.global.actian.environment "cloudopsdev") (eq .Values.global.actian.environment "dev") (eq .Values.global.actian.environment "test") (eq .Values.global.actian.environment "stage") -}}
     {{- printf "loki_password" -}}
   {{- else -}}
     {{- printf "agent_authentication" -}}
@@ -324,10 +322,10 @@ Vault paths for Prometheus and Loki secrets
 {{- end -}}
 
 {{- define "vaultSecrets.prometheusRemoteWriteUrlPath" -}}
-  {{- if or (eq .Values.actian.environment "dev") (eq .Values.actian.environment "test") -}}
-    {{- printf "paramstore/engineering/%s" .Values.global.grafanaRegion -}}
+  {{- if or (eq .Values.global.actian.environment "dev") (eq .Values.global.actian.environment "test") -}}
+    {{- printf "paramstore/engineering/%s" .Values.global.actian.grafanaRegion -}}
   {{- else -}}
-    {{- printf "paramstore/%s/%s" .Values.actian.environment .Values.global.grafanaRegion -}}
+    {{- printf "paramstore/%s/%s" .Values.global.actian.environment .Values.global.actian.grafanaRegion -}}
   {{- end -}}
 {{- end -}}
 
@@ -336,10 +334,10 @@ Vault paths for Prometheus and Loki secrets
 {{- end -}}
 
 {{- define "vaultSecrets.lokiWriteUrlPath" -}}
-  {{- if or (eq .Values.actian.environment "dev") (eq .Values.actian.environment "test") -}}
-    {{- printf "paramstore/engineering/%s" .Values.global.grafanaRegion -}}
+  {{- if or (eq .Values.global.actian.environment "dev") (eq .Values.global.actian.environment "test") -}}
+    {{- printf "paramstore/engineering/%s" .Values.global.actian.grafanaRegion -}}
   {{- else -}}
-    {{- printf "paramstore/%s/%s" .Values.actian.environment .Values.global.grafanaRegion -}}
+    {{- printf "paramstore/%s/%s" .Values.global.actian.environment .Values.global.actian.grafanaRegion -}}
   {{- end -}}
 {{- end -}}
 
