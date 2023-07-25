@@ -18,18 +18,8 @@ discovery.relabel "pods_actian" {
 
 	rule {
 		action        = "keep"
-		regex         = "warehouses"
+		regex         = "warehouses|databases|"
 		source_labels = ["__meta_kubernetes_namespace"]
-	}
-
-	rule {
-		source_labels = [
-			"__meta_kubernetes_pod_label_app_kubernetes_io_instance",
-			"__meta_kubernetes_pod_label_app_kubernetes_io_name",
-		]
-		target_label = "__helm_name__"
-		separator    = "-"
-		regex        = "(.+-.+)"
 	}
 
 	rule {
@@ -62,6 +52,11 @@ discovery.relabel "pods_actian" {
 		regex = ";*([^;]+);*.*"
 	}
 
+	// rule {
+	// 	replacement  = "discovery_relabel_pods"
+	// 	target_label = "flow_module_name"
+	// }
+
 	rule {
 		source_labels = [
 			"__meta_kubernetes_namespace",
@@ -83,24 +78,24 @@ discovery.relabel "pods_k8s" {
 		source_labels = ["__meta_kubernetes_namespace"]
 	}
 
-	rule {
-		source_labels = [
-			"__meta_kubernetes_pod_label_app_kubernetes_io_instance",
-			"__meta_kubernetes_pod_label_app_kubernetes_io_name",
-		]
-		target_label = "__helm_name__"
-		separator    = "-"
-		regex        = "(.+-.+)"
-	}
+	// rule {
+	// 	source_labels = [
+	// 		"__meta_kubernetes_pod_label_app_kubernetes_io_name",
+	// 	]
+	// 	target_label = "__helm_name__"
+	// 	separator    = "-"
+	// 	regex        = "(.+-.+)"
+	// }
 
 	rule {
 		// Try to identify a service name to eventually form the job label. We'll
 		// prefer the first of the below labels, in descending order.
 		source_labels = [
 			"__meta_kubernetes_pod_label_name",
+			"__meta_kubernetes_pod_label_app_kubernetes_io_name",
 			"__meta_kubernetes_pod_label_k8s_app",
 			"__meta_kubernetes_pod_label_app",
-			"__helm_name__",
+			"__meta_kubernetes_pod_label_app_kubernetes_io_instance",
 			"__meta_kubernetes_pod_controller_name",
 			"__meta_kubernetes_pod_name",
 		]
@@ -118,11 +113,6 @@ discovery.relabel "pods_k8s" {
 		// ideally we can use River expressions in the future to make this much
 		// less bizarre.
 		regex = ";*([^;]+);*.*"
-	}
-
-	rule {
-		source_labels = ["__meta_kubernetes_pod_node_name"]
-		target_label  = "__host__"
 	}
 
 	rule {

@@ -14,9 +14,9 @@ argument "password" {
 }
 
 // Cluster name
-argument "cluster_name" {
-	optional = false
-}
+// argument "cluster_name" {
+// 	optional = false
+// }
 
 // Cluster environment (cloudopsdev, dev, test, stage, production)
 argument "environment" {
@@ -29,9 +29,9 @@ argument "grafana_stack" {
 }
 
 // Cluster Service Provider namne (aws, gcp, azure)
-argument "cloud_provider" {
-	optional = false
-}
+// argument "cloud_provider" {
+// 	optional = false
+// }
 
 export "receiver" {
 	value = prometheus.remote_write.metrics.receiver
@@ -49,9 +49,6 @@ prometheus.remote_write "metrics" {
 		basic_auth {
 			username = argument.username.value
 			password = argument.password.value
-		}
-		headers = {
-			"X-Scope-OrgId" = argument.grafana_stack.value,
 		}
 	}
 }

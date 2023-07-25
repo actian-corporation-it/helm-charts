@@ -1,0 +1,204 @@
+// Arguments
+
+// Targets must be a list(map(string)) of targets to scrape
+argument "targets" {
+	optional = false
+}
+
+// forward_metrics_to must be a list(MetricsReceiver) where collected metrics
+// should be forwarded.
+argument "forward_metrics_to" {
+	optional = false
+}
+
+// scrape_interval is a duration which specifies how frequently to collect
+// metrics.
+argument "scrape_interval" {
+	optional = true
+	default  = "30s"
+}
+
+// scrape_timeout is a duration which specifies how long to wait for a single
+// metrics collection to complete.
+argument "scrape_timeout" {
+	optional = true
+	default  = "10s"
+}
+
+// Processing
+
+// Service and Ingress monitoring to be worked on, after some scraping from product dev clusters
+discovery.relabel "services_clean_unwanted" {
+	targets = argument.targets.value
+
+	rule {
+		action        = "drop"
+		regex         = ".*prometheus.*|kube-state-metrics|sumologic"
+		source_labels = [
+			"__meta_kubernetes_service_label_app_kubernetes_io_managed_by",
+			"__meta_kubernetes_service_label_app_kubernetes_io_name",
+			"__meta_kubernetes_service_name",
+		]
+	}
+
+	rule {
+	        action        = "drop"
+	        regex         = "grafana-agent-flow"
+	        source_labels = ["__meta_kubernetes_service_label_app_kubernetes_io_instance"]
+	}
+}
+
+discovery.relabel "services_prometheus_annotations_1" {
+	targets = discovery.relabel.services_clean_unwanted.output
+
+	rule {
+		action        = "drop"
+		regex         = "false"
+		source_labels = ["__meta_kubernetes_service_annotation_prometheus_io_scrape"]
+	}
+
+	rule {
+		source_labels = [
+			"__meta_kubernetes_service_annotation_prometheus_io_port",
+			"__meta_kubernetes_service_port_number",
+		]
+		target_label = "__port__"
+		regex        = ";*([^;]+);*.*"
+	}
+
+	rule {
+		source_labels = ["__meta_kubernetes_service_name"]
+		target_label  = "__service__"
+	}
+}
+
+discovery.relabel "services_prometheus_annotations_2" {
+	targets = discovery.relabel.services_prometheus_annotations_1.output
+
+	rule {
+		action        = "keep"
+		regex         = "kube-dns"
+		source_labels = ["__meta_kubernetes_service_name"]
+	}
+
+	rule {
+		action        = "lowercase"
+		source_labels = [
+			"__meta_kubernetes_service_name",
+			"__meta_kubernetes_service_port_protocol",
+		]
+		separator    = "_"
+		target_label = "__service__"
+	}
+}
+
+discovery.relabel "services_metrics_ports" {
+	targets = discovery.relabel.services_clean_unwanted.output
+
+	rule {
+		action        = "keep"
+		regex         = ".*-metrics.*"
+		source_labels = ["__meta_kubernetes_service_port_name"]
+	}
+
+	rule {
+		source_labels = ["__meta_kubernetes_service_port_number"]
+		target_label  = "__port__"
+	}
+
+	rule {
+		source_labels = ["__meta_kubernetes_service_name"]
+		target_label  = "__service__"
+	}
+}
+
+discovery.relabel "services_actian_redpanda" {
+	targets = discovery.relabel.services_clean_unwanted.output
+
+	rule {
+		action        = "keep"
+		regex         = "redpanda"
+		source_labels = ["__meta_kubernetes_service_label_app_kubernetes_io_name"]
+	}
+
+	rule {
+		action        = "keep"
+		regex         = "9644"
+		source_labels = ["__meta_kubernetes_service_port_number"]
+	}
+
+	rule {
+		source_labels = ["__meta_kubernetes_service_port_number"]
+		target_label  = "__port__"
+	}
+
+	rule {
+		replacement  = "/metrics"
+		target_label = "__metrics_path__"
+	}
+
+	rule {
+		source_labels = ["__meta_kubernetes_service_annotation_meta_helm_sh_release_name"]
+		target_label  = "__service__"
+	}
+}
+
+discovery.relabel "services" {
+	targets = concat(
+		discovery.relabel.services_prometheus_annotations_2.output,
+		discovery.relabel.services_metrics_ports.output,
+		discovery.relabel.services_actian_redpanda.output,
+	)
+
+	rule {
+		source_labels = ["__address__"]
+		target_label  = "__param_target"
+		regex         = "([\\w\\-\\_]+)\\..+:\\d+"
+	}
+
+	rule {
+		source_labels = ["__param_target"]
+		target_label  = "instance"
+	}
+
+	// rule {
+	// 	replacement  = "k8s_services"
+	// 	target_label = "flow_module_name"
+	// }
+
+	rule {
+		source_labels = [
+			"__meta_kubernetes_namespace",
+			"__service__",
+		]
+		target_label = "job"
+		separator    = "/"
+	}
+}
+
+prometheus.scrape "services" {
+	targets = discovery.relabel.services.output
+
+	forward_to = [prometheus.relabel.services.receiver]
+
+	bearer_token_file = "/var/run/secrets/kubernetes.io/serviceaccount/token"
+
+	scrape_interval = "30s"
+	scrape_timeout  = "10s"
+
+	tls_config {
+		ca_file              = "/var/run/secrets/kubernetes.io/serviceaccount/ca.crt"
+		insecure_skip_verify = false
+		server_name          = "kubernetes"
+	}
+}
+
+prometheus.relabel "services" {
+	rule {
+		source_labels = ["__name__"]
+		action        = "drop"
+		regex         = "go_.*"
+	}
+
+	forward_to = argument.forward_metrics_to.value
+}

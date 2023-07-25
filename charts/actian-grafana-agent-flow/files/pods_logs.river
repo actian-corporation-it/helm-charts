@@ -65,6 +65,11 @@ discovery.relabel "pods_logs" {
 		]
 	}
 
+	// rule {
+	// 	replacement  = "pod_logs"
+	// 	target_label = "flow_module_name"
+	// }
+
 	rule {
 		source_labels = [
 			"__meta_kubernetes_namespace",

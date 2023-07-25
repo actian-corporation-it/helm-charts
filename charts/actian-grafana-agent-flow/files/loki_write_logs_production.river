@@ -1,0 +1,54 @@
+// Loki Write URL
+argument "url" {
+	optional = false
+}
+
+// Loki User
+argument "username" {
+	optional = false
+}
+
+// Loki Password
+argument "password" {
+	optional = false
+}
+
+// Cluster name
+argument "cluster_name" {
+	optional = false
+}
+
+// Cluster environment (cloudopsdev, dev, test, stage, production)
+argument "environment" {
+	optional = false
+}
+
+// Grafana Stack name (for Mimir Tenant Id)
+argument "grafana_stack" {
+	optional = false
+}
+
+// Cluster Service Provider namne (aws, gcp, azure)
+argument "cloud_provider" {
+	optional = false
+}
+
+export "receiver" {
+	value = loki.write.logs.receiver
+}
+
+loki.write "logs" {
+	external_labels = {
+		cluster       = argument.cluster_name.value,
+		cloudProvider = argument.cloud_provider.value,
+	}
+
+	endpoint {
+		url = argument.url.value
+
+		basic_auth {
+			username = argument.username.value
+			password = argument.password.value
+		}
+	}
+}

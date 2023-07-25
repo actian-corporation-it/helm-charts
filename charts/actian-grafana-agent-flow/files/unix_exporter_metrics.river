@@ -25,6 +25,11 @@ argument "scrape_timeout" {
 discovery.relabel "unix_exporter" {
 	targets = argument.targets.value
 
+	// rule {
+	// 	replacement  = "unix_exporter"
+	// 	target_label = "flow_module_name"
+	// }
+
 	rule {
 		action       = "replace"
 		target_label = "job"

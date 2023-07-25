@@ -39,10 +39,10 @@ export "receiver" {
 
 prometheus.remote_write "metrics" {
 	external_labels = {
-		cluster       = argument.cluster_name.value,
+		cluster = argument.cluster_name.value,
 		cloudProvider = argument.cloud_provider.value,
 	}
-
+	
 	endpoint {
 		url = argument.url.value
 
@@ -51,7 +51,7 @@ prometheus.remote_write "metrics" {
 			password = argument.password.value
 		}
 		headers = {
-			"X-Scope-OrgId" = argument.grafana_stack.value,
+			"X-Scope-OrgID" = argument.grafana_stack.value,
 		}
 	}
 }
