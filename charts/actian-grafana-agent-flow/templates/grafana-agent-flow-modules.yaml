@@ -9,9 +9,15 @@ metadata:
     app.kubernetes.io/version: {{ .Chart.Version }}
     helm.sh/chart: grafana-agent-flow-modules-0.0.1
 data:
-  prometheus_remote_write_metrics.river: | {{ .Files.Get "files/prometheus_remote_write_metrics_nonprod.river" | trim | nindent 4 }}
+{{- if eq .Values.global.actian.environment "production" }}
+  prometheus_remote_write_metrics.river: | {{ .Files.Get "files/prometheus_remote_write_metrics_production.river" | trim | nindent 4 }}
 
-  loki_write_logs.river: | {{ .Files.Get "files/loki_write_logs.river" | trim | nindent 4 }}
+  loki_write_logs.river: | {{ .Files.Get "files/loki_write_logs_production.river" | trim | nindent 4 }}
+{{- else }}
+  prometheus_remote_write_metrics.river: | {{ .Files.Get "files/prometheus_remote_write_metrics_preproduction.river" | trim | nindent 4 }}
+
+  loki_write_logs.river: | {{ .Files.Get "files/loki_write_logs_preproduction.river" | trim | nindent 4 }}
+{{- end }}
 
   discovery_relabel_pods.river: | {{ .Files.Get "files/discovery_relabel_pods.river" | trim | nindent 4 }}
 
