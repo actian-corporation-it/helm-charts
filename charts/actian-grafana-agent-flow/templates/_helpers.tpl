@@ -1,6 +1,6 @@
 {{/*
 *****************************************
-Grafana Stack calculation
+Grafana Stack
 *****************************************
 */}}
 {{- define "actian.grafanaStack" -}}
@@ -10,6 +10,23 @@ Grafana Stack calculation
   {{- printf "engineering" -}}
 {{- else if eq .Values.global.actian.environment "stage" }}
   {{- printf "stage" -}}
+{{- else }}
+  {{- printf "" -}}
+{{- end }}
+{{- end -}}
+
+{{/*
+*****************************************
+Grafana Region
+*****************************************
+*/}}
+{{- define "actian.grafanaRegion" -}}
+{{- if or (eq .Values.global.actian.environment "cloudopsdev") (eq .Values.global.actian.environment "dev") (eq .Values.global.actian.environment "test") (eq .Values.global.actian.environment "stage") }}
+  {{- printf "us" -}}
+{{- else if eq .Values.global.actian.grafanaRegion "grafana_region" }}
+  {{- printf "us" -}}
+{{- else }}
+  {{- printf "%s" .Values.global.actian.grafanaRegion -}}
 {{- end }}
 {{- end -}}
 
@@ -36,10 +53,11 @@ Vault paths for Prometheus and Loki secrets
 *****************************************
 */}}
 {{- define "vaultSecrets.prometheusUserPath" -}}
+{{- $grafanaRegion := (include "actian.grafanaRegion" .) -}}
   {{- if or (eq .Values.global.actian.environment "dev") (eq .Values.global.actian.environment "test") -}}
-    {{- printf "paramstore/engineering/%s" .Values.global.actian.grafanaRegion -}}
+    {{- printf "paramstore/engineering/%s" $grafanaRegion -}}
   {{- else -}}
-    {{- printf "paramstore/%s/%s" .Values.global.actian.environment  .Values.global.actian.grafanaRegion -}}
+    {{- printf "paramstore/%s/%s" .Values.global.actian.environment  $grafanaRegion -}}
   {{- end -}}
 {{- end -}}
 
@@ -66,10 +84,11 @@ Vault paths for Prometheus and Loki secrets
 {{- end -}}
 
 {{- define "vaultSecrets.lokiUserPath" -}}
+{{- $grafanaRegion := (include "actian.grafanaRegion" .) -}}
   {{- if or (eq .Values.global.actian.environment "dev") (eq .Values.global.actian.environment "test") -}}
-    {{- printf "paramstore/engineering/%s" .Values.global.actian.grafanaRegion -}}
+    {{- printf "paramstore/engineering/%s" $grafanaRegion -}}
   {{- else -}}
-    {{- printf "paramstore/%s/%s" .Values.global.actian.environment .Values.global.actian.grafanaRegion -}}
+    {{- printf "paramstore/%s/%s" .Values.global.actian.environment $grafanaRegion -}}
   {{- end -}}
 {{- end -}}
 
@@ -96,10 +115,11 @@ Vault paths for Prometheus and Loki secrets
 {{- end -}}
 
 {{- define "vaultSecrets.prometheusRemoteWriteUrlPath" -}}
+{{- $grafanaRegion := (include "actian.grafanaRegion" .) -}}
   {{- if or (eq .Values.global.actian.environment "dev") (eq .Values.global.actian.environment "test") -}}
-    {{- printf "paramstore/engineering/%s" .Values.global.actian.grafanaRegion -}}
+    {{- printf "paramstore/engineering/%s" $grafanaRegion -}}
   {{- else -}}
-    {{- printf "paramstore/%s/%s" .Values.global.actian.environment .Values.global.actian.grafanaRegion -}}
+    {{- printf "paramstore/%s/%s" .Values.global.actian.environment $grafanaRegion -}}
   {{- end -}}
 {{- end -}}
 
@@ -108,10 +128,11 @@ Vault paths for Prometheus and Loki secrets
 {{- end -}}
 
 {{- define "vaultSecrets.lokiWriteUrlPath" -}}
+{{- $grafanaRegion := (include "actian.grafanaRegion" .) -}}
   {{- if or (eq .Values.global.actian.environment "dev") (eq .Values.global.actian.environment "test") -}}
-    {{- printf "paramstore/engineering/%s" .Values.global.actian.grafanaRegion -}}
+    {{- printf "paramstore/engineering/%s" $grafanaRegion -}}
   {{- else -}}
-    {{- printf "paramstore/%s/%s" .Values.global.actian.environment .Values.global.actian.grafanaRegion -}}
+    {{- printf "paramstore/%s/%s" .Values.global.actian.environment $grafanaRegion -}}
   {{- end -}}
 {{- end -}}
 
