@@ -37,8 +37,8 @@ discovery.relabel "ksm" {
 	targets = argument.pods_targets.value
 
 	// rule {
-	// 	replacement  = "ksm"
-	// 	target_label = "flow_module_name"
+	// 	replacement  = "discoery_relabel_ksm"
+	// 	target_label = "flow_module_name_1"
 	// }
 
 	rule {
@@ -53,8 +53,8 @@ discovery.relabel "cadvisor" {
 	targets = argument.nodes_targets.value
 
 	// rule {
-	// 	replacement  = "cadvisor"
-	// 	target_label = "flow_module_name"
+	// 	replacement  = "discovery_relabel_cadvisor"
+	// 	target_label = "flow_module_name_2"
 	// }
 
 	rule {
@@ -84,8 +84,8 @@ discovery.relabel "kubelet" {
 	targets = argument.nodes_targets.value
 
 	// rule {
-	// 	replacement  = "kubelet"
-	// 	target_label = "flow_module_name"
+	// 	replacement  = "discovery_relabel_kubelet"
+	// 	target_label = "flow_module_name_3"
 	// }
 
 	rule {
@@ -114,6 +114,11 @@ discovery.relabel "kubelet" {
 discovery.relabel "apiserver_endpoints" {
 	targets = argument.endpoints_targets.value
 
+	// rule {
+	// 	replacement  = "discovery_relabel_api_server_endpoints"
+	// 	target_label = "flow_module_name_4"
+	// }
+
 	rule {
 		source_labels = ["__meta_kubernetes_service_label_component"]
 		regex         = "apiserver"
@@ -124,11 +129,6 @@ discovery.relabel "apiserver_endpoints" {
 		target_label = "__scheme__"
 		replacement  = "https"
 	}
-
-	// rule {
-	// 	replacement  = "api_server_endpoints"
-	// 	target_label = "flow_module_name"
-	// }
 
 	rule {
 		target_label = "job"

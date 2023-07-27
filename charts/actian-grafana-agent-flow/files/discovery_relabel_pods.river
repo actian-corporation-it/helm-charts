@@ -18,9 +18,14 @@ discovery.relabel "pods_actian" {
 
 	rule {
 		action        = "keep"
-		regex         = "warehouses|databases|"
+		regex         = "avalanche|databases|warehouses"
 		source_labels = ["__meta_kubernetes_namespace"]
 	}
+
+	// rule {
+	// 	replacement  = "discovery_relabel_pods_actian"
+	// 	target_label = "flow_module_name_1"
+	// }
 
 	rule {
 		source_labels = [
@@ -52,11 +57,6 @@ discovery.relabel "pods_actian" {
 		regex = ";*([^;]+);*.*"
 	}
 
-	// rule {
-	// 	replacement  = "discovery_relabel_pods"
-	// 	target_label = "flow_module_name"
-	// }
-
 	rule {
 		source_labels = [
 			"__meta_kubernetes_namespace",
@@ -74,9 +74,14 @@ discovery.relabel "pods_k8s" {
 
 	rule {
 		action        = "drop"
-		regex         = "warehouses"
+		regex         = "avalanche|databases|warehouses"
 		source_labels = ["__meta_kubernetes_namespace"]
 	}
+
+	// rule {
+	// 	replacement  = "discovery_relabel_pods_k8s"
+	// 	target_label = "flow_module_name_2"
+	// }
 
 	// rule {
 	// 	source_labels = [
@@ -131,6 +136,11 @@ discovery.relabel "pods_common" {
 		discovery.relabel.pods_actian.output,
 		discovery.relabel.pods_k8s.output,
 	)
+
+	// rule {
+	// 	replacement  = "discovery_relabel_pods_common"
+	// 	target_label = "flow_module_name_3"
+	// }
 
 	rule {
 		source_labels = ["__meta_kubernetes_namespace"]

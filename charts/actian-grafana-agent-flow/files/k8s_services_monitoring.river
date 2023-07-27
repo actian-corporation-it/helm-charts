@@ -43,7 +43,7 @@ discovery.relabel "services_clean_unwanted" {
 
 	rule {
 		action        = "drop"
-		regex         = "grafana-agent-flow"
+		regex         = ".*grafana-agent-flow.*"
 		source_labels = ["__meta_kubernetes_service_label_app_kubernetes_io_instance"]
 	}
 }
@@ -56,6 +56,11 @@ discovery.relabel "services_prometheus_annotations_1" {
 		regex         = "false"
 		source_labels = ["__meta_kubernetes_service_annotation_prometheus_io_scrape"]
 	}
+
+	// rule {
+	// 	replacement  = "discovery_relabel_service_prometheus_annotations_1"
+	// 	target_label = "flow_module_name_1"
+	// }
 
 	rule {
 		source_labels = [
@@ -81,6 +86,11 @@ discovery.relabel "services_prometheus_annotations_2" {
 		source_labels = ["__meta_kubernetes_service_name"]
 	}
 
+	// rule {
+	// 	replacement  = "discovery_relabel_service_prometheus_annotations_2"
+	// 	target_label = "flow_module_name_2"
+	// }
+
 	rule {
 		action        = "lowercase"
 		source_labels = [
@@ -100,6 +110,11 @@ discovery.relabel "services_metrics_ports" {
 		regex         = ".*-metrics.*"
 		source_labels = ["__meta_kubernetes_service_port_name"]
 	}
+
+	// rule {
+	// 	replacement  = "discovery_relabel_service_metrics_ports"
+	// 	target_label = "flow_module_name_3"
+	// }
 
 	rule {
 		source_labels = ["__meta_kubernetes_service_port_number"]
@@ -127,6 +142,11 @@ discovery.relabel "services_actian_redpanda" {
 		source_labels = ["__meta_kubernetes_service_port_number"]
 	}
 
+	// rule {
+	// 	replacement  = "discovery_relabel_service_actian_redpanda"
+	// 	target_label = "flow_module_name_4"
+	// }
+
 	rule {
 		source_labels = ["__meta_kubernetes_service_port_number"]
 		target_label  = "__port__"
@@ -150,6 +170,11 @@ discovery.relabel "services" {
 		discovery.relabel.services_actian_redpanda.output,
 	)
 
+	// rule {
+	// 	replacement  = "discovery_relabel_k8s_services"
+	// 	target_label = "flow_module_name_5"
+	// }
+
 	rule {
 		source_labels = ["__address__"]
 		target_label  = "__param_target"
@@ -160,11 +185,6 @@ discovery.relabel "services" {
 		source_labels = ["__param_target"]
 		target_label  = "instance"
 	}
-
-	// rule {
-	// 	replacement  = "k8s_services"
-	// 	target_label = "flow_module_name"
-	// }
 
 	rule {
 		source_labels = [

@@ -37,6 +37,11 @@ discovery.relabel "pods_metrics" {
 		source_labels = ["__meta_kubernetes_pod_container_port_name"]
 	}
 
+	// rule {
+	// 	replacement  = "discovery_relabel_pods_metrics"
+	// 	target_label = "flow_module_name_final"
+	// }
+
 	rule {
 		action        = "replace"
 		regex         = "(https?)"

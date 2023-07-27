@@ -30,8 +30,8 @@ discovery.relabel "ingresses" {
 	targets = argument.targets.value
 
 	// rule {
-	// 	replacement  = "k8s_ingresses"
-	// 	target_label = "flow_module_name"
+	// 	replacement  = "discovery_relabel_k8s_ingresses"
+	// 	target_label = "flow_module_name_1"
 	// }
 
 	rule {

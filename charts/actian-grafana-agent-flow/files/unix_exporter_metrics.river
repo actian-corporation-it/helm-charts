@@ -26,8 +26,8 @@ discovery.relabel "unix_exporter" {
 	targets = argument.targets.value
 
 	// rule {
-	// 	replacement  = "unix_exporter"
-	// 	target_label = "flow_module_name"
+	// 	replacement  = "discovery_relabel_unix_exporter"
+	// 	target_label = "flow_module_name_1"
 	// }
 
 	rule {
@@ -54,10 +54,8 @@ discovery.relabel "unix_exporter" {
 
 prometheus.scrape "unix_exporter_metrics" {
 	targets = discovery.relabel.unix_exporter.output
-	// targets = argument.unix_exporter_targets.value
 
 	forward_to = [prometheus.relabel.unix_exporter_metrics.receiver]
-	// forward_to = argument.forward_metrics_to.value
 
 	bearer_token_file = "/var/run/secrets/kubernetes.io/serviceaccount/token"
 
