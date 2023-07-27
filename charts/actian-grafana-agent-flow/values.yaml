@@ -1,8 +1,8 @@
 global:
   actian:
-    externalSecretName: grafana-secrets
+    namespace: monitoring
+    externalSecretName: grafana-flow-secrets
     environment: environment
-    grafanaStack: grafana_stack
     grafanaRegion: grafana_region
     externalLabels:
       cloudProvider: csp
@@ -11,7 +11,7 @@ global:
 clusterSecretStore:
   saReference: false
   cabundle_secretName: vault.cabundle
-  clusterStore_name: grafana-secret-store
+  clusterStore_name: grafana-flow-secret-store
   k8s_sa: change_me
   k8s_sa_auth_token: change_me
   namespace: change_me
@@ -119,32 +119,32 @@ grafana-agent-flow-daemonset:
       - name: PROMETHEUS_USER
         valueFrom:
           secretKeyRef:
-            name: grafana-secrets
+            name: grafana-flow-secrets
             key: prometheus-user
       - name: PROMETHEUS_PASSWORD
         valueFrom:
           secretKeyRef:
-            name: grafana-secrets
+            name: grafana-flow-secrets
             key: prometheus-password
       - name: PROMETHEUS_REMOTE_WRITE_URL
         valueFrom:
           secretKeyRef:
-            name: grafana-secrets
+            name: grafana-flow-secrets
             key: prometheus-remote-write-url
       - name: LOKI_USER
         valueFrom:
           secretKeyRef:
-            name: grafana-secrets
+            name: grafana-flow-secrets
             key: loki-user
       - name: LOKI_PASSWORD
         valueFrom:
           secretKeyRef:
-            name: grafana-secrets
+            name: grafana-flow-secrets
             key: loki-password
       - name: LOKI_WRITE_URL
         valueFrom:
           secretKeyRef:
-            name: grafana-secrets
+            name: grafana-flow-secrets
             key: loki-write-url
     mounts:
       varlog: true
@@ -263,32 +263,32 @@ grafana-agent-flow-statefulset:
       - name: PROMETHEUS_USER
         valueFrom:
           secretKeyRef:
-            name: grafana-secrets
+            name: grafana-flow-secrets
             key: prometheus-user
       - name: PROMETHEUS_PASSWORD
         valueFrom:
           secretKeyRef:
-            name: grafana-secrets
+            name: grafana-flow-secrets
             key: prometheus-password
       - name: PROMETHEUS_REMOTE_WRITE_URL
         valueFrom:
           secretKeyRef:
-            name: grafana-secrets
+            name: grafana-flow-secrets
             key: prometheus-remote-write-url
       - name: LOKI_USER
         valueFrom:
           secretKeyRef:
-            name: grafana-secrets
+            name: grafana-flow-secrets
             key: loki-user
       - name: LOKI_PASSWORD
         valueFrom:
           secretKeyRef:
-            name: grafana-secrets
+            name: grafana-flow-secrets
             key: loki-password
       - name: LOKI_WRITE_URL
         valueFrom:
           secretKeyRef:
-            name: grafana-secrets
+            name: grafana-flow-secrets
             key: loki-write-url
     mounts:
       varlog: true
