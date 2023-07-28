@@ -36,3 +36,5 @@ data:
   k8s_services_monitoring.river: | {{ .Files.Get "files/k8s_services_monitoring.river" | trim | nindent 4}}
 
   k8s_ingresses_monitoring.river: | {{ .Files.Get "files/k8s_ingresses_monitoring.river" | trim | nindent 4}}
+
+  hashicorp_monitoring.river: | {{ .Files.Get "files/hashicorp_monitoring.river" | trim | nindent 4}}

@@ -1,0 +1,135 @@
+// Arguments
+
+// Targets must be a list(map(string)) of targets to scrape
+argument "targets" {
+	optional = false
+}
+
+// forward_metrics_to must be a list(MetricsReceiver) where collected metrics
+// should be forwarded.
+argument "forward_metrics_to" {
+	optional = false
+}
+
+// scrape_interval is a duration which specifies how frequently to collect
+// metrics.
+argument "scrape_interval" {
+	optional = true
+	default  = "30s"
+}
+
+// scrape_timeout is a duration which specifies how long to wait for a single
+// metrics collection to complete.
+argument "scrape_timeout" {
+	optional = true
+	default  = "10s"
+}
+
+// Processing
+
+// Drop everything but Consul
+discovery.relabel "consul" {
+	targets = argument.targets.value
+
+	rule {
+		action        = "keep"
+		regex         = "consul.*server"
+		source_labels = ["__meta_kubernetes_service_name"]
+	}
+
+	rule {
+		action        = "keep"
+		regex         = "8500"
+		source_labels = ["__meta_kubernetes_service_port_number"]
+	}
+
+	rule {
+		replacement  = "/v1/agent/metrics"
+		target_label = "__metrics_path__"
+	}
+}
+
+// Drop everything but Vault
+discovery.relabel "vault" {
+	targets = argument.targets.value
+
+	rule {
+		action        = "keep"
+		regex         = "vault.*active"
+		source_labels = ["__meta_kubernetes_service_name"]
+	}
+
+	rule {
+		action        = "keep"
+		regex         = "8200"
+		source_labels = ["__meta_kubernetes_service_port_number"]
+	}
+
+	rule {
+		replacement  = "/v1/sys/metrics"
+		target_label = "__metrics_path__"
+	}
+}
+
+discovery.relabel "hashicorp" {
+	targets = concat(
+		riscovery.relabel.consul.output,
+		discovery.relabel.vault.output,
+	)
+
+	rule {
+		source_labels = ["__meta_kubernetes_service_port_number"]
+		target_label  = "__port__"
+	}
+
+	rule {
+		source_labels = ["__meta_kubernetes_service_annotation_meta_helm_sh_release_name"]
+		target_label  = "__service__"
+	}
+
+	rule {
+		source_labels = ["__address__"]
+		target_label  = "__param_target"
+	}
+
+	rule {
+		source_labels = ["__meta_kubernetes_service_name"]
+		target_label  = "instance"
+	}
+
+	rule {
+		source_labels = [
+			"__meta_kubernetes_namespace",
+			"__service__",
+		]
+		target_label = "job"
+		separator    = "/"
+	}
+}
+
+prometheus.scrape "hashicorp" {
+	targets = discovery.relabel.hashicorp.output
+
+	forward_to = [prometheus.relabel.hashicorp.receiver]
+
+	bearer_token_file = "/var/run/secrets/kubernetes.io/serviceaccount/token"
+
+	scrape_interval = "30s"
+	scrape_timeout  = "10s"
+
+	tls_config {
+		ca_file              = "/var/run/secrets/kubernetes.io/serviceaccount/ca.crt"
+		insecure_skip_verify = false
+		server_name          = "kubernetes"
+	}
+}
+
+prometheus.relabel "hashicorp" {
+	rule {
+		source_labels = ["__name__"]
+		action        = "drop"
+		regex         = "go_.*"
+	}
+
+	forward_to = argument.forward_metrics_to.value
+}
