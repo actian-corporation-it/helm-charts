@@ -107,7 +107,7 @@ discovery.relabel "services_metrics_ports" {
 
 	rule {
 		action        = "keep"
-		regex         = ".*-metrics.*"
+		regex         = ".*metrics.*"
 		source_labels = ["__meta_kubernetes_service_port_name"]
 	}
 
