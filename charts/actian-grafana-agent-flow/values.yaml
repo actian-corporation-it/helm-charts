@@ -234,6 +234,64 @@ grafana-agent-flow-statefulset:
           }
         }
 
+        module.file "hashicorp_monitoring" {
+          filename = "/var/flow_modules/hashicorp_monitoring.river"
+
+          arguments {
+            targets            = discovery.kubernetes.services.targets
+            forward_metrics_to = [module.file.prometheus_remote_write_metrics.exports.receiver]
+          }
+        }
+
+        otelcol.receiver.otlp "default" {
+                // https://grafana.com/docs/agent/latest/static/flow/reference/components/otelcol.receiver.otlp/
+
+                // configures the default grpc endpoint "0.0.0.0:4317"
+                grpc { }
+                // configures the default http/protobuf endpoint "0.0.0.0:4318"
+                http { }
+
+                output {
+                        metrics = [otelcol.processor.batch.default.input]
+                        logs    = [otelcol.processor.batch.default.input]
+                        traces  = [otelcol.processor.batch.default.input]
+                }
+        }
+
+        otelcol.processor.batch "default" {
+                // https://grafana.com/docs/agent/latest/static/flow/reference/components/otelcol.processor.batch/
+                output {
+                        metrics = [otelcol.exporter.prometheus.grafana_prometheus.input]
+                        logs    = [otelcol.exporter.loki.grafana_loki.input]
+                }
+        }
+        //                 traces  = [otelcol.exporter.otlp.grafana_cloud_tempo.input]
+
+        otelcol.exporter.loki "grafana_loki" {
+                // https://grafana.com/docs/agent/latest/static/flow/reference/components/otelcol.exporter.loki/
+                forward_to = [module.file.loki_write_logs.exports.receiver]
+        }
+
+        otelcol.exporter.prometheus "grafana_prometheus" {
+                // https://grafana.com/docs/agent/latest/static/flow/reference/components/otelcol.exporter.prometheus/
+                forward_to = [module.file.prometheus_remote_write_metrics.exports.receiver]
+        }
+
+        // otelcol.exporter.otlp "grafana_tempo" {
+        //         // https://grafana.com/docs/agent/latest/static/flow/reference/components/otelcol.exporter.otlp/
+        //         client {
+        //                 endpoint = "tempo-prod-04-prod-us-east-0.grafana.net:443"
+        //                 auth     = otelcol.auth.basic.grafana_cloud_tempo.handler
+        //         }
+        // }
+
+        // otelcol.auth.basic "grafana_cloud_tempo" {
+        //         // https://grafana.com/docs/agent/latest/static/flow/reference/components/otelcol.auth.basic/
+        //         username = "616244"
+        //         password = "glc_eyJvIjoiODc2OTA5IiwibiI6ImJvYmJ5dGVzdCIsImsiOiJyOFB4MzQ5ZzBtZ2tya2Q3V1laOTY1N2kiLCJtIjp7InIiOiJwcm9kLXVzLWVhc3QtMCJ9fQ=="
+        // }
+
+
         module.file "prometheus_remote_write_metrics" {
           filename = "/var/flow_modules/prometheus_remote_write_metrics.river"
 
@@ -259,6 +317,13 @@ grafana-agent-flow-statefulset:
         }
 
     enableReporting: false
+    extraPorts:
+      - name: otlp-grpc
+        port: 4317
+        targetPort: 4317
+      - name: otlp-http
+        port: 4318
+        targetPort: 4318
     extraEnv:
       - name: PROMETHEUS_USER
         valueFrom:
