@@ -73,7 +73,7 @@ discovery.relabel "vault" {
 
 discovery.relabel "hashicorp" {
 	targets = concat(
-		riscovery.relabel.consul.output,
+		discovery.relabel.consul.output,
 		discovery.relabel.vault.output,
 	)
 
