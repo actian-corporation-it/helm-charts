@@ -28,8 +28,8 @@ argument "scrape_timeout" {
 // Processing
 
 // Drop everything but Consul
-discovery.relabel "consul" {
-	targets = argument.targets.value
+discovery.relabel "hashicorp_consul" {
+	targets = coalesce(argument.targets.value,[{"__address__" = "127.0.0.1:8500", "__meta_kubernetes_service_name"="consul_server","__meta_kubernetes_service_port_number"="8500"}])
 
 	rule {
 		action        = "keep"
@@ -46,6 +46,11 @@ discovery.relabel "consul" {
 	rule {
 		replacement  = "/v1/agent/metrics"
 		target_label = "__metrics_path__"
+	}
+
+	rule {
+		source_labels = ["__address__"]
+		target_label  = "instance"
 	}
 }
 
@@ -71,9 +76,9 @@ discovery.relabel "vault" {
 	}
 }
 
+		// discovery.relabel.consul.output,
 discovery.relabel "hashicorp" {
 	targets = concat(
-		discovery.relabel.consul.output,
 		discovery.relabel.vault.output,
 	)
 
@@ -90,10 +95,11 @@ discovery.relabel "hashicorp" {
 	rule {
 		source_labels = ["__address__"]
 		target_label  = "__param_target"
+		regex         = "([\\w\\-\\_]+)\\..+:\\d+"
 	}
 
 	rule {
-		source_labels = ["__meta_kubernetes_service_name"]
+		source_labels = ["__param_target"]
 		target_label  = "instance"
 	}
 
@@ -107,8 +113,17 @@ discovery.relabel "hashicorp" {
 	}
 }
 
+prometheus.exporter.consul "consul" {
+	server = discovery.relabel.hashicorp_consul.output[0].instance
+	// server = "http://consul-server.consul.svc:8500"
+	timeout = "10s" 
+}
+
 prometheus.scrape "hashicorp" {
-	targets = discovery.relabel.hashicorp.output
+	targets = concat(
+		discovery.relabel.hashicorp.output,
+		prometheus.exporter.consul.consul.targets,
+	)
 
 	forward_to = [prometheus.relabel.hashicorp.receiver]
 
