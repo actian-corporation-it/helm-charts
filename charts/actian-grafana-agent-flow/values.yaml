@@ -173,7 +173,7 @@ grafana-agent-flow-statefulset:
       create: true
       content: |
         logging {
-          level  = "warn"
+          level  = "debug"
           format = "logfmt"
         }
 
@@ -225,14 +225,14 @@ grafana-agent-flow-statefulset:
           }
         }
 
-        module.file "k8s_ingresses_monitoring" {
-          filename = "/var/flow_modules/k8s_ingresses_monitoring.river"
+        // module.file "k8s_ingresses_monitoring" {
+        //   filename = "/var/flow_modules/k8s_ingresses_monitoring.river"
 
-          arguments {
-            targets            = discovery.kubernetes.ingresses.targets
-            forward_metrics_to = [module.file.prometheus_remote_write_metrics.exports.receiver]
-          }
-        }
+        //   arguments {
+        //     targets            = discovery.kubernetes.ingresses.targets
+        //     forward_metrics_to = [module.file.prometheus_remote_write_metrics.exports.receiver]
+        //   }
+        // }
 
         module.file "hashicorp_monitoring" {
           filename = "/var/flow_modules/hashicorp_monitoring.river"
