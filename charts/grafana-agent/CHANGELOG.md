@@ -33,6 +33,14 @@ are not present.
 
 ## Changes
 
+### v3.6.0 (2023-08-03 - Suleyman Kutlu)
+
+-----------------
+
+#### Features
+
+- Adding missing metrics required for Anodot
+
 ### v3.5.0 (2023-07-24 - Suleyman Kutlu)
 
 -----------------
