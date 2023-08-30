@@ -37,13 +37,17 @@ discovery.relabel "ksm" {
 	targets = argument.pods_targets.value
 
 	// rule {
-	// 	replacement  = "discoery_relabel_ksm"
+	// 	replacement  = "discovery_relabel_ksm"
 	// 	target_label = "flow_module_name_1"
 	// }
 
 	rule {
 		source_labels = ["__meta_kubernetes_pod_label_app_kubernetes_io_name"]
 		regex         = "kube-state-metrics"
+		action		  = "keep"
+	}
+
+	rule {
 		replacement   = "integrations/kubernetes/kube-state-metrics"
 		target_label  = "job"
 	}
