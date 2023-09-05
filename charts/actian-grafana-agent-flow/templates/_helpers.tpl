@@ -100,7 +100,7 @@ Misc definitions
 
 {{- define "annotations.versions" -}}
 {{- $grafanaAgentVersion := (include "grafanaAgent.Version" .) -}}
-grafana_agent_versions: "Chart: {{ $.Chart.Name }} / {{ $.Chart.Version }}; Agent_Chart: {{ $grafanaAgentVersion }}"
+grafana_agent_versions: "Chart: {{ $.Chart.Name }} / {{ $.Chart.Version }}; grafana-agent: {{ $grafanaAgentVersion }}"
 {{- end -}}
 
 {{- define "grafanaAgent.Version" -}}
