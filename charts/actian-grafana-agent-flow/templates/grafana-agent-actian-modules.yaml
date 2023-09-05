@@ -9,13 +9,15 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: {{ .Chart.Name }}
     app.kubernetes.io/version: {{ .Chart.Version }}
+  annotations:
+{{ include "annotations.versions" . | indent 4 }}
 data:
 {{- if eq $environment "production" }}
-  prometheus_remote_write.river: | {{ .Files.Get "files/agent-modules/actian/prometheus_remote_write_production.river" | trim | nindent 4 }}
+  prometheus_remote_write.river: | {{ .Files.Get "agent-modules/actian/prometheus_remote_write_production.river" | trim | nindent 4 }}
 
-  loki_write.river: | {{ .Files.Get "files/agent-modules/actian/loki_write_production.river" | trim | nindent 4 }}
+  loki_write.river: | {{ .Files.Get "agent-modules/actian/loki_write_production.river" | trim | nindent 4 }}
 {{- else }}
-  prometheus_remote_write.river: | {{ .Files.Get "files/agent-modules/actian/prometheus_remote_write_preproduction.river" | trim | nindent 4 }}
+  prometheus_remote_write.river: | {{ .Files.Get "agent-modules/actian/prometheus_remote_write_preproduction.river" | trim | nindent 4 }}
 
-  loki_write.river: | {{ .Files.Get "files/agent-modules/actian/loki_write_preproduction.river" | trim | nindent 4 }}
+  loki_write.river: | {{ .Files.Get "agent-modules/actian/loki_write_preproduction.river" | trim | nindent 4 }}
 {{- end }}
