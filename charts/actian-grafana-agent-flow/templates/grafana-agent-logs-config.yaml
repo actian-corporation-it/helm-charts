@@ -40,7 +40,7 @@ data:
         }
     }
 
-    module.file "kubelet_journal_logs" {
+    module.git "kubelet_journal_logs" {
         basic_auth {
             username = env("GIT_USERNAME")
             password = env("GIT_PASSWORD")
