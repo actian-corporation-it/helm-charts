@@ -8,6 +8,8 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: {{ .Chart.Name }}
     app.kubernetes.io/version: {{ .Chart.Version }}
+  annotations:
+{{ include "annotations.versions" . | indent 4 }}
 data:
   agent-config.river: |
     logging {
@@ -16,6 +18,10 @@ data:
     }
 
     module.git "k8s_events" {
+        basic_auth {
+            username = env("GIT_USERNAME")
+            password = env("GIT_PASSWORD")
+        }
         repository = "{{- include "actian.grafanaAgentModulesRepo" . }}"
         revision = "{{- include "actian.grafanaAgentModulesRevision" . }}"
         path = "modules/kubernetes/logs/k8s_events.river"
