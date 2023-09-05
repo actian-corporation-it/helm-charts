@@ -1,5 +1,67 @@
 {{/*
 *****************************************
+Cluster Name
+*****************************************
+*/}}
+{{- define "actian.clusterName" -}}
+{{- printf "%s" .Values.global.actian.clusterName }}
+{{- end -}}
+
+{{/*
+*****************************************
+Cluster Environment
+*****************************************
+*/}}
+{{- define "actian.clusterEnvironment" -}}
+{{- printf "%s" .Values.global.actian.environment }}
+{{- end -}}
+
+{{/*
+*****************************************
+Cloud Service Provider
+*****************************************
+*/}}
+{{- define "actian.cloudProvider" -}}
+{{- printf "%s" .Values.global.actian.cloudProvider }}
+{{- end -}}
+
+{{/*
+*****************************************
+Cluster Region
+*****************************************
+*/}}
+{{- define "actian.clusterRegion" -}}
+{{- printf "%s" .Values.global.actian.clusterRegion }}
+{{- end -}}
+
+{{/*
+*****************************************
+Agent Modules Repository
+*****************************************
+*/}}
+{{- define "actian.grafanaAgentModulesRepo" -}}
+{{- if .Values.global.actian.modulesRepo -}}
+{{- printf "%s" .Values.global.actian.modulesRepo }}
+{{- else -}}
+{{- print "https://bitbucket.org/actian/grafana-agent-modules.git" }}
+{{- end -}}
+{{- end -}}
+
+{{/*
+*****************************************
+Agent Modules Revision
+*****************************************
+*/}}
+{{- define "actian.grafanaAgentModulesRevision" -}}
+{{- if .Values.global.actian.modulesRevision -}}
+{{- printf "%s" .Values.global.actian.modulesRevision }}
+{{- else -}}
+{{- print "main" }}
+{{- end -}}
+{{- end -}}
+
+{{/*
+*****************************************
 Grafana Stack
 *****************************************
 */}}
