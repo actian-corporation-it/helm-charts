@@ -2,7 +2,7 @@ name: actian-grafana-agent-flow
 apiVersion: v2
 description: Helm chart to deploy Grafana Agent Flow Mode with Actian specific configurations
 type: application
-version: 0.1.0
+version: 0.2.0
 
 dependencies:
   - name: clusterSecretStore
