@@ -41,8 +41,8 @@ loki.write "logs" {
 		url = argument.loki_url.value
 
 		basic_auth {
-			username = argument.username.value
-			password = argument.password.value
+			username = argument.loki_username.value
+			password = argument.loki_password.value
 		}
 		tenant_id = argument.grafana_stack.value
 	}
