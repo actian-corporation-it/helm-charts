@@ -1,0 +1,55 @@
+// Loki Write URL
+argument "loki_url" {
+	optional = false
+}
+
+// Loki User
+argument "loki_username" {
+	optional = false
+}
+
+// Loki Password
+argument "loki_password" {
+	optional = false
+}
+
+// Grafana Stack name (for Loki Tenant Id)
+argument "grafana_stack" {
+	optional = false
+}
+
+// External labels to add to log records
+argument "label_cluster" {
+	optional = false
+}
+argument "label_env" {
+	optional = false
+}
+argument "label_cloud_provider" {
+	optional = false
+}
+argument "label_region" {
+	optional = false
+}
+
+export "receiver" {
+	value = loki.write.logs.receiver
+}
+
+loki.write "logs" {
+	endpoint {
+		url = argument.loki_url.value
+
+		basic_auth {
+			username = argument.username.value
+			password = argument.password.value
+		}
+	}
+
+	external_labels = {
+		"cluster" = argument.label_cluster.value,
+		"env" = argument.label_env.value,
+		"cloudProvider" = argument.label_cloud_provider.value,
+		"region" = argument.label_region.value,
+	}
+}

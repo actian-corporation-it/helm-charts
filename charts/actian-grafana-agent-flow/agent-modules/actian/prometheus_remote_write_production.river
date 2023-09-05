@@ -1,0 +1,68 @@
+// Prometheus Remote Write URL
+argument "mimir_url" {
+	optional = false
+}
+
+// Prometheus User
+argument "mimir_username" {
+	optional = false
+}
+
+// Prometheus Password
+argument "mimir_password" {
+	optional = false
+}
+
+// Grafana Stack name (for Mimir Tenant Id)
+argument "grafana_stack" {
+	optional = false
+}
+
+// External labels to add to metrics
+argument "label_cluster" {
+	optional = false
+}
+argument "label_env" {
+	optional = false
+}
+argument "label_cloud_provider" {
+	optional = false
+}
+argument "label_region" {
+	optional = false
+}
+
+export "receiver" {
+	value = prometheus.remote_write.metrics.receiver
+}
+
+prometheus.remote_write "metrics" {
+	endpoint {
+		url = argument.mimir_url.value
+
+		basic_auth {
+			username = argument.mimir_username.value
+			password = argument.mimir_password.value
+		}
+	}
+
+	write_relabel_config {
+		replacement = argument.label_cluster.value
+		target_label = "cluster"
+	}
+
+	write_relabel_config {
+		replacement = argument.label_env.value
+		target_label = "env"
+	}
+
+	write_relabel_config {
+		replacement = argument.label_cloud_provider.value
+		target_label = "cloudProvider"
+	}
+
+	write_relabel_config {
+		replacement = argument.label_region.value
+		target_label = "region"
+	}
+}
