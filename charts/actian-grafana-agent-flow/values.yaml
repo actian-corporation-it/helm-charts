@@ -1,321 +1,247 @@
 global:
   actian:
     namespace: monitoring
-    externalSecretName: grafana-flow-secrets
-    environment: environment
-    grafanaRegion: grafana_region
-    externalLabels:
-      cloudProvider: csp
-      cluster: cluster_name
+    grafanaExternalSecretName: grafana-agent-secrets
+    grafanaBbcExternalSecretName: grafana-agent-bbc-secrets
+    clusterName: changeme_cluster_name
+    environment: changeme_cluster_environment
+    cloudProvider: changeme_cloud_service_provider
+    clusterRegion: changeme_cluster_region
+    grafanaRegion: changeme_grafana_region
 
 clusterSecretStore:
   saReference: false
   cabundle_secretName: vault.cabundle
-  clusterStore_name: grafana-flow-secret-store
-  k8s_sa: change_me
-  k8s_sa_auth_token: change_me
-  namespace: change_me
-  vault_auth_path: change_me
-  vault_role: change_me
+  clusterStore_name: grafana-agent-secrets-store
+  k8s_sa: changeme_k8s_service_account
+  k8s_sa_auth_token: changeme_k8s_service_account_auth_token
+  namespace: changeme_external_secrets_namespace
+  vault_auth_path: changeme_vault_k8s_auth_path
+  vault_role: changeme_vault_k8s_auth_role
   vault_kv_path: secret/grafana
   vault_server: vault.cloudops.actiandatacloud.com
 
-grafana-agent-flow-daemonset:
-  fullnameOverride: grafana-agent-flow-daemonset
+grafana-agent-logs:
+  fullnameOverride: grafana-agent-logs
   agent:
-    # -- Mode to run Grafana Agent in. Can be "flow" or "static".
     mode: 'flow'
     configMap:
-      create: true
-      content: |
-        logging {
-          level  = "warn"
-          format = "logfmt"
-        }
-
-        discovery.kubernetes "pods" {
-          role = "pod"
-        }
-
-        prometheus.exporter.unix {
-          set_collectors = [
-            "cpu",
-            "filesystem",
-            "loadavg",
-            "meminfo",
-            "netstat",
-          ]
-        }
-
-        module.file "discovery_relabel_pods" {
-          filename = "/var/flow_modules/discovery_relabel_pods.river"
-
-          arguments {
-            targets = discovery.kubernetes.pods.targets
-          }
-        }
-
-        module.file "pods_metrics" {
-          filename = "/var/flow_modules/pods_metrics.river"
-
-          arguments {
-            targets            = module.file.discovery_relabel_pods.exports.output
-            forward_metrics_to = [module.file.prometheus_remote_write_metrics.exports.receiver]
-          }
-        }
-
-        module.file "pods_logs" {
-          filename = "/var/flow_modules/pods_logs.river"
-
-          arguments {
-            targets         = module.file.discovery_relabel_pods.exports.output
-            forward_logs_to = [module.file.loki_write_logs.exports.receiver]
-          }
-        }
-
-        module.file "unix_exporter_metrics" {
-          filename = "/var/flow_modules/unix_exporter_metrics.river"
-
-          arguments {
-            targets            = prometheus.exporter.unix.targets
-            forward_metrics_to = [module.file.prometheus_remote_write_metrics.exports.receiver]
-          }
-        }
-
-        // module.file "prometheus_process_exporter_metrics" {
-        //     filename = "/var/flow_modules/process_exporter_metrics.river"
-
-        //     arguments {
-        //         forward_metrics_to = [module.file.prometheus_remote_write_metrics.exports.receiver]
-        //     }
-        // }
-
-        module.file "prometheus_remote_write_metrics" {
-          filename = "/var/flow_modules/prometheus_remote_write_metrics.river"
-
-          arguments {
-            url             = env("PROMETHEUS_REMOTE_WRITE_URL")
-            username        = env("PROMETHEUS_USER")
-            password        = env("PROMETHEUS_PASSWORD")
-            grafana_stack   = "{{- include "actian.grafanaStack" . }}"
-            external_labels = "{{ .Values.global.actian.externalLabels | toJson | replace "\"" "\\\"" }}"
-          }
-        }
-
-        module.file "loki_write_logs" {
-          filename = "/var/flow_modules/loki_write_logs.river"
-
-          arguments {
-            url             = env("LOKI_WRITE_URL")
-            username        = env("LOKI_USER")
-            password        = env("LOKI_PASSWORD")
-            grafana_stack   = "{{- include "actian.grafanaStack" . }}"
-            external_labels = "{{ .Values.global.actian.externalLabels | toJson | replace "\"" "\\\"" }}"
-          }
-        }
-
+      create: false
+      name: grafana-agent-logs-config
+      key: agent-config.river
+    storagePath: /var/tmp/grafana-agent/grafana-agent-logs
     enableReporting: false
     extraEnv:
-      - name: PROMETHEUS_USER
+      - name: NETRC
+        value: /etc/agent/netrc.d/.netrc
+      - name: AGENT_LOG_LEVEL
+        value: info
+      - name: LOGS_USERNAME
         valueFrom:
           secretKeyRef:
-            name: grafana-flow-secrets
-            key: prometheus-user
-      - name: PROMETHEUS_PASSWORD
-        valueFrom:
-          secretKeyRef:
-            name: grafana-flow-secrets
-            key: prometheus-password
-      - name: PROMETHEUS_REMOTE_WRITE_URL
-        valueFrom:
-          secretKeyRef:
-            name: grafana-flow-secrets
-            key: prometheus-remote-write-url
-      - name: LOKI_USER
-        valueFrom:
-          secretKeyRef:
-            name: grafana-flow-secrets
+            name: grafana-agent-secrets
             key: loki-user
-      - name: LOKI_PASSWORD
+      - name: LOGS_PASSWORD
         valueFrom:
           secretKeyRef:
-            name: grafana-flow-secrets
+            name: grafana-agent-secrets
             key: loki-password
-      - name: LOKI_WRITE_URL
+      - name: LOGS_URL
         valueFrom:
           secretKeyRef:
-            name: grafana-flow-secrets
+            name: grafana-agent-secrets
             key: loki-write-url
     mounts:
       varlog: true
-      dockercontainers: false
+      dockercontainers: true
       extra:
-        - name: flow-modules
-          mountPath: /var/flow_modules
-
+        - name: grafana-agent-actian-modules
+          mountPath: /etc/agent/modules/actian
+          readOnly: true
+        - name: grafana-agent-bbc-secrets
+          mountPath: /etc/agent/netrc.d
+          readOnly: true
   controller:
     type: 'daemonset'
+    updateStrategy:
+      type: RollingUpdate
     tolerations:
       - effect: NoSchedule
         operator: Exists
     volumes:
       extra:
-        - name: flow-modules
+        - name: grafana-agent-actian-modules
           configMap:
-            name: grafana-agent-flow-modules
+            name: grafana-agent-actian-modules
+        - name: grafana-agent-bbc-secrets
+          secret:
+            secretName: grafana-agent-bbc-secrets
+            items: 
+            - key: netrc
+              path: .netrc
+    podAnnotations:
+      logs.agent.grafana.com/log-format: logfmt
+      logs.agent.grafana.com/scrub-timestamp: "true"
+      logs.agent.grafana.com/scrub-level: "true"
+      logs.agent.grafana.com/drop-debug: "false"
+      logs.agent.grafana.com/embed-pod: "true"
+  service:
+    enabled: true
+    annotations:
+      metrics.agent.grafana.com/scrape: "true"
 
-grafana-agent-flow-statefulset:
-  fullnameOverride: grafana-agent-flow-statefulset
+grafana-agent-metrics:
+  fullnameOverride: grafana-agent-metrics
   agent:
-    # -- Mode to run Grafana Agent in. Can be "flow" or "static".
     mode: 'flow'
     configMap:
-      create: true
-      content: |
-        logging {
-          level  = "debug"
-          format = "logfmt"
-        }
+      create: false
+      name: grafana-agent-metrics-config
+      key: agent-config.river
+    storagePath: /var/lib/grafana-agent/grafana-agent-metrics
+    enableReporting: false
+    extraPorts: []
+    extraEnv:
+      - name: NETRC
+        value: /etc/agent/netrc.d/.netrc
+      - name: AGENT_LOG_LEVEL
+        value: info
+      - name: METRICS_USERNAME
+        valueFrom:
+          secretKeyRef:
+            name: grafana-agent-secrets
+            key: prometheus-user
+      - name: METRICS_PASSWORD
+        valueFrom:
+          secretKeyRef:
+            name: grafana-agent-secrets
+            key: prometheus-password
+      - name: METRICS_URL
+        valueFrom:
+          secretKeyRef:
+            name: grafana-agent-secrets
+            key: prometheus-remote-write-url
+    mounts:
+      varlog: false
+      dockercontainers: false
+      extra:
+        - name: grafana-agent-actian-modules
+          mountPath: /etc/agent/modules/actian
+          readOnly: true
+        - name: grafana-agent-bbc-secrets
+          mountPath: /etc/agent/netrc.d
+          readOnly: true
+  controller:
+    type: 'statefulset'
+    replicas: 1
+    updateStrategy:
+      type: RollingUpdate
+    volumes:
+      extra:
+        - name: grafana-agent-actian-modules
+          configMap:
+            name: grafana-agent-actian-modules
+        - name: grafana-agent-bbc-secrets
+          secret:
+            secretName: grafana-agent-bbc-secrets
+            items: 
+            - key: netrc
+              path: .netrc
+    podAnnotations:
+      logs.agent.grafana.com/log-format: logfmt
+      logs.agent.grafana.com/scrub-timestamp: "true"
+      logs.agent.grafana.com/scrub-level: "true"
+      logs.agent.grafana.com/drop-debug: "false"
+      logs.agent.grafana.com/embed-pod: "true"
+  service:
+    enabled: true
+    annotations:
+      metrics.agent.grafana.com/scrape: "true"
 
-        discovery.kubernetes "pods" {
-          role = "pod"
-        }
+grafana-agent-k8s-events:
+  fullnameOverride: grafana-agent-k8s-events
+  agent:
+    mode: 'flow'
+    configMap:
+      create: false
+      name: grafana-agent-k8s-events-config
+      key: agent-config.river
+    clustering:
+      enabled: false
+    storagePath: /var/lib/grafana-agent/grafana-agent-k8s-events
+    enableReporting: false
+    extraEnv:
+      - name: NETRC
+        value: /etc/agent/netrc.d/.netrc
+      - name: AGENT_LOG_LEVEL
+        value: info
+      - name: CLUSTER_NAME
+        value: changeme_cluster_name
+      - name: CLOUD_PROVIDER
+        value: changeme_cloud_service_provider
+      - name: REGION
+        value: changeme_cluster_region
+      - name: LOGS_USERNAME
+        valueFrom:
+          secretKeyRef:
+            name: grafana-agent-secrets
+            key: loki-user
+      - name: LOGS_PASSWORD
+        valueFrom:
+          secretKeyRef:
+            name: grafana-agent-secrets
+            key: loki-password
+      - name: LOGS_URL
+        valueFrom:
+          secretKeyRef:
+            name: grafana-agent-secrets
+            key: loki-write-url
+    mounts:
+      varlog: false
+      dockercontainers: false
+      extra:
+        - name: grafana-agent-actian-modules
+          mountPath: /etc/agent/modules/actian
+          readOnly: true
+        - name: grafana-agent-bbc-secrets
+          mountPath: /etc/agent/netrc.d
+          readOnly: true
+  controller:
+    type: 'statefulset'
+    replicas: 1
+    updateStrategy:
+      type: RollingUpdate
+    volumes:
+      extra:
+        - name: grafana-agent-actian-modules
+          configMap:
+            name: grafana-agent-actian-modules
+        - name: grafana-agent-bbc-secrets
+          secret:
+            secretName: grafana-agent-bbc-secrets
+            items: 
+            - key: netrc
+              path: .netrc
+    podAnnotations:
+      logs.agent.grafana.com/log-format: logfmt
+      logs.agent.grafana.com/scrub-timestamp: "true"
+      logs.agent.grafana.com/scrub-level: "true"
+      logs.agent.grafana.com/drop-debug: "false"
+      logs.agent.grafana.com/embed-pod: "true"
+  service:
+    enabled: true
+    annotations:
+      metrics.agent.grafana.com/scrape: "true"
 
-        discovery.kubernetes "nodes" {
-          role = "node"
-        }
-
-        discovery.kubernetes "services" {
-          role = "service"
-        }
-
-        discovery.kubernetes "endpoints" {
-          role = "endpoints"
-        }
-
-        discovery.kubernetes "ingresses" {
-          role = "ingress"
-        }
-
-        module.file "k8s_api" {
-          filename = "/var/flow_modules/k8s_api_metrics.river"
-
-          arguments {
-            pods_targets       = discovery.kubernetes.pods.targets
-            nodes_targets      = discovery.kubernetes.nodes.targets
-            endpoints_targets  = discovery.kubernetes.endpoints.targets
-            forward_metrics_to = [module.file.prometheus_remote_write_metrics.exports.receiver]
-          }
-        }
-
-        module.file "k8s_event_monitoring" {
-          filename = "/var/flow_modules/k8s_event_monitoring.river"
-
-          arguments {
-            forward_logs_to = [module.file.loki_write_logs.exports.receiver]
-          }
-        }
-
-        module.file "k8s_services_monitoring" {
-          filename = "/var/flow_modules/k8s_services_monitoring.river"
-
-          arguments {
-            targets            = discovery.kubernetes.services.targets
-            forward_metrics_to = [module.file.prometheus_remote_write_metrics.exports.receiver]
-          }
-        }
-
-        // module.file "k8s_ingresses_monitoring" {
-        //   filename = "/var/flow_modules/k8s_ingresses_monitoring.river"
-
-        //   arguments {
-        //     targets            = discovery.kubernetes.ingresses.targets
-        //     forward_metrics_to = [module.file.prometheus_remote_write_metrics.exports.receiver]
-        //   }
-        // }
-
-        module.file "hashicorp_monitoring" {
-          filename = "/var/flow_modules/hashicorp_monitoring.river"
-
-          arguments {
-            targets            = discovery.kubernetes.services.targets
-            forward_metrics_to = [module.file.prometheus_remote_write_metrics.exports.receiver]
-          }
-        }
-
-        otelcol.receiver.otlp "default" {
-                // https://grafana.com/docs/agent/latest/static/flow/reference/components/otelcol.receiver.otlp/
-
-                // configures the default grpc endpoint "0.0.0.0:4317"
-                grpc { }
-                // configures the default http/protobuf endpoint "0.0.0.0:4318"
-                http { }
-
-                output {
-                        metrics = [otelcol.processor.batch.default.input]
-                        logs    = [otelcol.processor.batch.default.input]
-                        traces  = [otelcol.processor.batch.default.input]
-                }
-        }
-
-        otelcol.processor.batch "default" {
-                // https://grafana.com/docs/agent/latest/static/flow/reference/components/otelcol.processor.batch/
-                output {
-                        metrics = [otelcol.exporter.prometheus.grafana_prometheus.input]
-                        logs    = [otelcol.exporter.loki.grafana_loki.input]
-                }
-        }
-        //                 traces  = [otelcol.exporter.otlp.grafana_cloud_tempo.input]
-
-        otelcol.exporter.loki "grafana_loki" {
-                // https://grafana.com/docs/agent/latest/static/flow/reference/components/otelcol.exporter.loki/
-                forward_to = [module.file.loki_write_logs.exports.receiver]
-        }
-
-        otelcol.exporter.prometheus "grafana_prometheus" {
-                // https://grafana.com/docs/agent/latest/static/flow/reference/components/otelcol.exporter.prometheus/
-                forward_to = [module.file.prometheus_remote_write_metrics.exports.receiver]
-        }
-
-        // otelcol.exporter.otlp "grafana_tempo" {
-        //         // https://grafana.com/docs/agent/latest/static/flow/reference/components/otelcol.exporter.otlp/
-        //         client {
-        //                 endpoint = "tempo-prod-04-prod-us-east-0.grafana.net:443"
-        //                 auth     = otelcol.auth.basic.grafana_cloud_tempo.handler
-        //         }
-        // }
-
-        // otelcol.auth.basic "grafana_cloud_tempo" {
-        //         // https://grafana.com/docs/agent/latest/static/flow/reference/components/otelcol.auth.basic/
-        //         username = "616244"
-        //         password = "glc_eyJvIjoiODc2OTA5IiwibiI6ImJvYmJ5dGVzdCIsImsiOiJyOFB4MzQ5ZzBtZ2tya2Q3V1laOTY1N2kiLCJtIjp7InIiOiJwcm9kLXVzLWVhc3QtMCJ9fQ=="
-        // }
-
-
-        module.file "prometheus_remote_write_metrics" {
-          filename = "/var/flow_modules/prometheus_remote_write_metrics.river"
-
-          arguments {
-            url             = env("PROMETHEUS_REMOTE_WRITE_URL")
-            username        = env("PROMETHEUS_USER")
-            password        = env("PROMETHEUS_PASSWORD")
-            grafana_stack   = "{{ include "actian.grafanaStack" . }}"
-            external_labels = "{{ .Values.global.actian.externalLabels | toJson | replace "\"" "\\\"" }}"
-          }
-        }
-
-        module.file "loki_write_logs" {
-          filename = "/var/flow_modules/loki_write_logs.river"
-
-          arguments {
-            url             = env("LOKI_WRITE_URL")
-            username        = env("LOKI_USER")
-            password        = env("LOKI_PASSWORD")
-            grafana_stack   = "{{- include "actian.grafanaStack" . }}"
-            external_labels = "{{ .Values.global.actian.externalLabels | toJson | replace "\"" "\\\"" }}"
-          }
-        }
-
+grafana-agent-otlp:
+  fullnameOverride: grafana-agent-otlp
+  agent:
+    mode: 'flow'
+    configMap:
+      create: false
+      name: grafana-agent-otlp-config
+      key: agent-config.river
+    storagePath: /var/lib/grafana-agent/grafana-agent-otlp
     enableReporting: false
     extraPorts:
       - name: otlp-grpc
@@ -325,48 +251,64 @@ grafana-agent-flow-statefulset:
         port: 4318
         targetPort: 4318
     extraEnv:
-      - name: PROMETHEUS_USER
+      - name: NETRC
+        value: /etc/agent/netrc.d/.netrc
+      - name: AGENT_LOG_LEVEL
+        value: info
+      - name: CLUSTER_NAME
+        value: changeme_cluster_name
+      - name: CLOUD_PROVIDER
+        value: changeme_cloud_service_provider
+      - name: REGION
+        value: changeme_cluster_region
+      - name: METRICS_USERNAME
         valueFrom:
           secretKeyRef:
-            name: grafana-flow-secrets
+            name: grafana-agent-secrets
             key: prometheus-user
-      - name: PROMETHEUS_PASSWORD
+      - name: METRICS_PASSWORD
         valueFrom:
           secretKeyRef:
-            name: grafana-flow-secrets
+            name: grafana-agent-secrets
             key: prometheus-password
-      - name: PROMETHEUS_REMOTE_WRITE_URL
+      - name: METRICS_URL
         valueFrom:
           secretKeyRef:
-            name: grafana-flow-secrets
+            name: grafana-agent-secrets
             key: prometheus-remote-write-url
-      - name: LOKI_USER
-        valueFrom:
-          secretKeyRef:
-            name: grafana-flow-secrets
-            key: loki-user
-      - name: LOKI_PASSWORD
-        valueFrom:
-          secretKeyRef:
-            name: grafana-flow-secrets
-            key: loki-password
-      - name: LOKI_WRITE_URL
-        valueFrom:
-          secretKeyRef:
-            name: grafana-flow-secrets
-            key: loki-write-url
     mounts:
-      varlog: true
+      varlog: false
       dockercontainers: false
       extra:
-        - name: flow-modules
-          mountPath: /var/flow_modules
-
+        - name: grafana-agent-actian-modules
+          mountPath: /etc/agent/modules/actian
+          readOnly: true
+        - name: grafana-agent-bbc-secrets
+          mountPath: /etc/agent/netrc.d
+          readOnly: true
   controller:
     type: 'statefulset'
     replicas: 1
+    updateStrategy:
+      type: RollingUpdate
     volumes:
       extra:
-        - name: flow-modules
+        - name: grafana-agent-actian-modules
           configMap:
-            name: grafana-agent-flow-modules
+            name: grafana-agent-actian-modules
+        - name: grafana-agent-bbc-secrets
+          secret:
+            secretName: grafana-agent-bbc-secrets
+            items: 
+            - key: netrc
+              path: .netrc
+    podAnnotations:
+      logs.agent.grafana.com/log-format: logfmt
+      logs.agent.grafana.com/scrub-timestamp: "true"
+      logs.agent.grafana.com/scrub-level: "true"
+      logs.agent.grafana.com/drop-debug: "false"
+      logs.agent.grafana.com/embed-pod: "true"
+  service:
+    enabled: true
+    annotations:
+      metrics.agent.grafana.com/scrape: "true"
