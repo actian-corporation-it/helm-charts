@@ -1,0 +1,37 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: grafana-agent-metrics-config
+  labels:
+    app.kubernetes.io/instance: grafana-agent
+    app.kubernetes.io/component: metrics-config
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: {{ .Chart.Name }}
+    app.kubernetes.io/version: {{ .Chart.Version }}
+data:
+  agent-config.river: |
+    logging {
+        level  = coalesce(env("AGENT_LOG_LEVEL"), "info")
+        format = "logfmt"
+    }
+
+    module.git "k8s_metrics" {
+        repository = "{{- include "actian.grafanaAgentModulesRepo" . }}"
+        revision = "{{- include "actian.grafanaAgentModulesRevision" . }}"
+        path = "modules/kubernetes/metrics/k8s_metrics.river"
+
+        arguments {
+            mimir_url = env("METRICS_URL")
+            mimir_username = env("METRICS_USERNAME")
+            mimir_password = env("METRICS_PASSWORD")
+            clustering = false
+            scrape_port_named_metrics = true
+            grafana_stack = "{{- include "actian.grafanaStack" . }}"
+            label_cluster = "{{- include "actian.clusterName" . }}"
+            label_env = "{{- include "actian.clusterEnvironment" . }}"
+            label_cloud_provider = "{{- include "actian.cloudProvider" . }}"
+            label_region = "{{- include "actian.clusterRegion" . }}"
+            git_repo = "{{- include "actian.grafanaAgentModulesRepo" . }}"
+            git_rev = "{{- include "actian.grafanaAgentModulesRevision" . }}"
+        }
+    }

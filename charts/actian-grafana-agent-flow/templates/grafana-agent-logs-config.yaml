@@ -1,0 +1,57 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: grafana-agent-logs-config
+  labels:
+    app.kubernetes.io/instance: grafana-agent
+    app.kubernetes.io/component: logs-config
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: {{ .Chart.Name }}
+    app.kubernetes.io/version: {{ .Chart.Version }}
+data:
+  agent-config.river: |
+    logging {
+        level  = coalesce(env("AGENT_LOG_LEVEL"), "info")
+        format = "logfmt"
+    }
+
+    module.git "k8s_logs" {
+        repository = "{{- include "actian.grafanaAgentModulesRepo" . }}"
+        revision = "{{- include "actian.grafanaAgentModulesRevision" . }}"
+        path = "modules/kubernetes/logs/k8s_logs.river"
+
+        arguments {
+            loki_url = env("LOGS_URL")
+            loki_username = env("LOGS_USERNAME")
+            loki_password = env("LOGS_PASSWORD")
+            grafana_stack = "{{- include "actian.grafanaStack" . }}"
+            label_cluster = "{{- include "actian.clusterName" . }}"
+            label_env = "{{- include "actian.clusterEnvironment" . }}"
+            label_cloud_provider = "{{- include "actian.cloudProvider" . }}"
+            label_region = "{{- include "actian.clusterRegion" . }}"
+            git_repo = "{{- include "actian.grafanaAgentModulesRepo" . }}"
+            git_rev = "{{- include "actian.grafanaAgentModulesRevision" . }}"
+        }
+    }
+
+    module.file "kubelet_journal_logs" {
+        repository = "{{- include "actian.grafanaAgentModulesRepo" . }}"
+        revision = "{{- include "actian.grafanaAgentModulesRevision" . }}"
+        path = "modules/kubernetes/logs/kubelet_journal_logs.river"
+
+        arguments {
+            loki_url = env("LOGS_URL")
+            loki_username = env("LOGS_USERNAME")
+            loki_password = env("LOGS_PASSWORD")
+            drop_debug = "true"
+            scrub_level = "true"
+            scrub_timestamp = "true"
+            grafana_stack = "{{- include "actian.grafanaStack" . }}"
+            label_cluster = "{{- include "actian.clusterName" . }}"
+            label_env = "{{- include "actian.clusterEnvironment" . }}"
+            label_cloud_provider = "{{- include "actian.cloudProvider" . }}"
+            label_region = "{{- include "actian.clusterRegion" . }}"
+            git_repo = "{{- include "actian.grafanaAgentModulesRepo" . }}"
+            git_rev = "{{- include "actian.grafanaAgentModulesRevision" . }}"
+        }
+    }

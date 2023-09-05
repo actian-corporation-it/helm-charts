@@ -1,0 +1,39 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: grafana-agent-otlp-config
+  labels:
+    app.kubernetes.io/instance: grafana-agent
+    app.kubernetes.io/component: otlp-config
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: {{ .Chart.Name }}
+    app.kubernetes.io/version: {{ .Chart.Version }}
+data:
+  agent-config.river: |
+    logging {
+        level  = coalesce(env("AGENT_LOG_LEVEL"), "info")
+        format = "logfmt"
+    }
+
+    module.git "otlp" {
+        repository = "{{- include "actian.grafanaAgentModulesRepo" . }}"
+        revision = "{{- include "actian.grafanaAgentModulesRevision" . }}"
+        path = "modules/actian/otlp/otlp_metrics.river"
+
+        arguments {
+            mimir_url = env("METRICS_URL")
+            mimir_username = env("METRICS_USERNAME")
+            mimir_password = env("METRICS_PASSWORD")
+            loki_url = env("LOGS_URL")
+            loki_username = env("LOGS_USERNAME")
+            loki_password = env("LOGS_PASSWORD")
+            clustering = false
+            grafana_stack = "{{- include "actian.grafanaStack" . }}"
+            label_cluster = "{{- include "actian.clusterName" . }}"
+            label_env = "{{- include "actian.clusterEnvironment" . }}"
+            label_cloud_provider = "{{- include "actian.cloudProvider" . }}"
+            label_region = "{{- include "actian.clusterRegion" . }}"
+            git_repo = "{{- include "actian.grafanaAgentModulesRepo" . }}"
+            git_rev = "{{- include "actian.grafanaAgentModulesRevision" . }}"
+        }
+    }
