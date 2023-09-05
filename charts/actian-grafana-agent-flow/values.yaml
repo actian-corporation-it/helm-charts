@@ -32,8 +32,16 @@ grafana-agent-logs:
     storagePath: /var/tmp/grafana-agent/grafana-agent-logs
     enableReporting: false
     extraEnv:
-      - name: NETRC
-        value: /etc/agent/netrc.d/.netrc
+      - name: GIT_USERNAME
+        valueFrom:
+          secretKeyRef:
+            name: grafana-agent-bbc-secrets
+            key: username
+      - name: GIT_PASSWORD
+        valueFrom:
+          secretKeyRef:
+            name: grafana-agent-bbc-secrets
+            key: token
       - name: AGENT_LOG_LEVEL
         value: info
       - name: LOGS_USERNAME
@@ -58,9 +66,6 @@ grafana-agent-logs:
         - name: grafana-agent-actian-modules
           mountPath: /etc/agent/modules/actian
           readOnly: true
-        - name: grafana-agent-bbc-secrets
-          mountPath: /etc/agent/netrc.d
-          readOnly: true
   controller:
     type: 'daemonset'
     updateStrategy:
@@ -73,12 +78,6 @@ grafana-agent-logs:
         - name: grafana-agent-actian-modules
           configMap:
             name: grafana-agent-actian-modules
-        - name: grafana-agent-bbc-secrets
-          secret:
-            secretName: grafana-agent-bbc-secrets
-            items: 
-            - key: netrc
-              path: .netrc
     podAnnotations:
       logs.agent.grafana.com/log-format: logfmt
       logs.agent.grafana.com/scrub-timestamp: "true"
@@ -102,8 +101,16 @@ grafana-agent-metrics:
     enableReporting: false
     extraPorts: []
     extraEnv:
-      - name: NETRC
-        value: /etc/agent/netrc.d/.netrc
+      - name: GIT_USERNAME
+        valueFrom:
+          secretKeyRef:
+            name: grafana-agent-bbc-secrets
+            key: username
+      - name: GIT_PASSWORD
+        valueFrom:
+          secretKeyRef:
+            name: grafana-agent-bbc-secrets
+            key: token
       - name: AGENT_LOG_LEVEL
         value: info
       - name: METRICS_USERNAME
@@ -128,9 +135,6 @@ grafana-agent-metrics:
         - name: grafana-agent-actian-modules
           mountPath: /etc/agent/modules/actian
           readOnly: true
-        - name: grafana-agent-bbc-secrets
-          mountPath: /etc/agent/netrc.d
-          readOnly: true
   controller:
     type: 'statefulset'
     replicas: 1
@@ -141,12 +145,6 @@ grafana-agent-metrics:
         - name: grafana-agent-actian-modules
           configMap:
             name: grafana-agent-actian-modules
-        - name: grafana-agent-bbc-secrets
-          secret:
-            secretName: grafana-agent-bbc-secrets
-            items: 
-            - key: netrc
-              path: .netrc
     podAnnotations:
       logs.agent.grafana.com/log-format: logfmt
       logs.agent.grafana.com/scrub-timestamp: "true"
@@ -171,16 +169,18 @@ grafana-agent-k8s-events:
     storagePath: /var/lib/grafana-agent/grafana-agent-k8s-events
     enableReporting: false
     extraEnv:
-      - name: NETRC
-        value: /etc/agent/netrc.d/.netrc
+      - name: GIT_USERNAME
+        valueFrom:
+          secretKeyRef:
+            name: grafana-agent-bbc-secrets
+            key: username
+      - name: GIT_PASSWORD
+        valueFrom:
+          secretKeyRef:
+            name: grafana-agent-bbc-secrets
+            key: token
       - name: AGENT_LOG_LEVEL
         value: info
-      - name: CLUSTER_NAME
-        value: changeme_cluster_name
-      - name: CLOUD_PROVIDER
-        value: changeme_cloud_service_provider
-      - name: REGION
-        value: changeme_cluster_region
       - name: LOGS_USERNAME
         valueFrom:
           secretKeyRef:
@@ -203,9 +203,6 @@ grafana-agent-k8s-events:
         - name: grafana-agent-actian-modules
           mountPath: /etc/agent/modules/actian
           readOnly: true
-        - name: grafana-agent-bbc-secrets
-          mountPath: /etc/agent/netrc.d
-          readOnly: true
   controller:
     type: 'statefulset'
     replicas: 1
@@ -216,12 +213,6 @@ grafana-agent-k8s-events:
         - name: grafana-agent-actian-modules
           configMap:
             name: grafana-agent-actian-modules
-        - name: grafana-agent-bbc-secrets
-          secret:
-            secretName: grafana-agent-bbc-secrets
-            items: 
-            - key: netrc
-              path: .netrc
     podAnnotations:
       logs.agent.grafana.com/log-format: logfmt
       logs.agent.grafana.com/scrub-timestamp: "true"
@@ -251,16 +242,18 @@ grafana-agent-otlp:
         port: 4318
         targetPort: 4318
     extraEnv:
-      - name: NETRC
-        value: /etc/agent/netrc.d/.netrc
+      - name: GIT_USERNAME
+        valueFrom:
+          secretKeyRef:
+            name: grafana-agent-bbc-secrets
+            key: username
+      - name: GIT_PASSWORD
+        valueFrom:
+          secretKeyRef:
+            name: grafana-agent-bbc-secrets
+            key: token
       - name: AGENT_LOG_LEVEL
         value: info
-      - name: CLUSTER_NAME
-        value: changeme_cluster_name
-      - name: CLOUD_PROVIDER
-        value: changeme_cloud_service_provider
-      - name: REGION
-        value: changeme_cluster_region
       - name: METRICS_USERNAME
         valueFrom:
           secretKeyRef:
@@ -283,9 +276,6 @@ grafana-agent-otlp:
         - name: grafana-agent-actian-modules
           mountPath: /etc/agent/modules/actian
           readOnly: true
-        - name: grafana-agent-bbc-secrets
-          mountPath: /etc/agent/netrc.d
-          readOnly: true
   controller:
     type: 'statefulset'
     replicas: 1
@@ -296,12 +286,6 @@ grafana-agent-otlp:
         - name: grafana-agent-actian-modules
           configMap:
             name: grafana-agent-actian-modules
-        - name: grafana-agent-bbc-secrets
-          secret:
-            secretName: grafana-agent-bbc-secrets
-            items: 
-            - key: netrc
-              path: .netrc
     podAnnotations:
       logs.agent.grafana.com/log-format: logfmt
       logs.agent.grafana.com/scrub-timestamp: "true"
