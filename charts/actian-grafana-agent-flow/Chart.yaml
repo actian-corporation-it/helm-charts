@@ -10,9 +10,17 @@ dependencies:
     version: 0.2.1
   - name: grafana-agent
     repository: https://grafana.github.io/helm-charts
-    version: 0.19.0
-    alias: grafana-agent-flow-daemonset
+    version: 0.22.0
+    alias: grafana-agent-logs
   - name: grafana-agent
     repository: https://grafana.github.io/helm-charts
-    version: 0.19.0
-    alias: grafana-agent-flow-statefulset
+    version: 0.22.0
+    alias: grafana-agent-metrics
+  - name: grafana-agent
+    repository: https://grafana.github.io/helm-charts
+    version: 0.22.0
+    alias: grafana-agent-k8s-events
+  - name: grafana-agent
+    repository: https://grafana.github.io/helm-charts
+    version: 0.22.0
+    alias: grafana-agent-otlp
