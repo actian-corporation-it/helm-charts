@@ -13,7 +13,7 @@ metadata:
 data:
   agent-config.river: |
     logging {
-        level  = coalesce(env("AGENT_LOG_LEVEL"), "info")
+        level  = "{{- include "actian.grafanaAgentLogLevel" . }}"
         format = "logfmt"
     }
 

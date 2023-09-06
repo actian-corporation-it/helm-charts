@@ -1,5 +1,6 @@
 global:
   actian:
+    agentLogLevel: warn
     namespace: monitoring
     grafanaExternalSecretName: grafana-agent-secrets
     grafanaBbcExternalSecretName: grafana-agent-bbc-secrets
@@ -42,8 +43,6 @@ grafana-agent-logs:
           secretKeyRef:
             name: grafana-agent-bbc-secrets
             key: token
-      - name: AGENT_LOG_LEVEL
-        value: warn
       - name: LOGS_USERNAME
         valueFrom:
           secretKeyRef:
@@ -111,8 +110,6 @@ grafana-agent-metrics:
           secretKeyRef:
             name: grafana-agent-bbc-secrets
             key: token
-      - name: AGENT_LOG_LEVEL
-        value: warn
       - name: METRICS_USERNAME
         valueFrom:
           secretKeyRef:
@@ -179,8 +176,6 @@ grafana-agent-k8s-events:
           secretKeyRef:
             name: grafana-agent-bbc-secrets
             key: token
-      - name: AGENT_LOG_LEVEL
-        value: warn
       - name: LOGS_USERNAME
         valueFrom:
           secretKeyRef:
@@ -252,8 +247,6 @@ grafana-agent-otlp:
           secretKeyRef:
             name: grafana-agent-bbc-secrets
             key: token
-      - name: AGENT_LOG_LEVEL
-        value: warn
       - name: METRICS_USERNAME
         valueFrom:
           secretKeyRef:
