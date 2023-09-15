@@ -1,7 +1,7 @@
 global:
   actian:
     agentLogLevel: warn
-    namespace: monitoring
+    namespace: grafana-agent
     grafanaExternalSecretName: grafana-agent-secrets
     grafanaBbcExternalSecretName: grafana-agent-bbc-secrets
     clusterName: changeme_cluster_name
