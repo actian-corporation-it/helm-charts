@@ -29,4 +29,6 @@ spec:
             - name: cronjobs
               configMap:
                 name: {{ $.Values.syntheticTests.cronjobsConfigMapName }}
+          imagePullSecrets:
+            - name: {{ $.Values.k6Image.secret }}
 {{- end -}}
